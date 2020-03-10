@@ -1,6 +1,5 @@
 package SpacePirates;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -11,7 +10,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JPanel;
@@ -26,6 +24,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 	private double					zoomFactor			= 1;
 	private boolean					zoomer				= false;
+	private boolean 				accelerating		= false;
 
 	private ArrayList <SpaceObject>	objects				= new ArrayList <SpaceObject> ( );
 
@@ -86,6 +85,17 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	public void mouseDragged (MouseEvent e)
 	{
 		// TODO Auto-generated method stub
+		
+		// track previous x,y 
+		// use a directional cone whose apex is the ship at the center of the screen.
+		// if dragging to the right of and away from center of screen then accelerating 
+		// 				(must be pass 20% of distance from center to side so draggin near ship will turn w/o accelerating)
+		// if dragging above the horizontal line and to the right of the ship, then turn left (rotate universe clockwise)
+		// if dragging below the horiztonal line and to the right o fthe ship, then turn right (rotate universe counter clockwise)
+		// if dragging behind the ship then decelerating (no turning involved)
+		// 
+			System.out.println("" + e.getX( ) + ", "+ e.getY() + "  set rotation angle of universe to follow direction being dragged");
+			
 
 	}
 
@@ -103,16 +113,19 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		if (e.getClickCount ( ) == 2)
 		{
 		}
+		// a click without dragging is a shot fired
 	}
 
 	@Override
 	public void mousePressed (MouseEvent e)
 	{
+
 	}
 
 	@Override
 	public void mouseReleased (MouseEvent e)
 	{
+
 	}
 
 	@Override
@@ -140,30 +153,32 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		  at.scale(zoomFactor, zoomFactor);
 		  g2.transform(at);
 		  if (zoomer) {
-		  setPreferredSize(new Dimension((int)((600)*this.myRowOffset*zoomFactor),
-		  (int)((600)*this.myColOffset*zoomFactor)));
+			  setPreferredSize(new Dimension((int)((600)*this.myRowOffset*zoomFactor),
+			  (int)((600)*this.myColOffset*zoomFactor)));
 		  }
 		  zoomer = false;
 		 
-
+/*
+ * probably should make the player's ship a separate member/attribute outside of the collection.
+ * the collection holds all the space things that have a position relative to the universe but the ship
+ * really represents a cursor that navigate through the universe.
+ * For testing purposes, can we create "stars" in a uniform pattern through out the universe so that we
+ * can "see" the ships maneuvering? 
+ * 
+ * need to shift the ship to always be at the center of the screen even if the screen size is changed OR
+ * if the wheel zooms in or out.
+ * 
+ */
 		for (SpaceObject obj : this.objects)
 		{
 			BufferedImage image = obj.getImage ( );
-			double rads = Math.toRadians(obj.getRotation ( ));
-			double sin = Math.abs(Math.sin(rads));
-			double cos = Math.abs(Math.cos(rads));
-			int w = (int) Math.floor(image.getWidth() * cos + image.getHeight() * sin);
-			int h = (int) Math.floor(image.getHeight() * cos + image.getWidth() * sin);
-			BufferedImage rotatedImage = new BufferedImage(w, h, image.getType());
-			AffineTransform transform = new AffineTransform();
-			transform.translate(w / 2, h / 2);
-			transform.rotate(rads,0, 0);
-			transform.translate(-image.getWidth() / 2, -image.getHeight() / 2);
-			AffineTransformOp rotateOp = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
-			rotateOp.filter(image,rotatedImage);
-			g2.drawImage (rotatedImage, obj.getX ( ), obj.getY ( ), Color.BLACK, null);
+			g2.rotate(obj.getRotation ( ),obj.getX ( )+image.getWidth ( )/2, obj.getY ( )+image.getHeight ( )/2);
+			g2.drawImage (image, obj.getX ( ), obj.getY ( ), null);
 			obj.setRotation (obj.getRotation ( )+15);
 		}
+		if (accelerating) 
+			System.out.println("accelerates");
+
 		// }
 
 	} // end paint component
@@ -186,5 +201,6 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			repaint ( );
 		}
 	}
+
 
 }

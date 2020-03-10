@@ -60,6 +60,7 @@ public class PirateFrame extends JFrame implements Runnable
 		splitPane.setDividerSize(0);
 		splitPane.setResizeWeight(.05);
 		splitPane.setBackground(Color.BLACK);
+
 		//splitPane.setForeground(Color.BLACK);		
 		add(BorderLayout.CENTER, splitPane);
 		progressBar = new JProgressBar(JProgressBar.HORIZONTAL,0,100);
