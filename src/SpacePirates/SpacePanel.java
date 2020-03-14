@@ -1,5 +1,6 @@
 package SpacePirates;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,6 +11,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JPanel;
@@ -27,6 +29,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	private boolean 				accelerating		= false;
 
 	private ArrayList <SpaceObject>	objects				= new ArrayList <SpaceObject> ( );
+	private SpaceShip 				mainShip			= null;
 
 	public SpacePanel ( )
 	{
@@ -59,6 +62,16 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		addMouseWheelListener (this);
 	}
 
+	public void addMainShip (SpaceShip ship)
+	{
+		this.mainShip = ship;
+	}
+	
+	public SpaceShip mainShip()
+	{
+		return this.mainShip;
+	}
+	
 	public void add (SpaceObject obj)
 	{
 		objects.add (obj);
@@ -169,11 +182,20 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
  * if the wheel zooms in or out.
  * 
  */
+	  
+		BufferedImage image = mainShip.getImage ( );
+		int centerX = this.getWidth ( )/2+image.getWidth ( )/2;
+		int centerY = this.getHeight ( )/2+image.getHeight ( )/2;
+		g2.rotate(mainShip.getRotation ( ),centerX,centerY);
+		g2.drawImage (image, this.getWidth ( )/2, this.getHeight ( )/2, null);
+		mainShip.setRotation (mainShip.getRotation ( )+0.1);
+			
 		for (SpaceObject obj : this.objects)
 		{
-			BufferedImage image = obj.getImage ( );
-			g2.rotate(obj.getRotation ( ),obj.getX ( )+image.getWidth ( )/2, obj.getY ( )+image.getHeight ( )/2);
-			g2.drawImage (image, obj.getX ( ), obj.getY ( ), null);
+			image = obj.getImage ( );
+			Graphics2D g22 = (Graphics2D)g.create ( );
+			g22.rotate(obj.getRotation ( ),obj.getX()+image.getWidth ( )/2,obj.getY()+image.getHeight ( )/2);
+			g22.drawImage (image, obj.getX(), obj.getY(), null);
 			obj.setRotation (obj.getRotation ( )+15);
 		}
 		if (accelerating) 

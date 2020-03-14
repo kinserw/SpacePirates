@@ -40,9 +40,24 @@ public class SpaceTreasure extends SpaceObject
 	public SpaceTreasure (int x, int y)
 	{
 		super (x, y);
-		// TODO Auto-generated constructor stub
 	}
 
+
+	/**
+	 * Constructor        
+	 *
+	 * <hr>
+	 * Date created: Mar 4, 2020 
+	 *
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public SpaceTreasure (int x, int y, SpaceTreasureType type)
+	{
+		super (x, y);
+		this.setTreasureType (type);
+	}
 	
 	/**
 	 * @return type

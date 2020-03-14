@@ -11,7 +11,6 @@
 
 package SpacePirates;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
@@ -31,8 +30,10 @@ abstract public class SpaceObject
 	private SpaceObjectType type = SpaceObjectType.STATIONARY;
 	private BufferedImage icon = null;
 	private static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
-	private int rotation = 0;
+	private double rotation = 0;
+	private double rotationRate = 0;
 	
+
 
 
 	public SpaceObject(int x, int y)
@@ -121,7 +122,7 @@ abstract public class SpaceObject
 	/**
 	 * @return rotation
 	 */
-	public int getRotation ( )
+	public double getRotation ( )
 	{
 		return rotation;
 	}
@@ -130,11 +131,29 @@ abstract public class SpaceObject
 	/**
 	 * @param rotation the rotation to set
 	 */
-	public void setRotation (int rotation)
+	public void setRotation (double rotation)
 	{
 		this.rotation = rotation;
 	}
 	
+	
+	/**
+	 * @return rotationRate
+	 */
+	public double getRotationRate ( )
+	{
+		return rotationRate;
+	}
+
+	
+	/**
+	 * @param rotationRate the rotationRate to set
+	 */
+	public void setRotationRate (double rotationRate)
+	{
+		this.rotationRate = rotationRate;
+	}
+
 	/**
 	 * @return type
 	 */

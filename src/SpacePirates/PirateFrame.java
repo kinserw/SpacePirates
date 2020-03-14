@@ -44,7 +44,11 @@ public class PirateFrame extends JFrame implements Runnable
 		createMenuBar();
 		
 		spacePanel = new SpacePanel();
-		spacePanel.add (new SpaceShip(200,150));
+		spacePanel.addMainShip (new SpaceShip(200,200));
+		spacePanel.add (new SpaceStation(300,300));
+//		spacePanel.add (new LargeAsteroid(150,300,6));
+//		spacePanel.add (new SpaceTreasure(300,150,SpaceTreasureType.URANIUM));
+		
 
 		setLayout(new BorderLayout());
 		JPanel buttonPanel = this.createButtons();
