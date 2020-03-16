@@ -1,6 +1,6 @@
 /**
  * ---------------------------------------------------------------------------
- * File name: SpaceStation.java
+ * File name: SmallAsteroid.java
  * Project name: SpacePirates
  * ---------------------------------------------------------------------------
  * Creator's name and email: William Kinser, kinserw@etsu.edu
@@ -20,9 +20,10 @@ package SpacePirates;
  * <hr>
  * @author William Kinser
  */
-public class SpaceStation extends WeighStation
+public class Weapon extends SpaceObject
 {
 
+	
 	/**
 	 * Constructor        
 	 *
@@ -33,10 +34,10 @@ public class SpaceStation extends WeighStation
 	 * @param x
 	 * @param y
 	 */
-	public SpaceStation (int x, int y)
+	public Weapon (int x, int y)
 	{
 		super (x, y);
-		this.setRotationRate (15.0);
+		// TODO Auto-generated constructor stub
 	}
 
 }

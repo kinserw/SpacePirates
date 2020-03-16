@@ -32,6 +32,7 @@ abstract public class SpaceObject
 	private static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
 	private double rotation = 0;
 	private double rotationRate = 0;
+	private int speed = 0;
 	
 
 
@@ -152,6 +153,24 @@ abstract public class SpaceObject
 	public void setRotationRate (double rotationRate)
 	{
 		this.rotationRate = rotationRate;
+	}
+
+	
+	/**
+	 * @return speed
+	 */
+	public int getSpeed ( )
+	{
+		return speed;
+	}
+
+	
+	/**
+	 * @param speed the speed to set
+	 */
+	public void setSpeed (int speed)
+	{
+		this.speed = speed;
 	}
 
 	/**

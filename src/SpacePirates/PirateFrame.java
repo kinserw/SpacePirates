@@ -21,6 +21,7 @@ import javax.swing.JSplitPane;
 public class PirateFrame extends JFrame implements Runnable
 {
 	int difficulty = 3;
+	int counter = 0;
 	public static PirateFrame ourFrame = null;
 	SpacePanel spacePanel = null;
 	private PirateBtnPanel myBtnPanel = null;
@@ -44,8 +45,8 @@ public class PirateFrame extends JFrame implements Runnable
 		createMenuBar();
 		
 		spacePanel = new SpacePanel();
-		spacePanel.addMainShip (new SpaceShip(200,200));
-		spacePanel.add (new SpaceStation(300,300));
+		spacePanel.addMainShip (new SpaceShip(0,0));
+		spacePanel.add (new SpaceStation(100,100));
 //		spacePanel.add (new LargeAsteroid(150,300,6));
 //		spacePanel.add (new SpaceTreasure(300,150,SpaceTreasureType.URANIUM));
 		
@@ -135,6 +136,13 @@ public class PirateFrame extends JFrame implements Runnable
 					
 
 			repaint();
+			counter++;
+			if (counter >= 1)
+			{
+				counter = 0;
+				this.spacePanel.moveObjects();
+			}
+			
 			//for (int i = 0; i < 1000000; i++);'
 			synchronized(this)
 			{
