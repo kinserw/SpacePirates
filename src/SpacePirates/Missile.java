@@ -11,7 +11,6 @@
 
 package SpacePirates;
 
-
 /**
  * Enter type purpose here
  *

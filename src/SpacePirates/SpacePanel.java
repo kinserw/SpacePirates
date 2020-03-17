@@ -1,20 +1,18 @@
 package SpacePirates;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import javax.sound.sampled.Line;
 import javax.swing.JPanel;
 
 public class SpacePanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener
@@ -27,10 +25,11 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 	private double					zoomFactor			= 1;
 	private boolean					zoomer				= false;
-	private boolean 				accelerating		= false;
 
 	private ArrayList <SpaceObject>	objects				= new ArrayList <SpaceObject> ( );
 	private SpaceShip 				mainShip			= null;
+
+	private boolean coasting = true;
 
 	public SpacePanel ( )
 	{
@@ -117,6 +116,11 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		if (e.getButton ( ) == MouseEvent.BUTTON3 && e.getClickCount ( ) == 2)
 		{
 			System.out.println("FIRE");
+			Missile missile = new Missile(this.mainShip.getX ( ), 
+										  this.mainShip.getY ( ));
+			missile.setRotation (mainShip.getRotation ( ));
+			missile.setSpeed (20);
+			this.objects.add (missile);
 		}
 	}
 
@@ -128,6 +132,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			System.out.print("Move  ");
 			
 			mainShip.setSpeed (10);
+			coasting = false;
 			
 		}
 
@@ -138,9 +143,10 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	{
 		if (e.getButton ( ) == MouseEvent.BUTTON1)
 		{
-			System.out.print("Stop Move  ");
+			//System.out.print("Stop Move  ");
 			
-			mainShip.setSpeed (0);
+			//mainShip.setSpeed (0);
+			coasting = true;
 			
 		}
 
@@ -162,10 +168,23 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 	public void moveObjects()
 	{
-		double deltaX = mainShip.getSpeed()*Math.cos(mainShip.getRotation ( ));
-		double deltaY = mainShip.getSpeed()*Math.sin(mainShip.getRotation ( ));
+		int speed = this.mainShip.getSpeed ( );
+		double deltaX = speed*Math.cos(mainShip.getRotation ( ));
+		double deltaY = speed*Math.sin(mainShip.getRotation ( ));
 		this.mainShip.setX (mainShip.getX() + (int)(deltaX));
 		this.mainShip.setY (mainShip.getY() + (int)(deltaY));
+		if (coasting)
+			this.mainShip.setSpeed ((speed <= 0 ? 0 : speed - 1));
+		
+		for (SpaceObject object : this.objects)
+		{
+			speed = object.getSpeed ( );
+			deltaX = speed*Math.cos(object.getRotation ( ));
+			deltaY = speed*Math.sin(object.getRotation ( ));
+			object.setX (object.getX() + (int)(deltaX));
+			object.setY (object.getY() + (int)(deltaY));
+		
+		}
 	}
 	
 	@Override
@@ -193,17 +212,15 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 		zoomer = false;
 		
-		// calculate offsets so main ship stays in center of screen always
-		this.myRowOffset = (int)(getWidth()/zoomFactor)/5 - mainShip.getX ( );
-		this.myColOffset = (int)(getHeight()/zoomFactor)/2 - mainShip.getY ( );
-
-  
 		Graphics2D g22 = (Graphics2D)g.create ( );
 		BufferedImage image = mainShip.getImage ( );
 		g22.rotate(mainShip.getRotation ( ),mainShip.getX ( )+image.getWidth()/2 , 
 			mainShip.getY()+image.getHeight ( )/2);
 		g22.drawImage (image, mainShip.getX ( ) , 
 							mainShip.getY() , null);
+		g22.dispose ( );
+		
+		ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
 
 		for (SpaceObject obj : this.objects)
 		{
@@ -213,9 +230,26 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 								(int)(obj.getY())+image.getHeight ( )/2);
 			g22.drawImage (image, (int)(obj.getX()), (int)(obj.getY()), null);
 			obj.setRotation (obj.getRotation ( )+obj.getRotationRate());
+			rects.add (new Rectangle(obj.getX ( ),obj.getY ( ), image.getWidth ( ),image.getHeight ( )));
+			g22.dispose ( );
 		}
-		if (accelerating) 
-			System.out.println("accelerates");
+
+		// look for collisions
+		// outer loop iterates through all rectangles
+		for (int r1 =0; r1 < rects.size ( ); r1++)
+		{
+			Rectangle rect1 = rects.get (r1);
+			// inner loop iterates through all rectangles after r1 in list
+			for (int r2 = r1+1; r2 < rects.size ( ); r2++)
+			{
+				Rectangle rect2 = rects.get (r2);
+				if (rect1.intersects (rect2))
+				{
+					System.out.println("collision between " + r1 + " and " +r2);
+					
+				}
+			}
+		}
 
 
 	} // end paint component
