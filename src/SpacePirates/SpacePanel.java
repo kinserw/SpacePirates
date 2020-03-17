@@ -27,7 +27,10 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	private boolean					zoomer				= false;
 
 	private ArrayList <SpaceObject>	objects				= new ArrayList <SpaceObject> ( );
-	private SpaceShip 				mainShip			= null;
+
+	// keep a handle to the mainShip for quick reference. The mainShip is in the 
+	// objects array list of SpaceObjects too.
+	private SpaceShip 				mainShip			= null; 
 
 	private boolean coasting = true;
 
@@ -64,6 +67,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 	public void addMainShip (SpaceShip ship)
 	{
+		objects.remove (mainShip);
+		objects.add (ship);
 		this.mainShip = ship;
 	}
 	
@@ -168,22 +173,16 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 	public void moveObjects()
 	{
-		int speed = this.mainShip.getSpeed ( );
-		double deltaX = speed*Math.cos(mainShip.getRotation ( ));
-		double deltaY = speed*Math.sin(mainShip.getRotation ( ));
-		this.mainShip.setX (mainShip.getX() + (int)(deltaX));
-		this.mainShip.setY (mainShip.getY() + (int)(deltaY));
-		if (coasting)
-			this.mainShip.setSpeed ((speed <= 0 ? 0 : speed - 1));
 		
 		for (SpaceObject object : this.objects)
 		{
-			speed = object.getSpeed ( );
-			deltaX = speed*Math.cos(object.getRotation ( ));
-			deltaY = speed*Math.sin(object.getRotation ( ));
+			int speed = object.getSpeed ( );
+			double deltaX = speed*Math.cos(object.getRotation ( ));
+			double deltaY = speed*Math.sin(object.getRotation ( ));
 			object.setX (object.getX() + (int)(deltaX));
 			object.setY (object.getY() + (int)(deltaY));
-		
+			if ((object == mainShip) && coasting)
+				this.mainShip.setSpeed ((speed <= 0 ? 0 : speed - 1));	
 		}
 	}
 	
@@ -191,10 +190,18 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	public void paintComponent (Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D) g;
-			
+		
+		// scales the window based on mouse scroll
 		AffineTransform at = new AffineTransform();
 		at.scale(zoomFactor, zoomFactor);
 		g2.transform(at);
+		setPreferredSize(new Dimension((int)((getWidth())*zoomFactor),
+			(int)((getHeight())*zoomFactor)));
+
+		
+		// determine if ship is nearing the edges of the screen and
+		// shift the coordinate system accordingly so that the ship 
+		// does not leave the screen but can keep moving
 		int xOffset = 0; 
 		if (mainShip.getX() > (getWidth()*.8))
 			xOffset = (int)(getWidth()*.8 - mainShip.getX ( ));
@@ -207,25 +214,17 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			yOffset = (int)(getHeight()*.2 - mainShip.getY ( ));
 		g2.translate (xOffset, yOffset);
 		  
-		setPreferredSize(new Dimension((int)((getWidth())*zoomFactor),
-										(int)((getHeight())*zoomFactor)));
-
 		zoomer = false;
-		
-		Graphics2D g22 = (Graphics2D)g.create ( );
-		BufferedImage image = mainShip.getImage ( );
-		g22.rotate(mainShip.getRotation ( ),mainShip.getX ( )+image.getWidth()/2 , 
-			mainShip.getY()+image.getHeight ( )/2);
-		g22.drawImage (image, mainShip.getX ( ) , 
-							mainShip.getY() , null);
-		g22.dispose ( );
-		
+				
+		// build a temporary list of rectangles for each space object. 
+		// their rectangle can change if they are moving so we do this each 
+		// time paint is called (could do it in SpacePanel:moveObjects )
 		ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
 
 		for (SpaceObject obj : this.objects)
 		{
-			image = obj.getImage ( );
-			g22 = (Graphics2D)g.create ( );
+			BufferedImage image = obj.getImage ( );
+			Graphics2D g22 = (Graphics2D)g.create ( );
 			g22.rotate(obj.getRotation ( ),(int)(obj.getX())+image.getWidth ( )/2,
 								(int)(obj.getY())+image.getHeight ( )/2);
 			g22.drawImage (image, (int)(obj.getX()), (int)(obj.getY()), null);
