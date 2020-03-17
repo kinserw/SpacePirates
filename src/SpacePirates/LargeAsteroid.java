@@ -30,8 +30,7 @@ public class LargeAsteroid extends SpaceObject
 		super(x,y);
 		for (int i = 0; i < size; i++)
 			pieces.add (new SmallAsteroid(x,y));
-		// TODO: need to assign each small asteroid with an x,y value relative to this object
-		// so they appear as a cluster
+		this.setRotationRate (5.0);
 	}
 	public int collision(int forceOfImpact, ArrayList<SpaceObject> componentParts)
 	{

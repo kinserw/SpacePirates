@@ -31,7 +31,7 @@ abstract public class SpaceObject
 	private BufferedImage icon = null;
 	private static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
 	private double rotation = 0;
-	private double rotationRate = 0;
+	private double rotationRate = 0.0;
 	private int speed = 0;
 	
 

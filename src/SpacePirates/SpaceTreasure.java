@@ -40,6 +40,7 @@ public class SpaceTreasure extends SpaceObject
 	public SpaceTreasure (int x, int y)
 	{
 		super (x, y);
+		this.setRotationRate (5.0);
 	}
 
 

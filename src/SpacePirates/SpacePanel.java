@@ -11,9 +11,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import javax.sound.sampled.Line;
 import javax.swing.JPanel;
 
 public class SpacePanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener
@@ -97,17 +98,6 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mouseDragged (MouseEvent e)
 	{
-		// TODO Auto-generated method stub
-		
-		// track previous x,y 
-		// use a directional cone whose apex is the ship at the center of the screen.
-		// if dragging to the right of and away from center of screen then accelerating 
-		// 				(must be pass 20% of distance from center to side so draggin near ship will turn w/o accelerating)
-		// if dragging above the horizontal line and to the right of the ship, then turn left (rotate universe clockwise)
-		// if dragging below the horiztonal line and to the right o fthe ship, then turn right (rotate universe counter clockwise)
-		// if dragging behind the ship then decelerating (no turning involved)
-		// 
-			//System.out.println("" + e.getX( ) + ", "+ e.getY() + "  set rotation angle of universe to follow direction being dragged");
 			
 
 	}
@@ -115,7 +105,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mouseMoved (MouseEvent e)
 	{
-		// TODO Auto-generated method stub
+		double rotation = Math.atan2 ((e.getY ( ) - mainShip.getY ( )),(e.getX() - mainShip.getY()));
+		mainShip.setRotation (rotation);
 
 	}
 
@@ -123,42 +114,35 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	public void mouseClicked (MouseEvent e)
 	{
 		// TODO Auto-generated method stub
-		if (e.getClickCount ( ) == 2)
+		if (e.getButton ( ) == MouseEvent.BUTTON3 && e.getClickCount ( ) == 2)
 		{
 			System.out.println("FIRE");
 		}
-		else
-			if (e.getClickCount ( ) == 1)
-			{
-				System.out.print("Move  ");
-				int x = (int)(e.getX());
-				int y = (int)(e.getY());
-				if (x > (getWidth()/2))
-				{
-					mainShip.setSpeed (10*(x-getWidth()/2)/(getWidth()/2));
-					mainShip.setRotationRate (-1*((y-(getHeight()/2.0))/(getHeight()/2.0))/10);
-					if (y < (getHeight()/2))
-					{
-						System.out.println("Up");
-					}
-					else
-					{
-						System.out.println("Down");
-					}
-				}
-				
-			}
 	}
 
 	@Override
 	public void mousePressed (MouseEvent e)
 	{
+		if (e.getButton ( ) == MouseEvent.BUTTON1)
+		{
+			System.out.print("Move  ");
+			
+			mainShip.setSpeed (10);
+			
+		}
 
 	}
 
 	@Override
 	public void mouseReleased (MouseEvent e)
 	{
+		if (e.getButton ( ) == MouseEvent.BUTTON1)
+		{
+			System.out.print("Stop Move  ");
+			
+			mainShip.setSpeed (0);
+			
+		}
 
 	}
 
@@ -178,70 +162,61 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 	public void moveObjects()
 	{
-		System.out.println("speed = " + mainShip.getSpeed() +   " rotation rate = " +
-							mainShip.getRotationRate ( ) + "x = " + mainShip.getX ( ) +
-							"y = " + mainShip.getY ( ));
-		double deg = Math.toDegrees (mainShip.getRotationRate ( ));
-		double deltaX = mainShip.getSpeed()*Math.cos(deg);
-		double deltaY = mainShip.getSpeed()*Math.sin(deg);
-		this.mainShip.setX (mainShip.getX() + (int)deltaX);
-		this.mainShip.setY (mainShip.getY() - (int)deltaY);
-		this.mainShip.setRotation (this.mainShip.getRotation()+this.mainShip.getRotationRate ( ));
+		double deltaX = mainShip.getSpeed()*Math.cos(mainShip.getRotation ( ));
+		double deltaY = mainShip.getSpeed()*Math.sin(mainShip.getRotation ( ));
+		this.mainShip.setX (mainShip.getX() + (int)(deltaX));
+		this.mainShip.setY (mainShip.getY() + (int)(deltaY));
 	}
 	
 	@Override
 	public void paintComponent (Graphics g)
 	{
-		// super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		
-		  //if (zoomer) {
-		  AffineTransform at = new AffineTransform();
-		  at.scale(zoomFactor, zoomFactor);
-		  g2.transform(at);
-		  //if (zoomer) {
-			  setPreferredSize(new Dimension((int)((getWidth())*zoomFactor),
-			  (int)((getHeight())*zoomFactor)));
-		  //}
-		  zoomer = false;
-
-		  // calculate offsets so main ship stays in center of screen always
-		  this.myRowOffset = (int)(getWidth()/zoomFactor)/2 - mainShip.getX ( );
-		  this.myColOffset = (int)(getHeight()/zoomFactor)/2 - mainShip.getY ( );
-
-/*
- * probably should make the player's ship a separate member/attribute outside of the collection.
- * the collection holds all the space things that have a position relative to the universe but the ship
- * really represents a cursor that navigate through the universe.
- * For testing purposes, can we create "stars" in a uniform pattern through out the universe so that we
- * can "see" the ships maneuvering? 
- * 
- * need to shift the ship to always be at the center of the screen even if the screen size is changed OR
- * if the wheel zooms in or out.
- * 
- */
-	  
-		BufferedImage image = mainShip.getImage ( );
-		int centerX = (int)(getWidth()/zoomFactor)/2+image.getWidth ( )/2;
-		int centerY = (int)(getHeight()/zoomFactor)/2+image.getHeight ( )/2;
-		g.drawImage (image, mainShip.getX ( ) + myRowOffset, 
-							mainShip.getY() + myColOffset, null);
-		g2.rotate(mainShip.getRotation ( ),centerX,centerY);
-		//mainShip.setRotation (mainShip.getRotation ( ));
 			
+		AffineTransform at = new AffineTransform();
+		at.scale(zoomFactor, zoomFactor);
+		g2.transform(at);
+		int xOffset = 0; 
+		if (mainShip.getX() > (getWidth()*.8))
+			xOffset = (int)(getWidth()*.8 - mainShip.getX ( ));
+		else if (mainShip.getX ( ) < getWidth()*.2)
+			xOffset = (int)(getWidth()*.2 - mainShip.getX ( ));
+		int yOffset = 0; 
+		if (mainShip.getY() > (getHeight()*.8))
+			yOffset = (int)(getHeight()*.8 - mainShip.getY ( ));
+		else if (mainShip.getY ( ) < getHeight()*.2)
+			yOffset = (int)(getHeight()*.2 - mainShip.getY ( ));
+		g2.translate (xOffset, yOffset);
+		  
+		setPreferredSize(new Dimension((int)((getWidth())*zoomFactor),
+										(int)((getHeight())*zoomFactor)));
+
+		zoomer = false;
+		
+		// calculate offsets so main ship stays in center of screen always
+		this.myRowOffset = (int)(getWidth()/zoomFactor)/5 - mainShip.getX ( );
+		this.myColOffset = (int)(getHeight()/zoomFactor)/2 - mainShip.getY ( );
+
+  
+		Graphics2D g22 = (Graphics2D)g.create ( );
+		BufferedImage image = mainShip.getImage ( );
+		g22.rotate(mainShip.getRotation ( ),mainShip.getX ( )+image.getWidth()/2 , 
+			mainShip.getY()+image.getHeight ( )/2);
+		g22.drawImage (image, mainShip.getX ( ) , 
+							mainShip.getY() , null);
+
 		for (SpaceObject obj : this.objects)
 		{
 			image = obj.getImage ( );
-			Graphics2D g22 = (Graphics2D)g.create ( );
-			g22.rotate(obj.getRotation ( ),(int)(obj.getX()+myRowOffset)+image.getWidth ( )/2,
-								(int)(obj.getY()+myColOffset)+image.getHeight ( )/2);
-			g22.drawImage (image, (int)(obj.getX()+myRowOffset), (int)(obj.getY()+myColOffset), null);
+			g22 = (Graphics2D)g.create ( );
+			g22.rotate(obj.getRotation ( ),(int)(obj.getX())+image.getWidth ( )/2,
+								(int)(obj.getY())+image.getHeight ( )/2);
+			g22.drawImage (image, (int)(obj.getX()), (int)(obj.getY()), null);
 			obj.setRotation (obj.getRotation ( )+obj.getRotationRate());
 		}
 		if (accelerating) 
 			System.out.println("accelerates");
 
-		// }
 
 	} // end paint component
 

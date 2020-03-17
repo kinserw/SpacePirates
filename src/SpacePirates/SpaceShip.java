@@ -36,6 +36,7 @@ public class SpaceShip extends SpaceObject
 	public SpaceShip (int x, int y)
 	{
 		super (x, y);
+		this.setRotation (0.0);
 		this.setType (SpaceObjectType.STEERABLE);
 	}
 

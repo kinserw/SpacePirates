@@ -36,7 +36,7 @@ public class WeighStation extends SpaceObject
 	public WeighStation (int x, int y)
 	{
 		super (x, y);
-		// TODO Auto-generated constructor stub
+		this.setRotationRate (5.0);
 	}
 	
 
