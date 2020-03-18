@@ -176,7 +176,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		
 		for (SpaceObject object : this.objects)
 		{
-			int speed = object.getSpeed ( );
+			double speed = object.getSpeed ( );
 			double deltaX = speed*Math.cos(object.getRotation ( ));
 			double deltaY = speed*Math.sin(object.getRotation ( ));
 			object.setX (object.getX() + (int)(deltaX));

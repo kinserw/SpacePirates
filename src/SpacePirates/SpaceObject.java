@@ -30,11 +30,12 @@ abstract public class SpaceObject
 	private SpaceObjectType type = SpaceObjectType.STATIONARY;
 	private BufferedImage icon = null;
 	private static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
-	private double rotation = 0;
-	private double rotationRate = 0.0;
-	private int speed = 0;
+	private double rotation = 0;		// current angle in reference to rotational velocity
+	private double rotationRate = 0.0;	// rotational velocity
+	private double speed = 0;			// space object's velocity
+	private double speedAng = 0;		// angle used for determining velocity vector
+	private double mass = 0;			// mass for simulating force and collisions
 	
-
 
 
 	public SpaceObject(int x, int y)
@@ -44,6 +45,11 @@ abstract public class SpaceObject
 		
 		// TODO: load image based on the image name set by most derived class for this instance
 		icon = fetchImage();
+	}
+	
+	public void simCollide(SpaceObject obj)
+	{
+		
 	}
 
 	/**
@@ -159,7 +165,7 @@ abstract public class SpaceObject
 	/**
 	 * @return speed
 	 */
-	public int getSpeed ( )
+	public double getSpeed ( )
 	{
 		return speed;
 	}
@@ -168,7 +174,7 @@ abstract public class SpaceObject
 	/**
 	 * @param speed the speed to set
 	 */
-	public void setSpeed (int speed)
+	public void setSpeed (double speed)
 	{
 		this.speed = speed;
 	}
@@ -188,6 +194,41 @@ abstract public class SpaceObject
 	public void setType (SpaceObjectType type)
 	{
 		this.type = type;
+	}
+	
+	/**
+	 * @return speedAng
+	 */
+	public double getSpeedAng ( )
+	{
+		return speedAng;
+	}
+
+	
+	/**
+	 * @param speedAng the speedAng to set
+	 */
+	public void setSpeedAng (double speedAng)
+	{
+		this.speedAng = speedAng;
+	}
+
+	
+	/**
+	 * @return mass
+	 */
+	public double getMass ( )
+	{
+		return mass;
+	}
+
+	
+	/**
+	 * @param mass the mass to set
+	 */
+	public void setMass (double mass)
+	{
+		this.mass = mass;
 	}
 
 } // end SpaceObject

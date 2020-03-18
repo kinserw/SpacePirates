@@ -25,4 +25,5 @@ public enum SpaceObjectType
 	STATIONARY,
 	ELLIPTICAL,
 	STEERABLE,
+	DYNAMIC
 }
