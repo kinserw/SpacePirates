@@ -111,7 +111,6 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	{
 		double rotation = Math.atan2 ((e.getY ( ) - mainShip.getY ( )),(e.getX() - mainShip.getY()));
 		mainShip.setRotation (rotation);
-
 	}
 
 	@Override
@@ -176,9 +175,9 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		
 		for (SpaceObject object : this.objects)
 		{
-			int speed = object.getSpeed ( );
-			double deltaX = speed*Math.cos(object.getRotation ( ));
-			double deltaY = speed*Math.sin(object.getRotation ( ));
+			double speed = object.getSpeed ( );
+			double deltaX = speed*Math.cos(object.getSpeedAng ( ));
+			double deltaY = speed*Math.sin(object.getSpeedAng ( ));
 			object.setX (object.getX() + (int)(deltaX));
 			object.setY (object.getY() + (int)(deltaY));
 			if ((object == mainShip) && coasting)
