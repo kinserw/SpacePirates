@@ -6,7 +6,14 @@ import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -16,16 +23,18 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSplitPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class PirateFrame extends JFrame implements Runnable
 {
 	int difficulty = 3;
-	int counter = 0;
 	public static PirateFrame ourFrame = null;
 	SpacePanel spacePanel = null;
 	private PirateBtnPanel myBtnPanel = null;
 	JProgressBar progressBar = null;
+	private int progress = 0;
+	private boolean gameInProgress = false;
 	
 
 
@@ -44,13 +53,9 @@ public class PirateFrame extends JFrame implements Runnable
 
 		createMenuBar();
 		
-		spacePanel = new SpacePanel();
+		spacePanel = new SpacePanel();	
+		// have to have a main ship even if a game isn't in progress.
 		spacePanel.addMainShip (new SpaceShip(300,300));
-		spacePanel.add (new SpaceStation(100,100));
-		spacePanel.add (new WeighStation(-100,-100));
-		spacePanel.add (new LargeAsteroid(150,300,6));
-		spacePanel.add (new SpaceTreasure(300,150,SpaceTreasureType.URANIUM));
-		
 
 		setLayout(new BorderLayout());
 		JPanel buttonPanel = this.createButtons();
@@ -71,6 +76,7 @@ public class PirateFrame extends JFrame implements Runnable
 		add(BorderLayout.CENTER, splitPane);
 		progressBar = new JProgressBar(JProgressBar.HORIZONTAL,0,100);
 		progressBar.setStringPainted(true);
+		progressBar.setBackground (Color.RED);
 		add(BorderLayout.SOUTH,this.progressBar);
 		
 		shapeMyFrame();
@@ -132,15 +138,16 @@ public class PirateFrame extends JFrame implements Runnable
 	public void run() {
 		while (true)
 		{
-			progressBar.setValue( (int)(0.44*100));
+			progressBar.setValue( (int)(this.progress));
 
 					
 
-			repaint();
-			counter++;
-			if (counter >= 1)
+			if (gameInProgress)
 			{
-				counter = 0;
+				repaint();
+				this.progressBar.setValue (progress);
+				
+
 				this.spacePanel.moveObjects();
 			}
 			
@@ -162,24 +169,155 @@ public class PirateFrame extends JFrame implements Runnable
 
 	private void saveGame()
 	{
-		
-	}
+		JFileChooser fileChooser = new JFileChooser("src");
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	            "SpacePirate files", "spf");
+	    fileChooser.setFileFilter(filter);	
+	    fileChooser.addChoosableFileFilter(filter);
+	    fileChooser.setAcceptAllFileFilterUsed(false);
+	    fileChooser.setSelectedFile(new File("*.spf"));
+		if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+		  File file = fileChooser.getSelectedFile();
+		  try 
+		  {
+			  if (file.exists())
+				  file.delete();
+			  file.createNewFile();
+			  
+			  if (file.canWrite())
+			  {
+				  String heading = "SpacePirate Game";
+				  FileOutputStream fileOut = new FileOutputStream(file); 
+		          ObjectOutputStream out = new ObjectOutputStream(fileOut); 
+		          
+		          out.writeObject(heading); 
 
-	private void loadGame()
+		          String errors = saveGame(out);
+		          if (errors != null)
+		        	  JOptionPane.showMessageDialog (this, errors);
+		          
+		          out.close(); 
+		          fileOut.close(); 
+				  
+			  	}// can write to file
+			  	else
+					  JOptionPane.showMessageDialog(null, "Unable to save game");
+		  }
+		  catch (Exception e)
+		  {
+			  JOptionPane.showMessageDialog(null, "Unable to save game");
+		  }
+		  
+		} // end get file
+	} // end save game
+
+	private boolean loadGame()
 	{
-		
-	}
+		JFileChooser fileChooser = new JFileChooser("src");
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("SpacePirate files", "spf");
+	    fileChooser.setFileFilter(filter);
+	    fileChooser.setDialogTitle ("Load Game");
+	    fileChooser.setApproveButtonToolTipText ("Select the SpacePirate saved game to load.");
+	    boolean status = true;
+	    
+		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			File file = fileChooser.getSelectedFile();
+			// load from file
+		  	try 
+			{
+				if (file.exists() && file.canRead())
+				{
+					  String heading = "SpacePirate Game";
+					  FileInputStream fileIn = new FileInputStream(file); 
+			          ObjectInputStream in = new ObjectInputStream(fileIn); 
+			              
+					
+			          // Method for serialization of object 
+			          String str = (String)in.readObject(); 
+			          if (!str.equals(heading))
+			        	  System.out.println("this is not a SpacePirate game file");
+			          else {
+			        	  String errors = loadGame(in);
+			        	  if (errors != null) 
+			        	  {
+			        		  JOptionPane.showMessageDialog (this, errors);
+			        		  status = false;
+			        	  }
+			          }
+			          in.close(); 
+			          fileIn.close(); 
+			          
+				} // can read from file
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Unable to load game");
+					return false;
+				}
+			}
+		  	catch (Exception e)
+			{
+				  JOptionPane.showMessageDialog(null, "Unable to load game");
+				  return false;
+			}
+		} // end get file
+
+		gameInProgress = status;
+
+		return status;
+	} // end load game
 		
 
 	private void endGame()
 	{
+
+		// if no progress then no need to get confirmation, we haven't really started a game
+		if (progress != 0)
+		{
+			int answer = JOptionPane.showConfirmDialog (this, "Are you sure you want to end this game?");
+			if (answer != JOptionPane.YES_OPTION)
+				return;
+			
+		}
+		
+		//TODO: do end game stuff here
+		gameInProgress = false;
+		progressBar.setBackground (Color.RED);
+		progress = 0;
+
+		this.spacePanel.endGame();
+		
+		// keep at least the main ship to avoid errors in mouse events
+		spacePanel.addMainShip (new SpaceShip(300,300));
 		
 	}
 	
 
 	private void startGame()
 	{
-		
+		if (progress > 0)
+		{
+			// confirm they want to end the game in progress
+			endGame();
+			if (progress >0)
+				return; // they don't want to end the current game
+		}
+
+		// TODO: do start game stuff here
+		gameInProgress = true;
+		progress = 0;
+		spacePanel.addMainShip (new SpaceShip(300,300));
+		spacePanel.add (new SpaceStation(100,100));
+		spacePanel.add (new WeighStation(-100,-100));
+		for (int i = 0; i <= difficulty; i++)
+		{
+			spacePanel.add (new LargeAsteroid((int)(Math.random ( )*1200)-600,
+												(int)(Math.random ( )*1200)-600,
+												6));
+		}
+		spacePanel.add (new SpaceTreasure(300,150,SpaceTreasureType.URANIUM));
+		progressBar.setBackground (Color.WHITE);
+
+		this.spacePanel.startGame();
 	}
 	
 	private void createMenuBar() 
@@ -193,16 +331,12 @@ public class PirateFrame extends JFrame implements Runnable
         JMenuItem loadMenuItem = new JMenuItem("Load");
         loadMenuItem.setMnemonic(KeyEvent.VK_L);
         loadMenuItem.setToolTipText("Load Game");
-        // need to place action listener near end of this method
-        // so that it can see all the menu variables and 
-        // update them based on the loaded file.
 
         fileMenu.add(loadMenuItem);
         
         JMenuItem saveMenuItem = new JMenuItem("Save");
         saveMenuItem.setMnemonic(KeyEvent.VK_S);
         saveMenuItem.setToolTipText("Save Game");
-        saveMenuItem.setEnabled(false);
         saveMenuItem.addActionListener((event) -> this.saveGame());
 
         fileMenu.add(saveMenuItem);
@@ -214,19 +348,11 @@ public class PirateFrame extends JFrame implements Runnable
         JMenuItem endMenuItem = new JMenuItem("End Game");
         newMenuItem.setMnemonic(KeyEvent.VK_N);
         newMenuItem.setToolTipText("Start a new game");
-        newMenuItem.addActionListener((event) -> {
-        				this.startGame ( );
-        			});
 
         fileMenu.add(newMenuItem);
  
         endMenuItem.setMnemonic(KeyEvent.VK_G);
         endMenuItem.setToolTipText("End current game");
-        endMenuItem.setEnabled(false);
-        endMenuItem.addActionListener((event) -> 
-        			{
-        				this.endGame ( );
-        			});
 
         fileMenu.add(endMenuItem);
         fileMenu.addSeparator();
@@ -250,6 +376,7 @@ public class PirateFrame extends JFrame implements Runnable
         easyRMenuItem.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 this.difficulty = 3;
+
             }
         });
 
@@ -273,7 +400,7 @@ public class PirateFrame extends JFrame implements Runnable
                 this.difficulty = 8;
             }
         });
-        
+
         JRadioButtonMenuItem reallyHardRMenuItem = new JRadioButtonMenuItem("Really Hard");
         optionMenu.add(reallyHardRMenuItem);
         reallyHardRMenuItem.setToolTipText("Set difficulty of game play to Really Hard");
@@ -298,7 +425,7 @@ public class PirateFrame extends JFrame implements Runnable
 
         smallRMenuItem.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-// small map logic goes here
+            	this.spacePanel.setZoomFactor(1);
             }
         });
 
@@ -307,7 +434,7 @@ public class PirateFrame extends JFrame implements Runnable
 
         medRMenuItem.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-//medium map logic goes here
+            	this.spacePanel.setZoomFactor(0.5);
             	}
         });
 
@@ -317,7 +444,7 @@ public class PirateFrame extends JFrame implements Runnable
 
         largeRMenuItem.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-// large map logic goes here
+            	this.spacePanel.setZoomFactor(0.25);
     			}
         });
 
@@ -330,11 +457,36 @@ public class PirateFrame extends JFrame implements Runnable
         loadMenuItem.addActionListener((event) -> 
         		{
         		this.loadGame();
+//TODO: set all menu items to be what was set during the game that was just loaded
+
         		});
 
  
         menuBar.add(optionMenu);
         
+        newMenuItem.addActionListener((event) -> {
+			this.startGame ( );
+			easyRMenuItem.setEnabled(false);
+			mediumRMenuItem.setEnabled(false);
+			hardRMenuItem.setEnabled(false);
+			reallyHardRMenuItem.setEnabled(false);
+			smallRMenuItem.setEnabled(false);
+			medRMenuItem.setEnabled(false);
+			largeRMenuItem.setEnabled(false);
+			
+		});
+        endMenuItem.addActionListener((event) -> 
+		{
+			this.endGame ( );
+			easyRMenuItem.setEnabled(true);
+			mediumRMenuItem.setEnabled(true);
+			hardRMenuItem.setEnabled(true);
+			reallyHardRMenuItem.setEnabled(true);
+			smallRMenuItem.setEnabled(true);
+			medRMenuItem.setEnabled(true);
+			largeRMenuItem.setEnabled(true);
+		});
+
         JMenuItem helpMenu = new JMenuItem("How to Play");
         helpMenu.addActionListener( (event) -> JOptionPane.showMessageDialog(this, 
         		"<html><h1>Space Pirates</h1><p style='width:400'>This is a strategy game in which the player searches the galaxy for treasure. The more treasure found, the more upgrades you can buy. The more upgrades you get, the more treasure you can find. The fun is endless!!<br>"
@@ -348,5 +500,46 @@ public class PirateFrame extends JFrame implements Runnable
         setJMenuBar(menuBar);
     }
 	
-	
+	public String saveGame(ObjectOutputStream out) throws IOException
+    {
+    	// returns a string containing any error messages generated while
+    	// saving the game
+		
+		String errors = null;
+		// TODO: save frame stuff here
+		// save progress, gameInprogress, etc.
+		
+		String panelErrors = this.spacePanel.saveGame (out);
+
+		if (panelErrors != null)
+		{
+			if (errors == null)
+				errors = panelErrors;
+			else 
+				errors += panelErrors;
+		}
+		
+		return errors;
+    }
+    public String loadGame(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+    	// returns a string containing any error messages generated while
+    	// saving the game
+		String errors = null;
+		// TODO: load frame stuff here
+		
+		String panelErrors = this.spacePanel.loadGame (in);
+		// load progress, gameInProgress, difficulty, etc
+		progressBar.setBackground (Color.WHITE);
+
+		if (panelErrors != null)
+		{
+			if (errors == null)
+				errors = panelErrors;
+			else 
+				errors += panelErrors;
+		}
+		
+		return errors;    
+	}
 }

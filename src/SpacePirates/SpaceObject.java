@@ -13,6 +13,7 @@ package SpacePirates;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 
@@ -35,6 +36,7 @@ abstract public class SpaceObject
 	private double speed = 0;			// space object's velocity
 	private double speedAng = 0;		// angle used for determining velocity vector
 	private double mass = 0;			// mass for simulating force and collisions
+	private SpaceObject origin = null;  // reference to object this one came from (if any)
 	
 
 
@@ -45,6 +47,27 @@ abstract public class SpaceObject
 		
 		// TODO: load image based on the image name set by most derived class for this instance
 		icon = fetchImage();
+	}
+	
+	/**
+	 * if this object collides with something, it will process the effect the
+	 * collision has on it based on the forceOfImpact provided. The ArrayList
+	 * is a list that can be populated in this method with new SpaceObjects 
+	 * created as a result of the collision (i.e. debris).
+	 * Returns true if this object was effectively destroyed by the collision. Caller
+	 * is responsible for deleting this object in that scenario.         
+	 *
+	 * <hr>
+	 * Date created: Mar 18, 2020
+	 *
+	 * <hr>
+	 * @param forceOfImpact
+	 * @param componentParts
+	 * @return true if destroyed by the collision
+	 */
+	public boolean collision(int forceOfImpact, ArrayList<SpaceObject> componentParts)
+	{
+		return false;
 	}
 	
 	public void simCollide(SpaceObject obj)
@@ -229,6 +252,24 @@ abstract public class SpaceObject
 	public void setMass (double mass)
 	{
 		this.mass = mass;
+	}
+
+	
+	/**
+	 * @return origin
+	 */
+	public SpaceObject getOrigin ( )
+	{
+		return origin;
+	}
+
+	
+	/**
+	 * @param origin the origin to set
+	 */
+	public void setOrigin (SpaceObject origin)
+	{
+		this.origin = origin;
 	}
 
 } // end SpaceObject

@@ -24,7 +24,7 @@ public class PirateBtnPanel extends JPanel {
 	
 	public void createContent()
 	{
-		    JButton newGameBtn =new JButton("New Game");  
+		    JButton newGameBtn =new JButton("Stats & Inventory");  
 		    newGameBtn.addActionListener( (event) ->  
 		    			{String str = "add stuff here";}
 		    	);

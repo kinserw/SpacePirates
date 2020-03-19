@@ -12,6 +12,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 
@@ -24,7 +27,6 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	private int						myColOffset			= 0;
 
 	private double					zoomFactor			= 1;
-	private boolean					zoomer				= false;
 
 	private ArrayList <SpaceObject>	objects				= new ArrayList <SpaceObject> ( );
 
@@ -99,6 +101,24 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		return myColOffset;
 	}
 
+	
+	/**
+	 * @return zoomFactor
+	 */
+	public double getZoomFactor ( )
+	{
+		return zoomFactor;
+	}
+
+	
+	/**
+	 * @param zoomFactor the zoomFactor to set
+	 */
+	public void setZoomFactor (double zoomFactor)
+	{
+		this.zoomFactor = zoomFactor;
+	}
+
 	@Override
 	public void mouseDragged (MouseEvent e)
 	{
@@ -109,8 +129,14 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mouseMoved (MouseEvent e)
 	{
-		double rotation = Math.atan2 ((e.getY ( ) - mainShip.getY ( )),(e.getX() - mainShip.getY()));
+		// include offsets in angle calculations since screen can be translated (shifted) but
+		// the mouse event x & y are not translated
+		// also need to adjust mouse event x & y based on zoomFactor to match adjustments already in the other values
+		double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
+		mainShip.setSpeedAng (rotation);
 		mainShip.setRotation (rotation);
+		
+		
 	}
 
 	@Override
@@ -122,8 +148,10 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			System.out.println("FIRE");
 			Missile missile = new Missile(this.mainShip.getX ( ), 
 										  this.mainShip.getY ( ));
+			missile.setSpeedAng (mainShip.getSpeedAng ( ));
 			missile.setRotation (mainShip.getRotation ( ));
 			missile.setSpeed (20);
+			missile.setOrigin (mainShip); // missile knows where it came from
 			this.objects.add (missile);
 		}
 	}
@@ -188,33 +216,43 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void paintComponent (Graphics g)
 	{
+		
 		Graphics2D g2 = (Graphics2D) g;
 		
 		// scales the window based on mouse scroll
 		AffineTransform at = new AffineTransform();
 		at.scale(zoomFactor, zoomFactor);
 		g2.transform(at);
-		setPreferredSize(new Dimension((int)((getWidth())*zoomFactor),
-			(int)((getHeight())*zoomFactor)));
+		//setPreferredSize(new Dimension((int)((getWidth())*zoomFactor),
+		//	(int)((getHeight())*zoomFactor)));
 
 		
 		// determine if ship is nearing the edges of the screen and
 		// shift the coordinate system accordingly so that the ship 
 		// does not leave the screen but can keep moving
-		int xOffset = 0; 
-		if (mainShip.getX() > (getWidth()*.8))
-			xOffset = (int)(getWidth()*.8 - mainShip.getX ( ));
-		else if (mainShip.getX ( ) < getWidth()*.2)
-			xOffset = (int)(getWidth()*.2 - mainShip.getX ( ));
-		int yOffset = 0; 
-		if (mainShip.getY() > (getHeight()*.8))
-			yOffset = (int)(getHeight()*.8 - mainShip.getY ( ));
-		else if (mainShip.getY ( ) < getHeight()*.2)
-			yOffset = (int)(getHeight()*.2 - mainShip.getY ( ));
-		g2.translate (xOffset, yOffset);
+		double width = getWidth()/zoomFactor;
+		double height = getHeight()/zoomFactor;
+
+		if (mainShip.getX() > (width*.8))
+			myRowOffset = (int)(width*.8- mainShip.getX ( ) );
+		else if (mainShip.getX ( ) < width*.2)
+			myRowOffset = (int)(width*.2 - mainShip.getX ( ));
+
+
+
+		if (mainShip.getY() > (height*.8))
+			myColOffset = (int)(height*.8 - mainShip.getY ( ) );
+		else if (mainShip.getY ( ) < height*.2)
+			myColOffset = (int)(height*.2 - mainShip.getY ( ) );
+
+
+		g2.translate (myRowOffset, myColOffset);
+// the commented out code keeps the screen centered as we zoom in and out but
+		// it messes up the directional calculations and the edge of screen 
+		// calculations above.
+		//		g2.translate (myRowOffset + (width/2-300), myColOffset  + (height/2-300));
 		  
-		zoomer = false;
-				
+			
 		// build a temporary list of rectangles for each space object. 
 		// their rectangle can change if they are moving so we do this each 
 		// time paint is called (could do it in SpacePanel:moveObjects )
@@ -243,11 +281,29 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 				Rectangle rect2 = rects.get (r2);
 				if (rect1.intersects (rect2))
 				{
-					System.out.println("collision between " + r1 + " and " +r2);
+					// make sure weapons aren't "colliding" with whatever fired them
+					SpaceObject o1 = objects.get (r1);
+					SpaceObject o2 = objects.get (r2);
+					if ((o1.getOrigin ( ) == o2) || (o2.getOrigin ( ) == o1))
+						;// as Trump says... "No Collision"
+					else
+					{
+						System.out.println("collision between " + r1 + " and " +r2);						
+						boolean o1Destroyed = o1.collision (10, objects);
+						boolean o2Destroyed = o2.collision (10, objects);
+						if (o1Destroyed)
+						{
+							objects.remove (o1);
+						}
+						if (o2Destroyed)
+						{
+							objects.remove (o2);
+						} // end destroy second object
+					} // end else (weapon not colliding with origin)
 					
-				}
-			}
-		}
+				} // end if r1 and r2 intersect
+			} // end inner loop for r2
+		} // end outer loop for r1
 
 
 	} // end paint component
@@ -255,8 +311,6 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mouseWheelMoved (MouseWheelEvent e)
 	{
-		// TODO Auto-generated method stub
-		zoomer = true;
 		// Zoom in
 		if (e.getWheelRotation ( ) < 0)
 		{
@@ -271,5 +325,37 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		}
 	}
 
+	public void startGame()
+	{
+		
+	}
+	
+	public void endGame()
+	{
+		objects.clear ( );
+	}
+	
+	
+	public String saveGame(ObjectOutputStream out) throws IOException
+    {
+    	// returns a string containing any error messages generated while
+    	// saving the game
+		// save zoomFactor
+		// save objects
+		// save index in objects that corresponds to mainShip
+		// save offsets
+		// 
+    	return null;
+    }
+    public String loadGame(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+    	// returns a string containing any error messages generated while
+    	// loading the game
+		// load zoomFactor
+		// load objects
+		// load index in objects that corresponds to mainShip, set mainShip
+		// load offsets
+    	return null;
+    }
 
 }

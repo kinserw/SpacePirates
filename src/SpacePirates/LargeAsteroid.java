@@ -32,7 +32,24 @@ public class LargeAsteroid extends SpaceObject
 			pieces.add (new SmallAsteroid(x,y));
 		this.setRotationRate (5.0);
 	}
-	public int collision(int forceOfImpact, ArrayList<SpaceObject> componentParts)
+	
+	/**
+	 * if this object collides with something, it will process the effect the
+	 * collision has on it based on the forceOfImpact provided. The ArrayList
+	 * is a list that can be populated in this method with new SpaceObjects 
+	 * created as a result of the collision (i.e. debris).
+	 * Returns true if this object was effectively destroyed by the collision. Caller
+	 * is responsible for deleting this object in that scenario.         
+	 *
+	 * <hr>
+	 * Date created: Mar 18, 2020
+	 *
+	 * <hr>
+	 * @param forceOfImpact
+	 * @param componentParts
+	 * @return true if destroyed by the collision
+	 */
+	public boolean collision(int forceOfImpact, ArrayList<SpaceObject> componentParts)
 	{
 		int numberOfDestroyedSmallAsteroids = 0;
 		
@@ -41,13 +58,12 @@ public class LargeAsteroid extends SpaceObject
 		// its own collection of SmallAsteroids. The sum of all SmallAsteroids
 		// will be equal to or less than the number originally contained herein.
 		// these will be returned in the array provided by the caller. 
-		// The original asteroid (*this*) will always remain since an object
-		// in java can't self destruct. If the result is that this asteroid
-		// has no small asteroids left in it, the caller should delete it.
+		// If the result is that this asteroid has no small asteroids left in it, 
+		// then it returns true and the caller should delete it.
 		
 		// some of the original SmallAsteroids contained herein may be destroyed
-		// by the collision (that number is returned back)
+		// by the collision 
 		
-		return numberOfDestroyedSmallAsteroids;
+		return false;
 	}
 }
