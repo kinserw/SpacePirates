@@ -25,6 +25,11 @@ public class SmallAsteroid extends SpaceObject
 
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7082185730627517184L;
+
+	/**
 	 * Constructor        
 	 *
 	 * <hr>

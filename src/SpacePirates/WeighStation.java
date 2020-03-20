@@ -24,6 +24,11 @@ public class WeighStation extends SpaceObject
 {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1862472330280340836L;
+
+	/**
 	 * Constructor        
 	 *
 	 * <hr>

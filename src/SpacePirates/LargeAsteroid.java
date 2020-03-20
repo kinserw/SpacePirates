@@ -23,14 +23,18 @@ import java.util.ArrayList;
  */
 public class LargeAsteroid extends SpaceObject
 {
-	private ArrayList<SmallAsteroid> pieces = new ArrayList<SmallAsteroid>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3176116193088426885L;
+	private int size = 0;
 	
 	public LargeAsteroid(int x, int y, int size)
 	{
 		super(x,y);
 		type = SpaceObjectType.DYNAMIC;
-		for (int i = 0; i < size; i++)
-			pieces.add (new SmallAsteroid(x,y));
+		this.size = size;
+
 		this.setRotationRate (5.0);
 	}
 	
@@ -39,8 +43,7 @@ public class LargeAsteroid extends SpaceObject
 	{
 		super(x,y,m,v);
 		type = SpaceObjectType.DYNAMIC;
-		for (int i = 0; i < size; i++)
-			pieces.add (new SmallAsteroid(x,y));
+		this.size = size;
 		this.setRotationRate (5.0);
 	}
 	/**

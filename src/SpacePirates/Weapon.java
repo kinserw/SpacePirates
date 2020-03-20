@@ -25,6 +25,11 @@ public class Weapon extends SpaceObject
 
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6953553329561591850L;
+
+	/**
 	 * Constructor        
 	 *
 	 * <hr>

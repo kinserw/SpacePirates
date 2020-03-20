@@ -13,6 +13,7 @@ package SpacePirates;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
@@ -25,18 +26,23 @@ import javax.imageio.ImageIO;
  * <hr>
  * @author William Kinser
  */
-abstract public class SpaceObject
+abstract public class SpaceObject implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1723319757299677962L;
+	
 	private int x, y;
 	protected SpaceObjectType type = SpaceObjectType.STATIONARY;
-	private BufferedImage icon = null;
-	private static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
+	private transient BufferedImage icon = null;
+	private transient static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
 	private double rotation = 0;		// current angle in reference to rotational velocity
 	private double rotationRate = 0.0;	// rotational velocity
 	private double speed = 0;			// space object's velocity
 	private double speedAng = 0;		// angle used for determining velocity vector
 	private double mass = 1;			// mass for simulating force and collisions
-	private SpaceObject origin = null;  // reference to object this one came from (if any)
+	private transient SpaceObject origin = null;  // reference to object this one came from (if any)
 	
 
 
@@ -189,6 +195,10 @@ abstract public class SpaceObject
 	
 	public BufferedImage getImage()
 	{
+		if (icon == null)
+		{
+			icon = fetchImage();
+		}
 		return this.icon;
 	}
 	/**

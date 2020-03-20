@@ -21,6 +21,11 @@ package SpacePirates;
  */
 public class Missile extends Weapon
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 466225001077917721L;
+
 	public Missile(int x, int y)
 	{
 		super (x, y);

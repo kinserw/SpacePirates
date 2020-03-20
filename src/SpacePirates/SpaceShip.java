@@ -24,6 +24,11 @@ public class SpaceShip extends SpaceObject
 {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8921014322626492689L;
+
+	/**
 	 * Constructor        
 	 *
 	 * <hr>

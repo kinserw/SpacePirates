@@ -235,23 +235,27 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		double width = getWidth()/zoomFactor;
 		double height = getHeight()/zoomFactor;
 
-		if (mainShip.getX() > (width*.8))
-			myRowOffset = (int)(width*.8- mainShip.getX ( ) );
-		else if (mainShip.getX ( ) < width*.2)
-			myRowOffset = (int)(width*.2 - mainShip.getX ( ));
-
-
-
-		if (mainShip.getY() > (height*.8))
-			myColOffset = (int)(height*.8 - mainShip.getY ( ) );
-		else if (mainShip.getY ( ) < height*.2)
-			myColOffset = (int)(height*.2 - mainShip.getY ( ) );
+		if (mainShip != null)
+		{
+			if (mainShip.getX() > (width*.8))
+				myRowOffset = (int)(width*.8- mainShip.getX ( ) );
+			else if (mainShip.getX ( ) < width*.2)
+				myRowOffset = (int)(width*.2 - mainShip.getX ( ));
 		
-		myRowOffset = mainShip.getX ( ) - ((int) width / 2 - mainShip.getImage ( ).getWidth ( ) / 2);
-		myColOffset = mainShip.getY ( ) - ((int) height / 2 - mainShip.getImage ( ).getHeight ( ) / 2);
-
-
-		g2.translate (-myRowOffset, -myColOffset);
+		
+		
+			if (mainShip.getY() > (height*.8))
+				myColOffset = (int)(height*.8 - mainShip.getY ( ) );
+			else if (mainShip.getY ( ) < height*.2)
+				myColOffset = (int)(height*.2 - mainShip.getY ( ) );
+			
+			myRowOffset = mainShip.getX ( ) - ((int) width / 2 - mainShip.getImage ( ).getWidth ( ) / 2);
+			myColOffset = mainShip.getY ( ) - ((int) height / 2 - mainShip.getImage ( ).getHeight ( ) / 2);
+		
+		
+			g2.translate (-myRowOffset, -myColOffset);
+		} // end if no ship
+		
 // the commented out code keeps the screen centered as we zoom in and out but
 		// it messes up the directional calculations and the edge of screen 
 		// calculations above.
@@ -342,26 +346,117 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	}
 	
 	
-	public String saveGame(ObjectOutputStream out) throws IOException
+	public String saveGame(ObjectOutputStream out) 
     {
     	// returns a string containing any error messages generated while
     	// saving the game
-		// save zoomFactor
-		// save objects
-		// save index in objects that corresponds to mainShip
-		// save offsets
-		// 
-    	return null;
+		String errors = null;
+
+		try
+		{
+			out.writeDouble (zoomFactor);
+			out.writeInt (this.myColOffset);
+			out.writeInt (this.myRowOffset);
+			
+			// save index in objects that corresponds to mainShip
+			int shipIndex = objects.indexOf (this.mainShip);
+			out.writeInt (shipIndex);
+
+			// save count of how many space objects we're saving
+			out.writeInt (this.objects.size ( ));
+
+			// save all space objects active at this time
+			// NOTE: the origin of a space object can't be saved with 
+			// the object so we'll process this after the list is done
+			// but get the count now.
+			int originCount = 0;
+			for (SpaceObject obj : this.objects)
+			{
+				out.writeObject (obj);
+				if (obj.getOrigin ( ) != null)
+					originCount++;
+			}
+			
+			// loop through a second time to handle any space objects
+			// with an origin that isn't null
+			out.writeInt (originCount);
+			for (SpaceObject obj : this.objects)
+			{
+				if (obj.getOrigin ( ) != null)
+				{
+					out.writeInt(objects.indexOf (obj));
+					out.writeInt (objects.indexOf (obj.getOrigin ( )));
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			errors = new String("Errors while saving panel data.");
+							
+		}
+
+    	return errors;
     }
-    public String loadGame(ObjectInputStream in) throws IOException, ClassNotFoundException
+    public String loadGame(ObjectInputStream in) 
     {
     	// returns a string containing any error messages generated while
-    	// loading the game
-		// load zoomFactor
-		// load objects
-		// load index in objects that corresponds to mainShip, set mainShip
-		// load offsets
-    	return null;
+    	String errors = null;
+    	
+		try
+		{
+	    	// load screen layout info
+	    	this.zoomFactor = in.readDouble ();
+	    	this.myColOffset = in.readInt ();
+	    	this.myRowOffset = in.readInt ();
+			
+			// load index in objects that corresponds to mainShip
+			int shipIndex = in.readInt (); // use this after all objects loaded
+	
+			// get count of how many space objects we're loading
+			int objCount = in.readInt ();
+	
+			// load all space objects saved
+			// NOTE: the origin of a space object can't be saved with 
+			// the object so we'll process this after the list is done
+			this.objects.clear ( ); // remove any current objects
+			for (int i = 0; i < objCount; i++)
+			{
+				SpaceObject obj = (SpaceObject)in.readObject ();
+				this.objects.add (obj);
+				if (i == shipIndex)
+				{
+					if (obj.getClass ( ).equals (SpaceShip.class))
+						this.mainShip = (SpaceShip)obj;
+					else
+						errors = new String("Can't find main space ship");
+				}
+			}
+			
+			// loop through a second time to handle any space objects
+			// with an origin that isn't null
+			int originCount;
+				originCount = in.readInt ();
+			for (int i = 0; i < originCount; i++)
+			{
+				int indexObj = in.readInt ( );
+				int indexOrigin = in.readInt ( );
+				this.objects.get (indexObj).setOrigin (this.objects.get (indexOrigin));
+			}
+		}
+		catch (ClassNotFoundException cnfe )
+		{
+			if (errors == null)
+				errors = new String("");
+			errors += " Error when reading in panel objects. Class not found. ";
+			
+		}
+		catch (IOException e)
+		{
+			if (errors == null)
+				errors = new String("");
+			errors += " Error when reading in panel objects.";
+		}
+    	return errors;
     }
 
 }

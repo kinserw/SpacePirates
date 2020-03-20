@@ -13,14 +13,17 @@ package SpacePirates;
 
 
 /**
- * Enter type purpose here
+ * Describes the nature of space objects mobility or the type of motion it will follow.
+ * 
+ * Note: enums are automatically serializable so this references to this class in 
+ * the space objects will save to an io stream without issues.
  *
  * <hr>
  * Date created: Mar 4, 2020
  * <hr>
  * @author William Kinser
  */
-public enum SpaceObjectType
+public enum SpaceObjectType 
 {
 	STATIONARY,
 	ELLIPTICAL,

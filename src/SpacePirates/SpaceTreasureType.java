@@ -13,7 +13,10 @@ package SpacePirates;
 
 
 /**
- * Enter type purpose here
+ * Defines the types of treasures the SpaceTreasure objects represent.
+ * 
+ *  * Note: enums are automatically serializable so this references to this class in 
+ * the space objects will save to an io stream without issues.
  *
  * <hr>
  * Date created: Mar 4, 2020

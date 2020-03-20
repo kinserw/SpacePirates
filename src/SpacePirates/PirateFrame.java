@@ -28,7 +28,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class PirateFrame extends JFrame implements Runnable
 {
-	int difficulty = 3;
+	private int difficulty = 3;
 	public static PirateFrame ourFrame = null;
 	SpacePanel spacePanel = null;
 	private PirateBtnPanel myBtnPanel = null;
@@ -457,11 +457,53 @@ public class PirateFrame extends JFrame implements Runnable
         optionMenu.addSeparator();
         
         loadMenuItem.addActionListener((event) -> 
-        		{
+        	{
+        		// loadGame returns true or false but we don't care at this point
+        		// because we have to set the panel items based on the current 
+        		// state. LoadGame should leave the game in a valid state so
+        		// just reflect that in the panel items.
         		this.loadGame();
-//TODO: set all menu items to be what was set during the game that was just loaded
-
-        		});
+        		
+    			easyRMenuItem.setEnabled(false);
+    			mediumRMenuItem.setEnabled(false);
+    			hardRMenuItem.setEnabled(false);
+    			reallyHardRMenuItem.setEnabled(false);
+    			smallRMenuItem.setEnabled(false);
+    			medRMenuItem.setEnabled(false);
+    			largeRMenuItem.setEnabled(false);
+    			switch (this.difficulty) 
+    			{
+    				case 10 : // really hard
+    	    			reallyHardRMenuItem.setSelected (true);
+    					break;
+    				case 8 : // hard
+    	    			hardRMenuItem.setSelected (true);
+    					break;
+    				case 5 : // medium
+    	    			mediumRMenuItem.setSelected (true);
+    					break;
+    				case 3 : // easy, fall through to default
+    				default :
+    	    			easyRMenuItem.setSelected (true);
+    					break;
+    						
+    			}
+    			if (this.spacePanel.getZoomFactor ( ) < 0.5) 
+    			{
+    				largeRMenuItem.setEnabled(true);			
+    			}
+    			else if (this.spacePanel.getZoomFactor ( ) < 1.0) 
+    			{
+    				medRMenuItem.setEnabled(true);			
+    			}
+    			else  
+    			{
+    				smallRMenuItem.setEnabled(true);			
+    			}
+    			
+    			this.progressBar.setBackground (Color.WHITE);
+        		
+        	});
 
  
         menuBar.add(optionMenu);
@@ -502,14 +544,23 @@ public class PirateFrame extends JFrame implements Runnable
         setJMenuBar(menuBar);
     }
 	
-	public String saveGame(ObjectOutputStream out) throws IOException
+	public String saveGame(ObjectOutputStream out) 
     {
     	// returns a string containing any error messages generated while
     	// saving the game
 		
 		String errors = null;
-		// TODO: save frame stuff here
-		// save progress, gameInprogress, etc.
+		try 
+		{
+	        out.writeInt(progress);
+	        out.writeBoolean (gameInProgress);
+	        out.writeInt (difficulty);
+
+		}
+		catch (Exception e)
+		{
+			errors = new String("Errors while saving frame data.");
+		}
 		
 		String panelErrors = this.spacePanel.saveGame (out);
 
@@ -523,15 +574,27 @@ public class PirateFrame extends JFrame implements Runnable
 		
 		return errors;
     }
-    public String loadGame(ObjectInputStream in) throws IOException, ClassNotFoundException
+    public String loadGame(ObjectInputStream in) 
     {
     	// returns a string containing any error messages generated while
     	// saving the game
 		String errors = null;
-		// TODO: load frame stuff here
+
+		
+		try
+		{
+			progress = in.readInt();
+			gameInProgress = in.readBoolean ();
+	        difficulty = in.readInt ();
+		}
+		catch (IOException e)
+		{
+			errors = new String ("Error while loading frame data.");
+		}
 		
 		String panelErrors = this.spacePanel.loadGame (in);
 		// load progress, gameInProgress, difficulty, etc
+
 		progressBar.setBackground (Color.WHITE);
 
 		if (panelErrors != null)
@@ -540,6 +603,14 @@ public class PirateFrame extends JFrame implements Runnable
 				errors = panelErrors;
 			else 
 				errors += panelErrors;
+		}
+		
+		// failure to read new game in may leave program in a disjointed 
+		// state so best to just reset in this scenario.
+		if (errors != null)
+		{			
+			progress = 0;
+			endGame();
 		}
 		
 		return errors;    

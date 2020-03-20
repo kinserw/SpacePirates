@@ -25,6 +25,10 @@ public class SpaceTreasure extends SpaceObject
 	/**
 	 * 
 	 */
+	private static final long serialVersionUID = 6638950121102790576L;
+	/**
+	 * 
+	 */
 	private SpaceTreasureType type = SpaceTreasureType.STEEL;
 
 	/**

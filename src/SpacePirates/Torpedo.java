@@ -22,6 +22,11 @@ package SpacePirates;
  */
 public class Torpedo extends Weapon
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5507921673897338261L;
+
 	public Torpedo(int x, int y)
 	{
 		super (x, y);

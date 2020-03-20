@@ -22,6 +22,11 @@ package SpacePirates;
  */
 public class ClusterBomb extends Weapon
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7596162407236521197L;
+
 	public ClusterBomb(int x, int y)
 	{
 		super (x, y);
