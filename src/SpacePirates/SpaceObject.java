@@ -28,7 +28,7 @@ import javax.imageio.ImageIO;
 abstract public class SpaceObject
 {
 	private int x, y;
-	private SpaceObjectType type = SpaceObjectType.STATIONARY;
+	protected SpaceObjectType type = SpaceObjectType.STATIONARY;
 	private BufferedImage icon = null;
 	private static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
 	private double rotation = 0;		// current angle in reference to rotational velocity
@@ -44,6 +44,17 @@ abstract public class SpaceObject
 	{
 		this.x = x;
 		this.y = y;
+		
+		// TODO: load image based on the image name set by most derived class for this instance
+		icon = fetchImage();
+	}
+	
+	public SpaceObject(int x, int y, double m, double v)
+	{
+		this.x = x;
+		this.y = y;
+		this.mass = m;
+		this.speed = v;
 		
 		// TODO: load image based on the image name set by most derived class for this instance
 		icon = fetchImage();
@@ -72,7 +83,24 @@ abstract public class SpaceObject
 	
 	public void simCollide(SpaceObject obj)
 	{
+		double x2 = obj.getX ( );
+		double y2 = obj.getY ( );
+		double speed2 = obj.getSpeed ( );
+		double speedAng2 = obj.getSpeedAng ( );
+		double mass2 = obj.getMass ( );
 		
+		double tempVX = 0;
+		double tempVY = 0;
+		double phi = 180; // TODO not sure how I will get phi
+		// Use two dimensional collision formulas to determine vectors
+		tempVX = (speed * Math.cos (speedAng2 - phi) * (mass2 - mass) + 2 * mass * speed * Math.cos (speedAng - phi)) / (mass2 + mass);
+		tempVY = tempVX;
+		tempVX = tempVX * (Math.cos (phi) + speed2 * Math.sin (speedAng2 - phi) * Math.cos (phi + (3.14159/2)));
+		tempVY = tempVY * (Math.sin (phi) + speed2 * Math.sin (speedAng2 - phi) * Math.sin (phi + (3.14159/2)));
+		obj.setSpeedAng (Math.atan (Math.abs (tempVY) / Math.abs (tempVX)));
+		obj.setSpeed (Math.sqrt (tempVY * tempVY + tempVX * tempVX));
+		System.out.println("X velocity is " + tempVX);
+		System.out.println("Y velocity is " + tempVY);
 	}
 
 	/**

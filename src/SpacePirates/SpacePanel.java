@@ -132,7 +132,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		// include offsets in angle calculations since screen can be translated (shifted) but
 		// the mouse event x & y are not translated
 		// also need to adjust mouse event x & y based on zoomFactor to match adjustments already in the other values
-		double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
+		//double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
+		double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ))),(e.getX() / zoomFactor + myRowOffset - (mainShip.getX())));
 		mainShip.setSpeedAng (rotation);
 		mainShip.setRotation (rotation);
 		
@@ -162,8 +163,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		if (e.getButton ( ) == MouseEvent.BUTTON1)
 		{
 			System.out.print("Move  ");
-			
-			mainShip.setSpeed (10);
+			if (mainShip.getSpeed() < 50)
+				mainShip.setSpeed (mainShip.getSpeed() + 10);
 			coasting = false;
 			
 		}
@@ -244,9 +245,12 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			myColOffset = (int)(height*.8 - mainShip.getY ( ) );
 		else if (mainShip.getY ( ) < height*.2)
 			myColOffset = (int)(height*.2 - mainShip.getY ( ) );
+		
+		myRowOffset = mainShip.getX ( ) - (int) width / 2;
+		myColOffset = mainShip.getY ( ) - (int) height / 2;
 
 
-		g2.translate (myRowOffset, myColOffset);
+		g2.translate (-myRowOffset, -myColOffset);
 // the commented out code keeps the screen centered as we zoom in and out but
 		// it messes up the directional calculations and the edge of screen 
 		// calculations above.
@@ -288,6 +292,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 						;// as Trump says... "No Collision"
 					else
 					{
+						o1.simCollide (o2);
 						System.out.println("collision between " + r1 + " and " +r2);						
 						boolean o1Destroyed = o1.collision (10, objects);
 						boolean o2Destroyed = o2.collision (10, objects);

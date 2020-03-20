@@ -28,11 +28,21 @@ public class LargeAsteroid extends SpaceObject
 	public LargeAsteroid(int x, int y, int size)
 	{
 		super(x,y);
+		type = SpaceObjectType.DYNAMIC;
 		for (int i = 0; i < size; i++)
 			pieces.add (new SmallAsteroid(x,y));
 		this.setRotationRate (5.0);
 	}
 	
+	
+	public LargeAsteroid(int x, int y, int size, double m, double v)
+	{
+		super(x,y,m,v);
+		type = SpaceObjectType.DYNAMIC;
+		for (int i = 0; i < size; i++)
+			pieces.add (new SmallAsteroid(x,y));
+		this.setRotationRate (5.0);
+	}
 	/**
 	 * if this object collides with something, it will process the effect the
 	 * collision has on it based on the forceOfImpact provided. The ArrayList
