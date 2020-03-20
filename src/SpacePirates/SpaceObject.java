@@ -42,6 +42,7 @@ abstract public class SpaceObject implements Serializable
 	private double speed = 0;			// space object's velocity
 	private double speedAng = 0;		// angle used for determining velocity vector
 	private double mass = 1;			// mass for simulating force and collisions
+	private int health = 100;			// percentage of health object has
 	private transient SpaceObject origin = null;  // reference to object this one came from (if any)
 	
 
@@ -84,14 +85,26 @@ abstract public class SpaceObject implements Serializable
 	 */
 	public boolean collision(int forceOfImpact, ArrayList<SpaceObject> componentParts)
 	{
-		return false;
+		return health<= 0;
 	}
-	
+
+	public void calculateDamage(double speed1, double speed2)
+	{
+		// speed max's out at 50 so two object's speed combined is max 100
+		// the faster they are going the more damage they do
+		health -= (int)(speed1+speed2);
+		
+	}
+
 	public void simCollide(SpaceObject obj)
 	{
 		double speed2 = obj.getSpeed ( );
 		double speedAng2 = obj.getSpeedAng ( );
 		double mass2 = obj.getMass ( );
+		
+		// make this a virtual function so space objects that have force fields
+		// can adjust the calculations but the rest use the same default calc.
+		calculateDamage(speed,speed2);
 		
 		double deltaX = speed*Math.cos(speedAng);
 		double deltaY = speed*Math.sin(speedAng);
@@ -358,6 +371,24 @@ abstract public class SpaceObject implements Serializable
 	public void setOrigin (SpaceObject origin)
 	{
 		this.origin = origin;
+	}
+
+	
+	/**
+	 * @return health
+	 */
+	public int getHealth ( )
+	{
+		return health;
+	}
+
+	
+	/**
+	 * @param health the health to set
+	 */
+	public void setHealth (int health)
+	{
+		this.health = health;
 	}
 
 } // end SpaceObject

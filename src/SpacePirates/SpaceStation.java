@@ -44,4 +44,8 @@ public class SpaceStation extends WeighStation
 		this.setRotationRate (5.0);
 	}
 
+	public void calculateDamage(int speed1, int speed2)
+	{
+		; // do nothing because I have a force field
+	}
 }

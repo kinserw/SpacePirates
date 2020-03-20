@@ -28,13 +28,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class PirateFrame extends JFrame implements Runnable
 {
-	private int difficulty = 3;
-	public static PirateFrame ourFrame = null;
-	SpacePanel spacePanel = null;
-	private PirateBtnPanel myBtnPanel = null;
-	JProgressBar progressBar = null;
-	private int progress = 0;
-	private boolean gameInProgress = false;
+	private int difficulty = 3;					// difficulty setting for the game
+	public static PirateFrame ourFrame = null;	// static handle to myself
+	SpacePanel spacePanel = null;				// handle to main game screen
+	private PirateBtnPanel myBtnPanel = null;	// handle to the btnPanel at top of screen
+	JProgressBar progressBar = null;			// handle to health bar at bottom of screen
+	private int health = 100; 					// tracks health of main ship
+	private boolean gameInProgress = false; 	// flag to indicate if a game is underway
+	private boolean gameOver = false ; 			// forces game to end 
 	
 
 
@@ -54,7 +55,7 @@ public class PirateFrame extends JFrame implements Runnable
 		createMenuBar();
 		
 		spacePanel = new SpacePanel();	
-		// have to have a main ship even if a game isn't in progress.
+		// have to have a main ship even if a game isn't in health.
 		spacePanel.addMainShip (new SpaceShip(300,300));
 
 		setLayout(new BorderLayout());
@@ -138,17 +139,25 @@ public class PirateFrame extends JFrame implements Runnable
 	public void run() {
 		while (true)
 		{
-			progressBar.setValue( (int)(this.progress));
-
-					
+			if (spacePanel.mainShip ( ) != null)
+				health = spacePanel.mainShip().getHealth();
+			
+			progressBar.setValue( (int)(this.health));
 
 			if (gameInProgress)
 			{
-				repaint();
-				this.progressBar.setValue (progress);
+				repaint();				
 				
-
-				this.spacePanel.moveObjects();
+				// now that collisions have been processed, determine if the main ship is
+				// so damaged that the game is over.
+				if (spacePanel.mainShip().getHealth ( ) <= 0)
+				{
+					JOptionPane.showMessageDialog (this, "Game Over!\nYour ship has been destroyed!");
+					gameOver = true;
+					endGame();
+				}
+				else
+					this.spacePanel.moveObjects();
 			}
 			
 			//for (int i = 0; i < 1000000; i++);'
@@ -270,19 +279,17 @@ public class PirateFrame extends JFrame implements Runnable
 	private void endGame()
 	{
 
-		// if no progress then no need to get confirmation, we haven't really started a game
-		if (progress != 0)
+		if (!gameOver) 
 		{
 			int answer = JOptionPane.showConfirmDialog (this, "Are you sure you want to end this game?");
 			if (answer != JOptionPane.YES_OPTION)
 				return;
-			
 		}
 		
-		//TODO: do end game stuff here
 		gameInProgress = false;
 		progressBar.setBackground (Color.RED);
-		progress = 0;
+		health = 100;
+		gameOver = false;
 
 		this.spacePanel.endGame();
 		
@@ -294,17 +301,18 @@ public class PirateFrame extends JFrame implements Runnable
 
 	private void startGame()
 	{
-		if (progress > 0)
+		if (gameInProgress)
 		{
 			// confirm they want to end the game in progress
 			endGame();
-			if (progress >0)
+			if (gameInProgress)
 				return; // they don't want to end the current game
 		}
 
 		// TODO: do start game stuff here
 		gameInProgress = true;
-		progress = 0;
+		gameOver = false;
+		health = 100;
 		spacePanel.addMainShip (new SpaceShip(300,300));
 		spacePanel.add (new SpaceStation(100,100));
 		spacePanel.add (new WeighStation(-100,-100));
@@ -533,12 +541,13 @@ public class PirateFrame extends JFrame implements Runnable
 
         JMenuItem helpMenu = new JMenuItem("How to Play");
         helpMenu.addActionListener( (event) -> JOptionPane.showMessageDialog(this, 
-        		"<html><h1>Space Pirates</h1><p style='width:400'>This is a strategy game in which the player searches the galaxy for treasure. The more treasure found, the more upgrades you can buy. The more upgrades you get, the more treasure you can find. The fun is endless!!<br>"
-        		+ "<br>You pilot your ship around space. Destroying asteroids, other ships and space debris will potentially release valuable treasure. Flying over the treasure (at a reasonable speed) allows you to add it to your payload.<br>" +
-        						"<br>A status bar at the top of the screen shows your current payload contents and equipment status. A health bar at the bottom of the screen helps you know when you need to seek repairs.<br>" + 
-        						"<br>Docking with a space station or weigh station will allow you to bank your payload, buy repairs and upgrades. While docked you can't fire at anything. On the plus side, nothing can harm you <br>" +
-        						"either since the stations are guarded by force fields."
-        		));
+    		"<html><h1>Space Pirates</h1><p style='width:400'>This is a strategy game in which the player searches the galaxy for treasure. The more treasure found, the more upgrades you can buy. The more upgrades you get, the more treasure you can find. The fun is endless!!<br>"
+    		+ "<br>You pilot your ship around space. Destroying asteroids, other ships and space debris will potentially release valuable treasure. Flying over the treasure (at a reasonable speed) allows you to add it to your payload.<br>" +
+    						"<br>A status bar at the top of the screen shows your current payload contents and equipment status. A health bar at the bottom of the screen helps you know when you need to seek repairs.<br>" + 
+    						"<br>Docking with a space station or weigh station will allow you to bank your payload, buy repairs and upgrades. While docked you can't fire at anything. On the plus side, nothing can harm you <br>" +
+    						"either since the stations are guarded by force fields.<br><br>Moving: <br><\t>left click to accelerate" +
+							"<br><\t>right double click to fire your weapon(s)" + 
+							"<br><\t>move the mouse in the direction you want to travel"        		));
         menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
@@ -552,7 +561,7 @@ public class PirateFrame extends JFrame implements Runnable
 		String errors = null;
 		try 
 		{
-	        out.writeInt(progress);
+	        out.writeInt(health);
 	        out.writeBoolean (gameInProgress);
 	        out.writeInt (difficulty);
 
@@ -583,7 +592,7 @@ public class PirateFrame extends JFrame implements Runnable
 		
 		try
 		{
-			progress = in.readInt();
+			health = in.readInt();
 			gameInProgress = in.readBoolean ();
 	        difficulty = in.readInt ();
 		}
@@ -593,7 +602,7 @@ public class PirateFrame extends JFrame implements Runnable
 		}
 		
 		String panelErrors = this.spacePanel.loadGame (in);
-		// load progress, gameInProgress, difficulty, etc
+		// load health, gameInProgress, difficulty, etc
 
 		progressBar.setBackground (Color.WHITE);
 
@@ -609,9 +618,12 @@ public class PirateFrame extends JFrame implements Runnable
 		// state so best to just reset in this scenario.
 		if (errors != null)
 		{			
-			progress = 0;
+			health = 100;
+			gameOver = true;
 			endGame();
 		}
+		
+		gameOver = false;
 		
 		return errors;    
 	}

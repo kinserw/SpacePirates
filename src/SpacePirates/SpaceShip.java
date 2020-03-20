@@ -45,4 +45,10 @@ public class SpaceShip extends SpaceObject
 		this.setType (SpaceObjectType.STEERABLE);
 	}
 
+	public void calculateDamage(double speed1, double speed2)
+	{
+		System.out.println("ship health = " + getHealth() + "  s1  s2 " + speed1 + "   " + speed2);
+
+		super.calculateDamage (speed1, speed2);
+	}
 }
