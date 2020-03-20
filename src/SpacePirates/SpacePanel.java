@@ -133,7 +133,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		// the mouse event x & y are not translated
 		// also need to adjust mouse event x & y based on zoomFactor to match adjustments already in the other values
 		//double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
-		double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ))),(e.getX() / zoomFactor + myRowOffset - (mainShip.getX())));
+		double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getHeight ( ) / 2)),
+									 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getWidth ( ) / 2)));
 		mainShip.setSpeedAng (rotation);
 		mainShip.setRotation (rotation);
 		
@@ -246,8 +247,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		else if (mainShip.getY ( ) < height*.2)
 			myColOffset = (int)(height*.2 - mainShip.getY ( ) );
 		
-		myRowOffset = mainShip.getX ( ) - (int) width / 2;
-		myColOffset = mainShip.getY ( ) - (int) height / 2;
+		myRowOffset = mainShip.getX ( ) - ((int) width / 2 - mainShip.getImage ( ).getWidth ( ) / 2);
+		myColOffset = mainShip.getY ( ) - ((int) height / 2 - mainShip.getImage ( ).getHeight ( ) / 2);
 
 
 		g2.translate (-myRowOffset, -myColOffset);
