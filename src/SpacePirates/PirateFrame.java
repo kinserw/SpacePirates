@@ -312,7 +312,9 @@ public class PirateFrame extends JFrame implements Runnable
 		{
 			spacePanel.add (new LargeAsteroid((int)(Math.random ( )*1200)-600,
 												(int)(Math.random ( )*1200)-600,
-												6));
+												6,
+												1,
+												1));
 		}
 		spacePanel.add (new SpaceTreasure(300,150,SpaceTreasureType.URANIUM));
 		progressBar.setBackground (Color.WHITE);

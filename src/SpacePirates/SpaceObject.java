@@ -35,7 +35,7 @@ abstract public class SpaceObject
 	private double rotationRate = 0.0;	// rotational velocity
 	private double speed = 0;			// space object's velocity
 	private double speedAng = 0;		// angle used for determining velocity vector
-	private double mass = 0;			// mass for simulating force and collisions
+	private double mass = 1;			// mass for simulating force and collisions
 	private SpaceObject origin = null;  // reference to object this one came from (if any)
 	
 
@@ -83,24 +83,74 @@ abstract public class SpaceObject
 	
 	public void simCollide(SpaceObject obj)
 	{
-		double x2 = obj.getX ( );
-		double y2 = obj.getY ( );
 		double speed2 = obj.getSpeed ( );
 		double speedAng2 = obj.getSpeedAng ( );
 		double mass2 = obj.getMass ( );
 		
-		double tempVX = 0;
-		double tempVY = 0;
-		double phi = 180; // TODO not sure how I will get phi
-		// Use two dimensional collision formulas to determine vectors
-		tempVX = (speed * Math.cos (speedAng2 - phi) * (mass2 - mass) + 2 * mass * speed * Math.cos (speedAng - phi)) / (mass2 + mass);
-		tempVY = tempVX;
-		tempVX = tempVX * (Math.cos (phi) + speed2 * Math.sin (speedAng2 - phi) * Math.cos (phi + (3.14159/2)));
-		tempVY = tempVY * (Math.sin (phi) + speed2 * Math.sin (speedAng2 - phi) * Math.sin (phi + (3.14159/2)));
-		obj.setSpeedAng (Math.atan (Math.abs (tempVY) / Math.abs (tempVX)));
-		obj.setSpeed (Math.sqrt (tempVY * tempVY + tempVX * tempVX));
-		System.out.println("X velocity is " + tempVX);
-		System.out.println("Y velocity is " + tempVY);
+		double deltaX = speed*Math.cos(speedAng);
+		double deltaY = speed*Math.sin(speedAng);
+		double deltaX2 = speed2*Math.cos(speedAng2);
+		double deltaY2 = speed2*Math.sin(speedAng2);
+		
+		double newDX = 0;
+		double newDY = 0;
+		double newDX2 = 0;
+		double newDY2 = 0;
+		double refAngle = 0;
+		double refAngle2 = 0;
+		double addAng = 0;
+		double addAng2 = 0;
+		
+		if ((deltaX == 0 && deltaY == 0))
+		{
+			newDX = (mass2 * deltaX2) / mass;
+			newDY = (mass2 * deltaY2) / mass;
+		}
+		else if ((deltaX2 == 0 && deltaY2 == 0))
+		{
+			newDX2 = (mass * deltaX) / mass2;
+			newDY2 = (mass * deltaY) / mass2;
+		}
+		else
+		{
+			newDX = (mass - mass2)/(mass + mass2)*deltaX + (mass2 * 2)/(mass + mass2)*deltaX2;
+			newDY = (mass - mass2)/(mass + mass2)*deltaY + (mass2 * 2)/(mass + mass2)*deltaY2;
+			newDX2 = (2 * mass)/(mass + mass2)*deltaX + (mass - mass2)/(mass + mass2)*deltaX2;
+			newDY2 = (2 * mass)/(mass + mass2)*deltaY + (mass - mass2)/(mass + mass2)*deltaY2;
+		
+		}
+		
+		if (newDX >= 0 && newDY >= 0)
+			;
+		else if (newDX <= 0 && newDY >= 0)
+			addAng = 90;
+		else if (newDX <= 0 && newDY <= 0)
+			addAng = 180;
+		else
+			addAng = 270;
+		
+		if (newDX2 >= 0 && newDY2 >= 0)
+			;
+		else if (newDX2 <= 0 && newDY2 >= 0)
+			addAng2 = 90;
+		else if (newDX2 <= 0 && newDY2 <= 0)
+			addAng2 = 180;
+		else
+			addAng2 = 270;
+		
+		refAngle = Math.atan(Math.abs (newDY/newDX));
+		refAngle2 = Math.atan(Math.abs (newDY2/newDX2));
+		
+		if (Double.isNaN(refAngle))
+			refAngle = 0;
+		if (Double.isNaN(refAngle2))
+			refAngle2 = 0;
+		
+		speed = Math.sqrt (newDX * newDX + newDY * newDY);
+		speedAng = refAngle + addAng;
+		obj.setSpeed (Math.sqrt (newDX2 * newDX2 + newDY2 * newDY2));
+		obj.setSpeedAng(refAngle2 + addAng2);
+
 	}
 
 	/**
