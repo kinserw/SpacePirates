@@ -1,7 +1,7 @@
 - Continuous random world generation
 - Collect treasure
 	- Treasure variation
-- Docking with stations
+- Docking with stations (charles)
 - Modify ship
 - *Trade ships (go in between way stations)
 	- avoid asteroids?
