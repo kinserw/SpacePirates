@@ -13,7 +13,7 @@ package SpacePirates;
 
 
 /**
- * Enter type purpose here
+ * Represents a triangular ship in space.
  *
  * <hr>
  * Date created: Mar 4, 2020
@@ -22,6 +22,8 @@ package SpacePirates;
  */
 public class SpaceShip extends SpaceObject
 {
+	private SpaceShipWeaponType currentWeapon = SpaceShipWeaponType.MISSILE;
+	private int weaponCount = 99;
 
 	/**
 	 * 
@@ -50,5 +52,59 @@ public class SpaceShip extends SpaceObject
 		System.out.println("ship health = " + getHealth() + "  s1  s2 " + speed1 + "   " + speed2);
 
 		super.calculateDamage (speed1, speed2);
+	}
+
+	
+	/**
+	 * @return currentWeapon
+	 */
+	public Weapon getCurrentWeapon ( )
+	{
+		Weapon weapon = null;
+		if (weaponCount <= 0)
+			return weapon;
+		
+		switch (this.currentWeapon)
+		{
+			case CLUSTERBOMB :
+				weapon = new ClusterBomb(getX(),getY());
+				break;
+			case TORPEDO :
+				weapon = new Torpedo(getX(),getY());
+				break;
+			default : // MISSILE
+				weapon = new Missile(getX(),getY());
+					
+		}
+		this.weaponCount--;
+		
+		return weapon;
+	}
+
+	
+	/**
+	 * @param currentWeapon the currentWeapon to set
+	 */
+	public void setCurrentWeapon (SpaceShipWeaponType currentWeaponType)
+	{
+		this.currentWeapon = currentWeaponType;
+	}
+
+	
+	/**
+	 * @return weaponCount
+	 */
+	public int getWeaponCount ( )
+	{
+		return weaponCount;
+	}
+
+	
+	/**
+	 * @param weaponCount the weaponCount to set
+	 */
+	public void setWeaponCount (int weaponCount)
+	{
+		this.weaponCount = weaponCount;
 	}
 }

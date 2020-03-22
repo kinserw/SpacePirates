@@ -1,36 +1,28 @@
 /**
  * ---------------------------------------------------------------------------
- * File name: Missile.java
+ * File name: SpaceShipWeaponType.java
  * Project name: SpacePirates
  * ---------------------------------------------------------------------------
  * Creator's name and email: William Kinser, kinserw@etsu.edu
  * Course:  CSCI 1260 277
- * Creation Date: Mar 15, 2020
+ * Creation Date: Mar 22, 2020
  * ---------------------------------------------------------------------------
  */
 
 package SpacePirates;
 
+
 /**
- * Enter type purpose here
+ * Defines the types of weapons a SpaceShip object can carry.
  *
  * <hr>
- * Date created: Mar 15, 2020
+ * Date created: Mar 22, 2020
  * <hr>
  * @author William Kinser
  */
-public class Missile extends Weapon
+public enum SpaceShipWeaponType
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 466225001077917721L;
-
-	public Missile(int x, int y)
-	{
-		super (x, y);
-		super.setSpeed(20);
-		super.setType (SpaceObjectType.STEERABLE);
-	}
-	
+	MISSILE,
+	TORPEDO,
+	CLUSTERBOMB
 }

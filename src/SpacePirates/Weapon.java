@@ -42,7 +42,7 @@ public class Weapon extends SpaceObject
 	public Weapon (int x, int y)
 	{
 		super (x, y);
-		// TODO Auto-generated constructor stub
+		super.setHealth (0); // causes weapons to be destroyed on collision
 	}
 
 }

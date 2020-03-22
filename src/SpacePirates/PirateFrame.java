@@ -155,6 +155,8 @@ public class PirateFrame extends JFrame implements Runnable
 					JOptionPane.showMessageDialog (this, "Game Over!\nYour ship has been destroyed!");
 					gameOver = true;
 					endGame();
+					gameInProgress = false;
+					repaint();
 				}
 				else
 					this.spacePanel.moveObjects();
@@ -164,7 +166,7 @@ public class PirateFrame extends JFrame implements Runnable
 			synchronized(this)
 			{
 				try {
-					this.wait(250);
+					this.wait(50);
 					
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block

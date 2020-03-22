@@ -19,7 +19,9 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 /**
- * Enter type purpose here
+ * Abstract base class for all objects in space. Defines common behaviors and
+ * attributes. Defined as Serializable, thus forcing all subclasses to be as 
+ * well so they can be stored and retrieved from an iostream.
  *
  * <hr>
  * Date created: Mar 4, 2020
@@ -29,21 +31,33 @@ import javax.imageio.ImageIO;
 abstract public class SpaceObject implements Serializable
 {
 	/**
-	 * 
+	 * needed for serialization 
 	 */
 	private static final long serialVersionUID = -1723319757299677962L;
 	
-	private int x, y;
-	protected SpaceObjectType type = SpaceObjectType.STATIONARY;
+	/*
+	 * transient & static data below are attributes not saved when a game is saved.
+	 * All member data is initialized at declaration to avoid undefined values
+	 * when object is created from an iostream (i.e. when loaded from a file).
+	 */
 	private transient BufferedImage icon = null;
-	private transient static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
+	private static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
+	private transient SpaceObject origin = null;  // reference to object this one came from (if any)
+
+	// x,y represent coordinates on the 2D plane
+	private int x = 0;
+	private int y = 0; 
+	
+	// represents the type of space objects. Subclasses should set this in their
+	// constructors.
+	protected SpaceObjectType type = SpaceObjectType.STATIONARY;
+
 	private double rotation = 0;		// current angle in reference to rotational velocity
 	private double rotationRate = 0.0;	// rotational velocity
 	private double speed = 0;			// space object's velocity
 	private double speedAng = 0;		// angle used for determining velocity vector
 	private double mass = 1;			// mass for simulating force and collisions
 	private int health = 100;			// percentage of health object has
-	private transient SpaceObject origin = null;  // reference to object this one came from (if any)
 	
 
 
@@ -92,6 +106,10 @@ abstract public class SpaceObject implements Serializable
 	{
 		// speed max's out at 50 so two object's speed combined is max 100
 		// the faster they are going the more damage they do
+
+		// CHARLES TODO: consider using angular speed since current calculation doesn't
+		// take into consideration whether the two objects are doing a head on 
+		// collision or if they are glancing off each other.
 		health -= (int)(speed1+speed2);
 		
 	}
@@ -186,10 +204,15 @@ abstract public class SpaceObject implements Serializable
 	private BufferedImage fetchImage()
 	{
 		String name = this.getClass ( ).getName ( );
+
+		// if class name prefixed with package name, remove the package name
 		if (name.contains ("."))
 		{
 			name = name.substring (name.lastIndexOf (".")+1);
 		}
+		
+		// see if we've already loaded this image. Since static, no need to 
+		// load it more than once 
 		BufferedImage i = ourImages.get (name);
 		if (i == null)
 		{
@@ -208,6 +231,8 @@ abstract public class SpaceObject implements Serializable
 	
 	public BufferedImage getImage()
 	{
+		// need this logic for when space objects are loaded from an io stream
+		// and don't go through the defined constructors.
 		if (icon == null)
 		{
 			icon = fetchImage();

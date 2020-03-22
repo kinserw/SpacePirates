@@ -1,6 +1,5 @@
 package SpacePirates;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LayoutManager;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class SpacePanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener
@@ -145,17 +143,28 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mouseClicked (MouseEvent e)
 	{
-		// TODO Auto-generated method stub
+		// right mouse double click causes the player's ship to fire it's current
+		// weapon. 
+		
+		// TODO: get the weapon being fired from the mainship object.
+		
 		if (e.getButton ( ) == MouseEvent.BUTTON3 && e.getClickCount ( ) == 2)
 		{
 			System.out.println("FIRE");
-			Missile missile = new Missile(this.mainShip.getX ( ), 
-										  this.mainShip.getY ( ));
-			missile.setSpeedAng (mainShip.getSpeedAng ( ));
-			missile.setRotation (mainShip.getRotation ( ));
-			missile.setSpeed (20);
-			missile.setOrigin (mainShip); // missile knows where it came from
-			this.objects.add (missile);
+			Weapon weapon = this.mainShip.getCurrentWeapon ( );
+			if (weapon != null)
+			{
+				weapon.setX(this.mainShip.getX ( ) + 
+					        this.mainShip.getImage ( ).getWidth ( )/2 -
+					        weapon.getImage ( ).getWidth ( )/2);
+				weapon.setY (this.mainShip.getY ( ) + 
+			        		this.mainShip.getImage ( ).getHeight( )/2 -
+			        		weapon.getImage ( ).getHeight( )/2);
+				weapon.setSpeedAng (mainShip.getSpeedAng ( ));
+				weapon.setRotation (mainShip.getRotation ( ));
+				weapon.setOrigin (mainShip); // missile knows where it came from
+				this.objects.add (weapon);
+			} // fire weapon
 		}
 	}
 
