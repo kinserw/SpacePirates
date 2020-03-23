@@ -2,6 +2,7 @@
 - Collect treasure
 	- Treasure variation
 - Docking with stations (charles)
+- Asteroids repelled from stations
 - Modify ship
 - Turn ship while mouse button is down
 - *Trade ships (go in between way stations)

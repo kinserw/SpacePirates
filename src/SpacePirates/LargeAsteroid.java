@@ -44,7 +44,7 @@ public class LargeAsteroid extends SpaceObject
 		super(x,y,m,v);
 		type = SpaceObjectType.DYNAMIC;
 		this.size = size;
-		this.setRotationRate (5.0);
+		this.setRotationRate (.5);
 	}
 	/**
 	 * if this object collides with something, it will process the effect the
