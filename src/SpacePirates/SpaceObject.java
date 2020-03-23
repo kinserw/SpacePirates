@@ -114,30 +114,70 @@ abstract public class SpaceObject implements Serializable
 		
 	}
 
+	public void orbit(SpaceObject obj)
+	{
+		double rotation = Math.atan2 (obj.getX() - x, obj.getY() - y);
+		setSpeedAng (rotation + 90);
+		speed = 10;
+	}
+	
+	public void pointAt(double x, double y)
+	{
+		double rotation = Math.atan2 (y - this.x, y - this.y);
+		setSpeedAng (rotation);
+		setRotation (rotation);
+	}
+	
+	public void pointAt(SpaceObject obj)
+	{
+		double rotation = Math.atan2 (((obj.getY ( ) + obj.getImage ( ).getHeight ( ) / 2) - (y + getImage ( ).getHeight ( ) / 2)),
+			 ((obj.getX() + obj.getImage ( ).getWidth( ) / 2) - (x + getImage ( ).getWidth ( ) / 2)));
+		setSpeedAng (rotation);
+		setRotation (rotation);
+	}
+	
+	/**
+	 * This method simulates the physics of two space objects colliding       
+	 *
+	 * <hr>
+	 * Date created: Mar 22, 2020
+	 *
+	 * <hr>
+	 * @param obj the object being collided with
+	 */
 	public void simCollide(SpaceObject obj)
 	{
-		double speed2 = obj.getSpeed ( );
-		double speedAng2 = obj.getSpeedAng ( );
-		double mass2 = obj.getMass ( );
+		double speed2 = obj.getSpeed ( );			// store the speed of the second object as a temporary variable
+		double speedAng2 = obj.getSpeedAng ( );		// store the angle of the second object as a temporary variable
+		double mass2 = obj.getMass ( );				// store the mass of the second object as a temporary variable
 		
 		// make this a virtual function so space objects that have force fields
 		// can adjust the calculations but the rest use the same default calc.
 		calculateDamage(speed,speed2);
 		
+		
+		// separate the vector into individual components
 		double deltaX = speed*Math.cos(speedAng);
 		double deltaY = speed*Math.sin(speedAng);
 		double deltaX2 = speed2*Math.cos(speedAng2);
 		double deltaY2 = speed2*Math.sin(speedAng2);
 		
+		// store new values for x and y vectors of each object here
 		double newDX = 0;
 		double newDY = 0;
 		double newDX2 = 0;
 		double newDY2 = 0;
+		
+		// ref angles are based on quadrant of the vector 90, 180, 270
 		double refAngle = 0;
 		double refAngle2 = 0;
+		
+		// add angles are in addition to ref angles
 		double addAng = 0;
 		double addAng2 = 0;
 		
+		// use physics formulas to calculate new vectors
+		// formulas differ based on whether or not objects are at rest
 		if ((deltaX == 0 && deltaY == 0))
 		{
 			newDX = (mass2 * deltaX2) / mass;
@@ -157,6 +197,7 @@ abstract public class SpaceObject implements Serializable
 		
 		}
 		
+		// determine quadrant
 		if (newDX >= 0 && newDY >= 0)
 			;
 		else if (newDX <= 0 && newDY >= 0)
@@ -175,6 +216,7 @@ abstract public class SpaceObject implements Serializable
 		else
 			addAng2 = 270;
 		
+		// apply new values to the objects
 		refAngle = Math.atan(Math.abs (newDY/newDX));
 		refAngle2 = Math.atan(Math.abs (newDY2/newDX2));
 		

@@ -41,7 +41,7 @@ public class SpaceStation extends WeighStation
 	public SpaceStation (int x, int y)
 	{
 		super (x, y);
-		this.setRotationRate (5.0);
+		this.setRotationRate (0.1);
 	}
 
 	public void calculateDamage(int speed1, int speed2)

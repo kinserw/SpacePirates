@@ -41,7 +41,7 @@ public class WeighStation extends SpaceObject
 	public WeighStation (int x, int y)
 	{
 		super (x, y);
-		this.setRotationRate (5.0);
+		this.setRotationRate (0.5);
 	}
 	
 

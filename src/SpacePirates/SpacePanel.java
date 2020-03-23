@@ -33,7 +33,9 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	// objects array list of SpaceObjects too.
 	private SpaceShip 				mainShip			= null; 
 
-	private boolean coasting = true;
+	
+	
+	
 
 	public SpacePanel ( )
 	{
@@ -176,8 +178,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			System.out.print("Move  ");
 			if (mainShip.getSpeed() < 50)
 				mainShip.setSpeed (mainShip.getSpeed() + 10);
-			coasting = false;
-			
+			mainShip.setCoasting (false);
+			mouseMoved(e);
 		}
 
 	}
@@ -190,7 +192,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			//System.out.print("Stop Move  ");
 			
 			//mainShip.setSpeed (0);
-			coasting = true;
+			mainShip.setCoasting (true);
 			
 		}
 
@@ -218,9 +220,9 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			double speed = object.getSpeed ( );
 			double deltaX = speed*Math.cos(object.getSpeedAng ( ));
 			double deltaY = speed*Math.sin(object.getSpeedAng ( ));
-			object.setX (object.getX() + (int)(deltaX));
-			object.setY (object.getY() + (int)(deltaY));
-			if ((object == mainShip) && coasting)
+			object.setX (object.getX() + (int)((deltaX)));
+			object.setY (object.getY() + (int)((deltaY)));
+			if ((object == mainShip) && mainShip.isCoasting())
 				this.mainShip.setSpeed ((speed <= 0 ? 0 : speed - 1));	
 		}
 	}

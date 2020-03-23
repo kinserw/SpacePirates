@@ -24,6 +24,7 @@ public class SpaceShip extends SpaceObject
 {
 	private SpaceShipWeaponType currentWeapon = SpaceShipWeaponType.MISSILE;
 	private int weaponCount = 99;
+	private boolean coasting = true;
 
 	/**
 	 * 
@@ -106,5 +107,23 @@ public class SpaceShip extends SpaceObject
 	public void setWeaponCount (int weaponCount)
 	{
 		this.weaponCount = weaponCount;
+	}
+
+	
+	/**
+	 * @return coasting
+	 */
+	public boolean isCoasting ( )
+	{
+		return coasting;
+	}
+
+	
+	/**
+	 * @param coasting the coasting to set
+	 */
+	public void setCoasting (boolean coasting)
+	{
+		this.coasting = coasting;
 	}
 }
