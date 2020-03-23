@@ -50,7 +50,7 @@ abstract public class SpaceObject implements Serializable
 	
 	// represents the type of space objects. Subclasses should set this in their
 	// constructors.
-	protected SpaceObjectType type = SpaceObjectType.STATIONARY;
+	protected SpaceObjectType type = SpaceObjectType.ELLIPTICAL;
 
 	private double rotation = 0;		// current angle in reference to rotational velocity
 	private double rotationRate = 0.0;	// rotational velocity
@@ -241,11 +241,18 @@ abstract public class SpaceObject implements Serializable
 		if (Double.isNaN(refAngle2))
 			refAngle2 = 0;
 		
-		speed = Math.sqrt (newDX * newDX + newDY * newDY);
-		speedAng = refAngle + addAng;
-		obj.setSpeed (Math.sqrt (newDX2 * newDX2 + newDY2 * newDY2));
-		obj.setSpeedAng(refAngle2 + addAng2);
-
+		// only change speed and angle if not a stationary object
+		
+		if (type != SpaceObjectType.STATIONARY)
+		{
+			speed = Math.sqrt (newDX * newDX + newDY * newDY);
+			speedAng = refAngle + addAng;
+		}
+		if (obj.getType ( )!= SpaceObjectType.STATIONARY)
+		{
+			obj.setSpeed (Math.sqrt (newDX2 * newDX2 + newDY2 * newDY2));
+			obj.setSpeedAng(refAngle2 + addAng2);
+		}
 	}
 
 	/**

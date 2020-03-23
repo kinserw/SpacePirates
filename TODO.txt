@@ -2,12 +2,14 @@
 - Collect treasure
 	- Treasure variation
 - Docking with stations (charles)
+         - disable firing while in orbit (william)
 - Asteroids repelled from stations
+	- made stations fixed in space even when collided with (william)
 - Modify ship
-- Turn ship while mouse button is down
+- Turn ship while mouse button is down (william)
 - *Trade ships (go in between way stations)
 	- avoid asteroids?
 	- loot on ships
 
-
+- added welcome popup (william)
  

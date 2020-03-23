@@ -18,7 +18,7 @@ package SpacePirates;
  * <hr>
  * Date created: Mar 18, 2020
  * <hr>
- * @author William Kinser
+ * @author Charles Kinser
  */
 public enum Difficulty
 {

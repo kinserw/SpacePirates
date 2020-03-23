@@ -41,8 +41,13 @@ public class WeighStation extends SpaceObject
 	public WeighStation (int x, int y)
 	{
 		super (x, y);
-		this.setRotationRate (0.5);
+		this.setType (SpaceObjectType.STATIONARY);
+		this.setRotationRate (0.2);
 	}
 	
+	public void calculateDamage(double speed1, double speed2)
+	{
+		// override base class method to not take damage since stations have a force field
+	}
 
 }

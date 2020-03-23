@@ -124,7 +124,17 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	public void mouseDragged (MouseEvent e)
 	{
 			
-
+		// include offsets in angle calculations since screen can be translated (shifted) but
+		// the mouse event x & y are not translated
+		// also need to adjust mouse event x & y based on zoomFactor to match adjustments already in the other values
+		//double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
+		if (mainShip.isInOrbit() == false)
+		{
+			double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getHeight ( ) / 2)),
+										 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getWidth ( ) / 2)));
+			mainShip.setSpeedAng (rotation);
+			mainShip.setRotation (rotation);
+		}
 	}
 
 	@Override
@@ -154,22 +164,25 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		
 		if (e.getButton ( ) == MouseEvent.BUTTON3 && e.getClickCount ( ) == 2)
 		{
-			System.out.println("FIRE");
-			Weapon weapon = this.mainShip.getCurrentWeapon ( );
-			if (weapon != null)
+			if (mainShip.isInOrbit() == false)
 			{
-				weapon.setX(this.mainShip.getX ( ) + 
-					        this.mainShip.getImage ( ).getWidth ( )/2 -
-					        weapon.getImage ( ).getWidth ( )/2);
-				weapon.setY (this.mainShip.getY ( ) + 
-			        		this.mainShip.getImage ( ).getHeight( )/2 -
-			        		weapon.getImage ( ).getHeight( )/2);
-				weapon.setSpeedAng (mainShip.getSpeedAng ( ));
-				weapon.setRotation (mainShip.getRotation ( ));
-				weapon.setOrigin (mainShip); // missile knows where it came from
-				this.objects.add (weapon);
-			} // fire weapon
-		}
+				System.out.println("FIRE");
+				Weapon weapon = this.mainShip.getCurrentWeapon ( );
+				if (weapon != null)
+				{
+					weapon.setX(this.mainShip.getX ( ) + 
+						        this.mainShip.getImage ( ).getWidth ( )/2 -
+						        weapon.getImage ( ).getWidth ( )/2);
+					weapon.setY (this.mainShip.getY ( ) + 
+				        		this.mainShip.getImage ( ).getHeight( )/2 -
+				        		weapon.getImage ( ).getHeight( )/2);
+					weapon.setSpeedAng (mainShip.getSpeedAng ( ));
+					weapon.setRotation (mainShip.getRotation ( ));
+					weapon.setOrigin (mainShip); // missile knows where it came from
+					this.objects.add (weapon);
+				} // need a weapon to fire
+			} // can't fire if in orbit 
+		}// fire weapon
 	}
 
 	@Override
@@ -296,11 +309,14 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			g22.dispose ( );
 		}
 
-		// look for collisions
+		// look for collisions (use loops since objects can be destroyed by collisions
+		// and have to be removed from the collections of rects and objects
+		
 		// outer loop iterates through all rectangles
 		for (int r1 =0; r1 < rects.size ( ); r1++)
 		{
 			Rectangle rect1 = rects.get (r1);
+			
 			// inner loop iterates through all rectangles after r1 in list
 			for (int r2 = r1+1; r2 < rects.size ( ); r2++)
 			{
@@ -318,14 +334,24 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 						System.out.println("collision between " + r1 + " and " +r2);						
 						boolean o1Destroyed = o1.collision (10, objects);
 						boolean o2Destroyed = o2.collision (10, objects);
-						if (o1Destroyed)
-						{
-							objects.remove (o1);
-						}
+						
+						// remove 2nd object first just in case first is also destroyed
+						// since destroying the first affects the indexing of rects and objects
 						if (o2Destroyed)
 						{
 							objects.remove (o2);
+							rects.remove (rect2);
+							r2--;
+							// don't need to modify r1 since its the outer loop and hasn't hit the r2
+							// index yet
 						} // end destroy second object
+						if (o1Destroyed)
+						{
+							objects.remove (o1);
+							rects.remove(rect1);
+							r1--;
+							r2--; // decrement r2 since r1 by definition is earlier in the list
+						}
 					} // end else (weapon not colliding with origin)
 					
 				} // end if r1 and r2 intersect

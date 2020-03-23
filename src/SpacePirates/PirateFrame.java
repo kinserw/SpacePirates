@@ -36,6 +36,7 @@ public class PirateFrame extends JFrame implements Runnable
 	private int health = 100; 					// tracks health of main ship
 	private boolean gameInProgress = false; 	// flag to indicate if a game is underway
 	private boolean gameOver = false ; 			// forces game to end 
+	private boolean firstTimeThru = true; 		// flag used to display welcome screen
 	
 
 
@@ -84,6 +85,22 @@ public class PirateFrame extends JFrame implements Runnable
 
 		Thread myThread = new Thread(this);
 		
+		if (this.firstTimeThru)
+		{
+			this.firstTimeThru = false;
+			String[] options = {"New Game", "Load Game","Pick Options"};
+			int answer = JOptionPane.showOptionDialog (null, 
+							"Welcome to SpacePirates!\n" +
+						    "\nWould you like to start a new game or load an existing game?", 
+				"Welcome", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, 
+				options, 0);
+			if (answer == 0)
+				startGame();
+			else if (answer == 1)
+				loadGame();
+				
+		}
+
 		//run();
 		myThread.start();
 

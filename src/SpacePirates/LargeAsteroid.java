@@ -79,4 +79,9 @@ public class LargeAsteroid extends SpaceObject
 		
 		return false;
 	}
+	
+	public void setInOrbit (boolean inOrbit)
+	{
+		; // do nothing. asteroids can't be in orbit
+	}
 }
