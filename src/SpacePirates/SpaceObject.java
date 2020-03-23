@@ -121,7 +121,7 @@ abstract public class SpaceObject implements Serializable
 		pointAt(obj);
 		speedAng -= Math.PI/2;
 		rotation -= Math.PI/2;
-		speed = 10;
+		speed = 5;
 		lastOrb = obj;
 	}
 	
@@ -130,9 +130,9 @@ abstract public class SpaceObject implements Serializable
 		if (lastOrb != null)
 		{
 			pointAt(lastOrb);
-			speedAng -= Math.PI/2;
-			rotation -= Math.PI/2;
-			speed = 10;
+			speedAng -= Math.PI/2.2; //TODO 2.2 is a temporary fix, it should work as 2
+			rotation -= Math.PI/2.2;
+			speed = 5;
 		}
 	}
 	
@@ -145,10 +145,11 @@ abstract public class SpaceObject implements Serializable
 	
 	public void pointAt(SpaceObject obj)
 	{
-		double rotation = Math.atan2 (((obj.getY ( ) + obj.getImage ( ).getHeight ( ) / 2) - (y + getImage ( ).getHeight ( ) / 2)),
-			 ((obj.getX() + obj.getImage ( ).getWidth( ) / 2) - (x + getImage ( ).getWidth ( ) / 2)));
+		double rotation = Math.atan2 (((obj.getY ( ) + obj.getImage ( ).getHeight ( ) / 2) - (this.y + getImage ( ).getHeight ( ) / 2)),
+			 ((obj.getX() + obj.getImage ( ).getWidth( ) / 2) - (this.x + getImage ( ).getWidth ( ) / 2)));
 		setSpeedAng (rotation);
 		setRotation (rotation);
+		
 	}
 	
 	/**

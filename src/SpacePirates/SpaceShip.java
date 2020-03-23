@@ -57,7 +57,7 @@ public class SpaceShip extends SpaceObject
 	
 	public void simCollide(SpaceObject obj)
 	{
-		if (obj instanceof SpaceStation)
+		if (obj instanceof SpaceStation || obj instanceof WeighStation)
 		{
 			System.out.println("orbit");
 			orbit(obj);
