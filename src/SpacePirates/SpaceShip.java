@@ -54,7 +54,33 @@ public class SpaceShip extends SpaceObject
 
 		super.calculateDamage (speed1, speed2);
 	}
+	
+	public void simCollide(SpaceObject obj)
+	{
+		if (obj instanceof SpaceStation)
+		{
+			System.out.println("orbit");
+			orbit(obj);
+			setInOrbit(true);
+		}
+		else
+		{
+			setInOrbit(false);
+			super.simCollide(obj);
+		}
+	}
 
+	public void orbit(SpaceObject obj)
+	{
+		coasting = false;
+		super.orbit (obj);
+	}
+	
+	public void orbit()
+	{
+		coasting = false;
+		super.orbit ();
+	}
 	
 	/**
 	 * @return currentWeapon

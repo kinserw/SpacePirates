@@ -134,11 +134,14 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		// the mouse event x & y are not translated
 		// also need to adjust mouse event x & y based on zoomFactor to match adjustments already in the other values
 		//double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
-		double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getHeight ( ) / 2)),
-									 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getWidth ( ) / 2)));
-		mainShip.setSpeedAng (rotation);
-		mainShip.setRotation (rotation);
-		
+		if (mainShip.isInOrbit() == false)
+		{
+			double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getHeight ( ) / 2)),
+										 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getWidth ( ) / 2)));
+			mainShip.setSpeedAng (rotation);
+			mainShip.setRotation (rotation);
+			System.out.println(rotation);
+		}
 		
 	}
 
@@ -179,7 +182,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			if (mainShip.getSpeed() < 50)
 				mainShip.setSpeed (mainShip.getSpeed() + 10);
 			mainShip.setCoasting (false);
-			mouseMoved(e);
+			mainShip.setInOrbit (false);
 		}
 
 	}
@@ -222,8 +225,11 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			double deltaY = speed*Math.sin(object.getSpeedAng ( ));
 			object.setX (object.getX() + (int)((deltaX)));
 			object.setY (object.getY() + (int)((deltaY)));
-			if ((object == mainShip) && mainShip.isCoasting())
-				this.mainShip.setSpeed ((speed <= 0 ? 0 : speed - 1));	
+			if ((object == mainShip) && mainShip.isInOrbit())
+				object.orbit();
+			else if ((object == mainShip) && mainShip.isCoasting())
+				this.mainShip.setSpeed ((speed <= 0 ? 0 : speed - 1));
+			
 		}
 	}
 	

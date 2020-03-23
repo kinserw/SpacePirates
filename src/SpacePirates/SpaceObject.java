@@ -58,6 +58,8 @@ abstract public class SpaceObject implements Serializable
 	private double speedAng = 0;		// angle used for determining velocity vector
 	private double mass = 1;			// mass for simulating force and collisions
 	private int health = 100;			// percentage of health object has
+	private boolean inOrbit = false;	// is the object in orbit
+	private SpaceObject lastOrb = null;	// the last object orbited
 	
 
 
@@ -116,14 +118,27 @@ abstract public class SpaceObject implements Serializable
 
 	public void orbit(SpaceObject obj)
 	{
-		double rotation = Math.atan2 (obj.getX() - x, obj.getY() - y);
-		setSpeedAng (rotation + 90);
+		pointAt(obj);
+		speedAng -= Math.PI/2;
+		rotation -= Math.PI/2;
 		speed = 10;
+		lastOrb = obj;
+	}
+	
+	public void orbit()
+	{
+		if (lastOrb != null)
+		{
+			pointAt(lastOrb);
+			speedAng -= Math.PI/2;
+			rotation -= Math.PI/2;
+			speed = 10;
+		}
 	}
 	
 	public void pointAt(double x, double y)
 	{
-		double rotation = Math.atan2 (y - this.x, y - this.y);
+		double rotation = Math.atan2 (y - this.y, x - this.x);
 		setSpeedAng (rotation);
 		setRotation (rotation);
 	}
@@ -456,6 +471,24 @@ abstract public class SpaceObject implements Serializable
 	public void setHealth (int health)
 	{
 		this.health = health;
+	}
+
+	
+	/**
+	 * @return inOrbit
+	 */
+	public boolean isInOrbit ( )
+	{
+		return inOrbit;
+	}
+
+	
+	/**
+	 * @param inOrbit the inOrbit to set
+	 */
+	public void setInOrbit (boolean inOrbit)
+	{
+		this.inOrbit = inOrbit;
 	}
 
 } // end SpaceObject
