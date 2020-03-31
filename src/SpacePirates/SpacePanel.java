@@ -193,7 +193,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 					weapon.setSpeedAng (mainShip.getSpeedAng ( ));
 					weapon.setRotation (mainShip.getRotation ( ));
 					weapon.setOrigin (mainShip); // missile knows where it came from
-					this.objects.add (weapon);
+					this.objects.add (1,weapon);
 				} // need a weapon to fire
 			} // can't fire if in orbit 
 		}// fire weapon
@@ -329,6 +329,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		// and have to be removed from the collections of rects and objects
 		
 		// outer loop iterates through all rectangles
+		
 		for (int r1 =0; r1 < rects.size ( ); r1++)
 		{
 			Rectangle rect1 = rects.get (r1);
@@ -357,6 +358,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 						// since destroying the first affects the indexing of rects and objects
 						if (o2Destroyed)
 						{
+							objects.addAll (o2.getDebris());
 							objects.remove (o2);
 							rects.remove (rect2);
 							r2--;
@@ -365,6 +367,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 						} // end destroy second object
 						if (o1Destroyed)
 						{
+							objects.addAll (o1.getDebris());
 							objects.remove (o1);
 							rects.remove(rect1);
 							r1--;

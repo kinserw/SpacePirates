@@ -44,5 +44,11 @@ public class SmallAsteroid extends SpaceObject
 		super (x, y);
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	public SmallAsteroid(int x, int y, double m, double v)
+	{
+		super(x,y,m,v);
+		type = SpaceObjectType.DYNAMIC;
+		this.setRotationRate (.5);
+	}
 }

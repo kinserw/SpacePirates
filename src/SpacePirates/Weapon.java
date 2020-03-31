@@ -45,4 +45,29 @@ public class Weapon extends SpaceObject
 		super.setHealth (0); // causes weapons to be destroyed on collision
 	}
 
+	
+	public void simCollide(SpaceObject obj)
+	{
+		if (obj instanceof SpaceStation || obj instanceof WeighStation)
+		{
+			this.setHealth (0); // missiles hitting a station just disappear
+		}
+		else if (obj instanceof SpaceTreasure)
+		{
+			// weapons hitting a space treasure destroys it and itself (without collecting any booty)
+			SpaceTreasure treasure = (SpaceTreasure)obj;
+			treasure.setHealth (0);
+			this.setHealth (0);
+		}
+		else if (obj instanceof LargeAsteroid)
+		{
+			LargeAsteroid asteroid = (LargeAsteroid)obj;
+			asteroid.setHealth(0); // force the asteroid to break up
+			super.simCollide(obj);
+		}
+		else
+		{
+			super.simCollide(obj);
+		}
+	}
 }

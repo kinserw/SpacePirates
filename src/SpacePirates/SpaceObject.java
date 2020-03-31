@@ -115,6 +115,11 @@ abstract public class SpaceObject implements Serializable
 		health -= (int)(speed1+speed2);
 		
 	}
+	
+	public ArrayList<SpaceObject> getDebris()
+	{
+		return new ArrayList<SpaceObject>(); // default is no debris
+	}
 
 	public void orbit(SpaceObject obj)
 	{
