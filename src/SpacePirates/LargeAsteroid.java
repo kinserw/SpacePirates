@@ -84,4 +84,15 @@ public class LargeAsteroid extends SpaceObject
 	{
 		; // do nothing. asteroids can't be in orbit
 	}
+
+	public void orbit(SpaceObject obj)
+	{
+		; // do nothing. asteroids can't be in orbit
+	}
+	
+	public void orbit()
+	{
+		; // do nothing. asteroids can't be in orbit
+	}
+	
 }

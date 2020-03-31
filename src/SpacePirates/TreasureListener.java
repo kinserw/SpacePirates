@@ -1,11 +1,11 @@
 /**
  * ---------------------------------------------------------------------------
- * File name: SpaceTreasureType.java
+ * File name: TreasureListener.java
  * Project name: SpacePirates
  * ---------------------------------------------------------------------------
  * Creator's name and email: William Kinser, kinserw@etsu.edu
  * Course:  CSCI 1260 277
- * Creation Date: Mar 4, 2020
+ * Creation Date: Mar 31, 2020
  * ---------------------------------------------------------------------------
  */
 
@@ -13,26 +13,16 @@ package SpacePirates;
 
 
 /**
- * Defines the types of treasures the SpaceTreasure objects represent.
- * 
- *  * Note: enums are automatically serializable so this references to this class in 
- * the space objects will save to an io stream without issues.
+ * Interface class used to notify other object of when a treasure was 
+ * captured.
  *
  * <hr>
- * Date created: Mar 4, 2020
+ * Date created: Mar 31, 2020
  * <hr>
  * @author William Kinser
  */
-public enum SpaceTreasureType
+public interface TreasureListener
 {
-	STEEL,
-	WATER,
-	GOLD,
-	URANIUM,
-	TITANIUM,
-	DARK_MATTER,
-	ANTI_MATTER,
-	SPACE_CREDITS
-	
 
+	public void treasureCaptured(SpaceTreasure treasure);
 }

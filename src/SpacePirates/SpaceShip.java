@@ -25,6 +25,8 @@ public class SpaceShip extends SpaceObject
 	private SpaceShipWeaponType currentWeapon = SpaceShipWeaponType.MISSILE;
 	private int weaponCount = 99;
 	private boolean coasting = true;
+	private TreasureListener treasureListener = null;
+	private OrbitListener orbitListener = null;
 
 	/**
 	 * 
@@ -63,11 +65,49 @@ public class SpaceShip extends SpaceObject
 			orbit(obj);
 			setInOrbit(true);
 		}
+		else if (obj instanceof SpaceTreasure)
+		{
+			SpaceTreasure treasure = (SpaceTreasure)obj;
+			notifyTreasureListener(treasure);
+			setInOrbit(false);
+			treasure.setHealth (0);
+		}
 		else
 		{
 			setInOrbit(false);
 			super.simCollide(obj);
 		}
+	}
+	
+	public void addTreasureListener(TreasureListener tl)
+	{
+		this.treasureListener = tl;
+	}
+	
+	private void notifyTreasureListener(SpaceTreasure treasure)
+	{
+		if (this.treasureListener != null)
+			this.treasureListener.treasureCaptured (treasure);
+	}
+
+	/**
+	 * @param inOrbit the inOrbit to set
+	 */
+	public void setInOrbit (boolean inOrbit)
+	{
+		super.setInOrbit (inOrbit);
+		notifyOrbitListener(inOrbit);
+	}
+
+	public void addOrbitListener(OrbitListener listener)
+	{
+		this.orbitListener = listener;
+	}
+
+	private void notifyOrbitListener(boolean orbiting)
+	{
+		if (this.orbitListener != null)
+			this.orbitListener.orbitChanged (orbiting);
 	}
 
 	public void orbit(SpaceObject obj)

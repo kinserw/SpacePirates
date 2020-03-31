@@ -2,14 +2,26 @@
 - Collect treasure
 	- Treasure variation
 - Docking with stations (charles)
-         - disable firing while in orbit (william)
-- Asteroids repelled from stations
-	- made stations fixed in space even when collided with (william)
+	-- flesh out purchase of items
+- Asteroids repelled from stations 
+	(I made so they don't orbit but they still don't repel)
+
+OPTIONAL ITEMS TO ADD
 - Modify ship
-- Turn ship while mouse button is down (william)
 - *Trade ships (go in between way stations)
 	- avoid asteroids?
 	- loot on ships
 
+
+COMPLETED
+-- added logic to buy things when docked. 
+-- added logic so that space ship is always first in the objects list (this will make
+	sure that r1 and 01 is always the spaceship when evaluating collisions
+	
+- added logic for ships to "collide" with treasures, capture their value and save it in PirateFrame array of treasures.
+- added stats popup
+
 - added welcome popup (william)
- 
+- Turn ship while mouse button is down (william)
+- made stations fixed in space even when collided with (william)
+- disable firing while in orbit (william)

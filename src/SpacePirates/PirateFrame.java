@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -26,20 +28,28 @@ import javax.swing.JSplitPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
-public class PirateFrame extends JFrame implements Runnable
+public class PirateFrame extends JFrame implements Runnable, ActionListener, TreasureListener, OrbitListener
 {
-	private int difficulty = 3;					// difficulty setting for the game
 	public static PirateFrame ourFrame = null;	// static handle to myself
 	SpacePanel spacePanel = null;				// handle to main game screen
 	private PirateBtnPanel myBtnPanel = null;	// handle to the btnPanel at top of screen
 	JProgressBar progressBar = null;			// handle to health bar at bottom of screen
-	private int health = 100; 					// tracks health of main ship
 	private boolean gameInProgress = false; 	// flag to indicate if a game is underway
 	private boolean gameOver = false ; 			// forces game to end 
 	private boolean firstTimeThru = true; 		// flag used to display welcome screen
+	private boolean gamePaused = false;			// flag indicating if game is paused or running
+
+	// TODO: Move all the following to SpaceGame
+	private int difficulty = 3;					// difficulty setting for the game
+	private int health = 100; 					// tracks health of main ship
+	private int score = 0;						// overall score in the game
+	private int asteroidsHit = 0;				// count of how man weapons hit asteroids
+	private int[] treasuresCaptured = new int[SpaceTreasureType.SPACE_CREDITS.ordinal()+1];
+												// count of how man treasures were captured
+	private int currency = 0;					// total currency available. Can trade in treasure for currency
+	private boolean lastOrbitStatus = false;    // orbit status used to determine if a change in status happened
+
 	
-
-
 	/**
 	 * 
 	 */
@@ -148,8 +158,49 @@ public class PirateFrame extends JFrame implements Runnable
 	{
 		this.myBtnPanel = new PirateBtnPanel();
 		myBtnPanel.createContent();
+		myBtnPanel.addStatsListener (this);
 		return myBtnPanel;
 		
+	}
+
+	/**
+	 * captures when the stats button is pressed and displays the current stats        
+	 *
+	 * <hr>
+	 * Date created: Mar 31, 2020 
+	 *
+	 * <hr>
+	 * @param e
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed (ActionEvent e)
+	{
+		setGamePaused(true);
+		
+		
+		String[] difficultyString = {"?","?", "?", "Easy", "?", "Medium", "?", "?", "Hard", "?", "Really Hard"};
+		String treasures = "";
+		for (SpaceTreasureType treasureType : SpaceTreasureType.values ( ))
+			treasures += "\t\t                     " + treasureType + " = " + treasuresCaptured[treasureType.ordinal ( )] + "\n";
+
+		JOptionPane.showMessageDialog (this, 
+			"Game is currently" + (gameInProgress ? " " : " not " ) + "in progress.\n" +
+			"Difficulty set at: " + difficultyString[difficulty] + ". \n" +
+			"Health remaining: " + health + "%\n"+
+			"Wealth accumulated: " + currency + "\n" +
+			"Score " + score + "\n" +
+					"\t\t Asteroids hit: " + asteroidsHit + "\n" +
+					"\t\t Treasures captured: "+ "\n" + treasures
+			, "Space Pirates Stats", JOptionPane.INFORMATION_MESSAGE, null);
+
+		setGamePaused(false);
+	}
+	
+	public void setGamePaused(boolean paused)
+	{
+		gamePaused = paused;
+		this.spacePanel.setGamePaused(paused);
 	}
 
 	@Override
@@ -163,7 +214,8 @@ public class PirateFrame extends JFrame implements Runnable
 
 			if (gameInProgress)
 			{
-				repaint();				
+				repaint();		
+				this.myBtnPanel.updateScore (score);
 				
 				// now that collisions have been processed, determine if the main ship is
 				// so damaged that the game is over.
@@ -175,7 +227,7 @@ public class PirateFrame extends JFrame implements Runnable
 					gameInProgress = false;
 					repaint();
 				}
-				else
+				else if (!gamePaused)
 					this.spacePanel.moveObjects();
 			}
 			
@@ -332,6 +384,12 @@ public class PirateFrame extends JFrame implements Runnable
 		gameInProgress = true;
 		gameOver = false;
 		health = 100;
+		this.score = 0;
+		this.asteroidsHit = 0;
+		this.currency = 0;
+		for (SpaceTreasureType type : SpaceTreasureType.values())
+			treasuresCaptured[type.ordinal()] = 0;
+
 		spacePanel.addMainShip (new SpaceShip(300,300));
 		spacePanel.add (new SpaceStation(100,100));
 		spacePanel.add (new WeighStation(-100,-100));
@@ -411,6 +469,7 @@ public class PirateFrame extends JFrame implements Runnable
 
         JRadioButtonMenuItem mediumRMenuItem = new JRadioButtonMenuItem("Normal");
         mediumRMenuItem.setSelected(true);
+        difficulty = 5;
         optionMenu.add(mediumRMenuItem);
         mediumRMenuItem.setToolTipText("Set difficulty of game play to Normal");
 
@@ -646,4 +705,56 @@ public class PirateFrame extends JFrame implements Runnable
 		
 		return errors;    
 	}
+
+	/**
+	 * Enter method description here         
+	 *
+	 * <hr>
+	 * Date created: Mar 31, 2020 
+	 *
+	 * <hr>
+	 * @param treasure
+	 * @see SpacePirates.TreasureListener#treasureCaptured(SpacePirates.SpaceTreasure)
+	 */
+	@Override
+	public void treasureCaptured (SpaceTreasure treasure)
+	{
+		this.treasuresCaptured[treasure.getTreasureType ( ).ordinal()] += 1;
+		currency += SpaceTreasure.value[treasure.getTreasureType ( ).ordinal()];
+		score += 50;
+		
+	}
+
+	/**
+	 * Enter method description here         
+	 *
+	 * <hr>
+	 * Date created: Mar 31, 2020 
+	 *
+	 * <hr>
+	 * @param orbiting
+	 * @see SpacePirates.OrbitListener#orbitChanged(boolean)
+	 */
+	@Override
+	public void orbitChanged (boolean orbiting)
+	{
+		if (lastOrbitStatus == orbiting)
+			return;
+		lastOrbitStatus = orbiting;
+		
+		if (orbiting)
+		{
+			setGamePaused(true);
+			score += 100; 
+	        Object[] options = {"Buy Health", "Turn Treasure", "All Done"};
+	
+			Object answer = JOptionPane.showInputDialog (this, "You've docked with a station! \n" +
+				"You have " + this.currency + " space credits, " +
+				health + "% health.\nWhat would you like to do" 
+				, "Docking in Progess", JOptionPane.PLAIN_MESSAGE, null, 
+				options, options[0]);
+			setGamePaused(false);
+		}
+	}
+
 }

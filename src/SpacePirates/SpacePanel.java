@@ -32,6 +32,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	// keep a handle to the mainShip for quick reference. The mainShip is in the 
 	// objects array list of SpaceObjects too.
 	private SpaceShip 				mainShip			= null; 
+	
+	private boolean 				gamePaused			= false; // flag indicating game is paused
 
 	
 	
@@ -70,9 +72,21 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 	public void addMainShip (SpaceShip ship)
 	{
+		// forget about the old ship if any existed
 		objects.remove (mainShip);
-		objects.add (ship);
+		if (mainShip != null)
+		{
+			mainShip.addTreasureListener (null);
+			mainShip.addOrbitListener (null);
+		}
+		// remember this one passed in
+		objects.add (0,ship);		// make sure space ship is first in collection
 		this.mainShip = ship;
+		if (mainShip != null)
+		{
+			mainShip.addTreasureListener (PirateFrame.ourFrame);
+			mainShip.addOrbitListener (PirateFrame.ourFrame);
+		}
 	}
 	
 	public SpaceShip mainShip()
@@ -248,6 +262,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void paintComponent (Graphics g)
 	{
+		if (gamePaused)
+			return;
 		
 		Graphics2D g2 = (Graphics2D) g;
 		
@@ -326,12 +342,14 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 					// make sure weapons aren't "colliding" with whatever fired them
 					SpaceObject o1 = objects.get (r1);
 					SpaceObject o2 = objects.get (r2);
+										
 					if ((o1.getOrigin ( ) == o2) || (o2.getOrigin ( ) == o1))
 						;// as Trump says... "No Collision"
 					else
 					{
 						o1.simCollide (o2);
-						System.out.println("collision between " + r1 + " and " +r2);						
+						System.out.println("collision between " + r1  + " (" + o1.getClass ( ).getSimpleName ( ) + ") " +
+							" and " +r2 + o2.getClass ( ).getSimpleName ( ) + ") ");						
 						boolean o1Destroyed = o1.collision (10, objects);
 						boolean o2Destroyed = o2.collision (10, objects);
 						
@@ -388,6 +406,10 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		objects.clear ( );
 	}
 	
+	public void setGamePaused(boolean paused)
+	{
+		gamePaused = paused;
+	}
 	
 	public String saveGame(ObjectOutputStream out) 
     {

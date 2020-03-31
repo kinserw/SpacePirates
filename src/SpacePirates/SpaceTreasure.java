@@ -31,6 +31,17 @@ public class SpaceTreasure extends SpaceObject
 	 */
 	private SpaceTreasureType type = SpaceTreasureType.STEEL;
 
+	public static final int[] value = {
+					1, // STEEL,
+					3, // WATER,
+					5, // GOLD,
+					8, // URANIUM,
+					9, // TITANIUM,
+					15, // DARK_MATTER,
+					15, // ANTI_MATTER,
+					5 // SPACE_CREDITS0
+					};
+
 	/**
 	 * Constructor        
 	 *
