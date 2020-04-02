@@ -1,3 +1,20 @@
+Stuff for anyone (these are items from the capstone requirements document)
+- our JFrame needs
+	- a caption and its own icon. 
+- the "how to play" popup needs to be a class derived from JDialog (and not a JOptionPane)
+
+Other stuff for anyone
+- stats display needs to show which weapon is in use and how many rounds it has left
+- docking with the station needs to allow user to buy new weapons, buy more rounds for weapon on board, buy health, trade in treasures to get space coins 
+	(this is started by not fully working; one might say the hooks are in place)
+- need to make sure the main ship can't be damaged while in orbit around a space station or weigh station 
+- need to improve our ability to get out of orbit without going back into orbit right away
+- need to make sure score is increased when asteroids (large and small) are shot
+- docking should give us some points as well (but just the initial docking not repeatedly getting more points while docked)
+- shooting spacetreasures should give us points but not as much as capturing the treasure
+- shooting a space station or weigh station should deduct points (not a huge amount just enough to make it a disincentive)
+
+
 Stuff for Ryan
 - investigate how saveGame and loadGame works in PirateFrame and SpacePanel. then add the following items from PirateFrame to both saveGame and loadGame...
 	private int score = 0;						// overall score in the game
