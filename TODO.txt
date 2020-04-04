@@ -13,6 +13,7 @@ Other stuff for anyone
 - docking should give us some points as well (but just the initial docking not repeatedly getting more points while docked)
 - shooting spacetreasures should give us points but not as much as capturing the treasure
 - shooting a space station or weigh station should deduct points (not a huge amount just enough to make it a disincentive)
+- edit ClusterBomb.gif file to have multiple layers/panes (all exist as separate files, just need to be merged into a single animated gif file named ClusterBomb.gif)
 
 
 Stuff for Ryan
