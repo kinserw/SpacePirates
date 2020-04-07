@@ -271,7 +271,6 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		          ObjectOutputStream out = new ObjectOutputStream(fileOut); 
 		          
 		          out.writeObject(heading); 
-
 		          String errors = saveGame(out);
 		          if (errors != null)
 		        	  JOptionPane.showMessageDialog (this, errors);
@@ -642,6 +641,20 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	        out.writeInt(health);
 	        out.writeBoolean (gameInProgress);
 	        out.writeInt (difficulty);
+	        out.writeInt (score);
+	        out.writeInt (asteroidsHit);
+	        
+	        int numTreasures = 0;
+	        for(@SuppressWarnings ("unused") int tc:treasuresCaptured)
+	        	numTreasures ++;
+	        
+	        out.writeInt (numTreasures);
+	        
+	        for(int tc: treasuresCaptured)
+	        	out.writeInt (tc);
+	        
+	        out.writeInt (currency);
+	        out.writeBoolean(lastOrbitStatus);
 
 		}
 		catch (Exception e)
@@ -667,12 +680,21 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
     	// saving the game
 		String errors = null;
 
-		
 		try
 		{
 			health = in.readInt();
 			gameInProgress = in.readBoolean ();
 	        difficulty = in.readInt ();
+	        score = in.readInt ( );
+	        asteroidsHit = in.readInt ( );
+	        
+	        int numTreasures = in.readInt ( );
+	        for(int i = 0; i<numTreasures; i++) 
+	        	treasuresCaptured[i] = in.readInt ( );
+	        
+	       
+	        currency = in.readInt();
+	        lastOrbitStatus = in.readBoolean ( );
 		}
 		catch (IOException e)
 		{
