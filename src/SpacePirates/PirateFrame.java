@@ -644,11 +644,8 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	        out.writeInt (score);
 	        out.writeInt (asteroidsHit);
 	        
-	        int numTreasures = 0;
-	        for(@SuppressWarnings ("unused") int tc:treasuresCaptured)
-	        	numTreasures ++;
-	        
-	        out.writeInt (numTreasures);
+	        int numTreasures = treasuresCaptured.length;
+	        out.writeInt (numTreasures); // save size of array so it can be initialized on load	        
 	        
 	        for(int tc: treasuresCaptured)
 	        	out.writeInt (tc);
@@ -689,6 +686,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	        asteroidsHit = in.readInt ( );
 	        
 	        int numTreasures = in.readInt ( );
+	        treasuresCaptured = new int[numTreasures];
 	        for(int i = 0; i<numTreasures; i++) 
 	        	treasuresCaptured[i] = in.readInt ( );
 	        

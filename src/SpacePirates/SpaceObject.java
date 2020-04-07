@@ -59,7 +59,7 @@ abstract public class SpaceObject implements Serializable
 	private double mass = 1;			// mass for simulating force and collisions
 	private int health = 100;			// percentage of health object has
 	private boolean inOrbit = false;	// is the object in orbit
-	private SpaceObject lastOrb = null;	// the last object orbited
+	private transient SpaceObject lastOrb = null;	// the last object orbited
 	
 
 

@@ -25,8 +25,8 @@ public class SpaceShip extends SpaceObject
 	private SpaceShipWeaponType currentWeapon = SpaceShipWeaponType.MISSILE;
 	private int weaponCount = 99;
 	private boolean coasting = true;
-	private TreasureListener treasureListener = null;
-	private OrbitListener orbitListener = null;
+	private transient TreasureListener treasureListener = null;
+	private transient OrbitListener orbitListener = null;
 
 	/**
 	 * 
