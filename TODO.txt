@@ -1,9 +1,4 @@
 Stuff for anyone (these are items from the capstone requirements document)
-- our JFrame needs
-	- a caption and its own icon. 
-- the "how to play" popup needs to be a class derived from JDialog (and not a JOptionPane)
-
-Other stuff for anyone
 - stats display needs to show which weapon is in use and how many rounds it has left
 - docking with the station needs to allow user to buy new weapons, buy more rounds for weapon on board, buy health, trade in treasures to get space coins 
 	(this is started by not fully working; one might say the hooks are in place)
@@ -45,6 +40,9 @@ OPTIONAL ITEMS TO ADD
 
 
 COMPLETED
+- the "how to play" popup needs to be a class derived from JDialog (and not a JOptionPane)
+- our JFrame needs
+	- a caption and its own icon. 
 -- added logic to buy things when docked. 
 -- added logic so that space ship is always first in the objects list (this will make
 	sure that r1 and 01 is always the spaceship when evaluating collisions
