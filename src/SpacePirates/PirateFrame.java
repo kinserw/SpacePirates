@@ -8,12 +8,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -56,6 +58,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	private static final long serialVersionUID = -943895067531390799L;
 
 	public PirateFrame() throws HeadlessException {
+		super("Space Pirates");
 		// set up default operations and starting size/position of screen 
 		setTitle("Space Pirates");
 		PirateFrame.ourFrame = this; 
@@ -150,8 +153,19 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	
 	public static void main(String[] args)
 	{
+		String name = "SpaceShip.gif";
+
+		BufferedImage i = null;
+		try
+        {
+				i = ImageIO.read(new File(name));
+		}
+		catch (Exception e)
+		{
+		}
 		@SuppressWarnings("unused")
 		PirateFrame gameFrame = new PirateFrame();
+		gameFrame.setIconImage (i);
 	}
 	
 	private JPanel createButtons()
@@ -616,15 +630,9 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 			largeRMenuItem.setEnabled(true);
 		});
 
+        
         JMenuItem helpMenu = new JMenuItem("How to Play");
-        helpMenu.addActionListener( (event) -> JOptionPane.showMessageDialog(this, 
-    		"<html><h1>Space Pirates</h1><p style='width:400'>This is a strategy game in which the player searches the galaxy for treasure. The more treasure found, the more upgrades you can buy. The more upgrades you get, the more treasure you can find. The fun is endless!!<br>"
-    		+ "<br>You pilot your ship around space. Destroying asteroids, other ships and space debris will potentially release valuable treasure. Flying over the treasure (at a reasonable speed) allows you to add it to your payload.<br>" +
-    						"<br>A status bar at the top of the screen shows your current payload contents and equipment status. A health bar at the bottom of the screen helps you know when you need to seek repairs.<br>" + 
-    						"<br>Docking with a space station or weigh station will allow you to bank your payload, buy repairs and upgrades. While docked you can't fire at anything. On the plus side, nothing can harm you <br>" +
-    						"either since the stations are guarded by force fields.<br><br>Moving: <br><\t>left click to accelerate" +
-							"<br><\t>right double click to fire your weapon(s)" + 
-							"<br><\t>move the mouse in the direction you want to travel"        		));
+        helpMenu.addActionListener( (event) -> new PirateRulesPopup(this) );
         menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
