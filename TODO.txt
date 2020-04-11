@@ -6,15 +6,7 @@ Stuff for anyone (these are items from the capstone requirements document)
 - edit ClusterBomb.gif file to have multiple layers/panes (all exist as separate files, just need to be merged into a single animated gif file named ClusterBomb.gif)
 
 
-Stuff for Ryan
-- investigate how saveGame and loadGame works in PirateFrame and SpacePanel. then add the following items from PirateFrame to both saveGame and loadGame...
-	private int score = 0;						// overall score in the game
-	private int asteroidsHit = 0;				// count of how man weapons hit asteroids
-	private int[] treasuresCaptured = new int[SpaceTreasureType.SPACE_CREDITS.ordinal()+1];
-												// count of how man treasures were captured
-	private int currency = 0;					// total currency available. Can trade in treasure for currency
-	private boolean lastOrbitStatus = false;    // orbit status used to determine if a change in status happened
-- modify LargeAsteroid to generate a random treasure when it is destroyed (should be returned with the collection of small asteroids already in being created). The lower the value of the treasure type the higher the probability it is created. 
+Stuff for Sam 
 - modify SmallAsteroid to do the same thing (randomly create treasure) but skip the first 3 types since small asteroids are harder to hit.
 
 
@@ -54,3 +46,6 @@ COMPLETED
 - Turn ship while mouse button is down (william)
 - made stations fixed in space even when collided with (william)
 - disable firing while in orbit (william)
+- added asteroidsHit, treasuresCaptured, currency, and lastOrbitStatus attributes to loadGame and saveGame methods.(Sam)
+- modify LargeAsteroid to generate a random treasure when it is destroyed (should be returned with the collection of small asteroids already in being created). 
+  The lower the value of the treasure type the higher the probability it is created.(Sam)

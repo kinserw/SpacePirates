@@ -45,8 +45,8 @@ abstract public class SpaceObject implements Serializable
 	private transient SpaceObject origin = null;  // reference to object this one came from (if any)
 
 	// x,y represent coordinates on the 2D plane
-	private int x = 0;
-	private int y = 0; 
+	protected int x = 0;
+	protected int y = 0; 
 	
 	// represents the type of space objects. Subclasses should set this in their
 	// constructors.

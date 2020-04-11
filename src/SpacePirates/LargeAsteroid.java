@@ -12,6 +12,7 @@
 package SpacePirates;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Enter type purpose here
@@ -83,10 +84,62 @@ public class LargeAsteroid extends SpaceObject
 			debrisItem.setSpeed (Math.random()*2*getSpeed());
 			debrisField.add (debrisItem);
 		}
+		debrisField.add (addSpaceTreasure());
 		return debrisField;
 	}
 	
-
+	/**
+	 * Adds space treasure to debris based on probability    
+	 *
+	 * <hr>
+	 * Date created: Apr 11, 2020
+	 *
+	 * <hr>
+	 * @return Space Treasure
+	 */
+	public SpaceTreasure addSpaceTreasure()
+	{
+		
+		SpaceTreasure treasure = new SpaceTreasure(x,y);
+		
+		Random r = new Random();
+		int prob = r.nextInt(1000);
+		
+		if(prob<=25)					//anti-matter has a 2.5% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.ANTI_MATTER);
+		}
+		else if(prob>25 && prob<=50)	//dark-matter has a 2.5% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.DARK_MATTER);
+		}
+		else if(prob>50 && prob<=100) 	//titanium has a 5% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.TITANIUM);
+		}
+		else if(prob>100 && prob<=200)	//Uranium has a 10% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.URANIUM);
+		}
+		else if(prob>200 && prob<=350)	//Gold has a 15% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.GOLD);
+		}
+		else if(prob>350 && prob<=500) //SpaceCredits has a 15% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.SPACE_CREDITS);
+		}
+		else if(prob>500 && prob<=700)	//Water has a 20% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.WATER);
+		}
+		else							//Steel has a 30% chance of being the treasure type
+			treasure.setTreasureType (SpaceTreasureType.STEEL);
+		
+		return treasure;	
+	}
+	
+	
 	
 	public void setInOrbit (boolean inOrbit)
 	{
