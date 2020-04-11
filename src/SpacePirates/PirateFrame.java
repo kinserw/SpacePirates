@@ -44,7 +44,6 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	// TODO: Move all the following to SpaceGame
 	private int difficulty = 3;					// difficulty setting for the game
 	private int health = 100; 					// tracks health of main ship
-	private int score = 0;						// overall score in the game
 	private int asteroidsHit = 0;				// count of how man weapons hit asteroids
 	private int[] treasuresCaptured = new int[SpaceTreasureType.SPACE_CREDITS.ordinal()+1];
 												// count of how man treasures were captured
@@ -203,7 +202,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 			"Difficulty set at: " + difficultyString[difficulty] + ". \n" +
 			"Health remaining: " + health + "%\n"+
 			"Wealth accumulated: " + currency + "\n" +
-			"Score " + score + "\n" +
+			"Score " + PirateScore.score + "\n" +
 					"\t\t Asteroids hit: " + asteroidsHit + "\n" +
 					"\t\t Treasures captured: "+ "\n" + treasures
 			, "Space Pirates Stats", JOptionPane.INFORMATION_MESSAGE, null);
@@ -229,7 +228,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 			if (gameInProgress)
 			{
 				repaint();		
-				this.myBtnPanel.updateScore (score);
+				this.myBtnPanel.updateScore (PirateScore.score);
 				
 				// now that collisions have been processed, determine if the main ship is
 				// so damaged that the game is over.
@@ -397,7 +396,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		gameInProgress = true;
 		gameOver = false;
 		health = 100;
-		this.score = 0;
+		PirateScore.score = 0;
 		this.asteroidsHit = 0;
 		this.currency = 0;
 		for (SpaceTreasureType type : SpaceTreasureType.values())
@@ -649,7 +648,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	        out.writeInt(health);
 	        out.writeBoolean (gameInProgress);
 	        out.writeInt (difficulty);
-	        out.writeInt (score);
+	        out.writeInt (PirateScore.score);
 	        out.writeInt (asteroidsHit);
 	        
 	        int numTreasures = treasuresCaptured.length;
@@ -690,7 +689,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 			health = in.readInt();
 			gameInProgress = in.readBoolean ();
 	        difficulty = in.readInt ();
-	        score = in.readInt ( );
+	        PirateScore.score = in.readInt ( );
 	        asteroidsHit = in.readInt ( );
 	        
 	        int numTreasures = in.readInt ( );
@@ -749,12 +748,13 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	{
 		this.treasuresCaptured[treasure.getTreasureType ( ).ordinal()] += 1;
 		currency += SpaceTreasure.value[treasure.getTreasureType ( ).ordinal()];
-		score += 50;
+		PirateScore.score += 100;
 		
 	}
 
 	/**
-	 * Enter method description here         
+	 * ObitListener method that gets called if the orbit 
+	 * status of the main space ship changes.          
 	 *
 	 * <hr>
 	 * Date created: Mar 31, 2020 
@@ -767,13 +767,16 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	public void orbitChanged (boolean orbiting)
 	{
 		if (lastOrbitStatus == orbiting)
+		{
 			return;
+		}
+
 		lastOrbitStatus = orbiting;
 		
 		if (orbiting)
 		{
 			setGamePaused(true);
-			score += 100; 
+			PirateScore.score += 25; 
 	        Object[] options = {"Buy Health", "Turn Treasure", "All Done"};
 	
 			Object answer = JOptionPane.showInputDialog (this, "You've docked with a station! \n" +

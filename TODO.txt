@@ -4,10 +4,6 @@ Stuff for anyone (these are items from the capstone requirements document)
 	(this is started by not fully working; one might say the hooks are in place)
 - need to make sure the main ship can't be damaged while in orbit around a space station or weigh station 
 - need to improve our ability to get out of orbit without going back into orbit right away
-- need to make sure score is increased when asteroids (large and small) are shot
-- docking should give us some points as well (but just the initial docking not repeatedly getting more points while docked)
-- shooting spacetreasures should give us points but not as much as capturing the treasure
-- shooting a space station or weigh station should deduct points (not a huge amount just enough to make it a disincentive)
 - edit ClusterBomb.gif file to have multiple layers/panes (all exist as separate files, just need to be merged into a single animated gif file named ClusterBomb.gif)
 
 
@@ -40,6 +36,10 @@ OPTIONAL ITEMS TO ADD
 
 
 COMPLETED
+- shooting spacetreasures should give us points but not as much as capturing the treasure
+- shooting a space station or weigh station should deduct points (not a huge amount just enough to make it a disincentive)
+- docking should give us some points as well (but just the initial docking not repeatedly getting more points while docked)
+- need to make sure score is increased when asteroids (large and small) are shot
 - the "how to play" popup needs to be a class derived from JDialog (and not a JOptionPane)
 - our JFrame needs
 	- a caption and its own icon. 

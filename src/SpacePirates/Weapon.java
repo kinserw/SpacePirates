@@ -51,6 +51,7 @@ public class Weapon extends SpaceObject
 		if (obj instanceof SpaceStation || obj instanceof WeighStation)
 		{
 			this.setHealth (0); // missiles hitting a station just disappear
+			PirateScore.score -= 25;
 		}
 		else if (obj instanceof SpaceTreasure)
 		{
@@ -58,12 +59,21 @@ public class Weapon extends SpaceObject
 			SpaceTreasure treasure = (SpaceTreasure)obj;
 			treasure.setHealth (0);
 			this.setHealth (0);
+			PirateScore.score += 25;
 		}
 		else if (obj instanceof LargeAsteroid)
 		{
 			LargeAsteroid asteroid = (LargeAsteroid)obj;
 			asteroid.setHealth(0); // force the asteroid to break up
 			super.simCollide(obj);
+			PirateScore.score += 100;
+		}
+		else if (obj instanceof SmallAsteroid)
+		{
+			SmallAsteroid asteroid = (SmallAsteroid)obj;
+			asteroid.setHealth(0); // force the asteroid to break up
+			super.simCollide(obj);
+			PirateScore.score += 200;
 		}
 		else
 		{
