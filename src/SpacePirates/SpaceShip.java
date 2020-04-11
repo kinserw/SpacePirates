@@ -27,6 +27,7 @@ public class SpaceShip extends SpaceObject
 	private boolean coasting = true;
 	private transient TreasureListener treasureListener = null;
 	private transient OrbitListener orbitListener = null;
+	private transient boolean breakingOrbit = false;
 
 	/**
 	 * 
@@ -61,9 +62,12 @@ public class SpaceShip extends SpaceObject
 	{
 		if (obj instanceof SpaceStation || obj instanceof WeighStation)
 		{
-			System.out.println("orbit");
-			orbit(obj);
-			setInOrbit(true);
+			if (!breakingOrbit)
+			{
+				System.out.println("orbit");
+				orbit(obj);
+				setInOrbit(true);
+			}
 		}
 		else if (obj instanceof SpaceTreasure)
 		{
@@ -176,6 +180,24 @@ public class SpaceShip extends SpaceObject
 	}
 
 	
+	
+	/**
+	 * @return breakingOrbit
+	 */
+	public boolean isBreakingOrbit ( )
+	{
+		return breakingOrbit;
+	}
+
+	
+	/**
+	 * @param breakingOrbit the breakingOrbit to set
+	 */
+	public void setBreakingOrbit (boolean breakingOrbit)
+	{
+		this.breakingOrbit = breakingOrbit;
+	}
+
 	/**
 	 * @return coasting
 	 */

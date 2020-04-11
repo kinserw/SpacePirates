@@ -52,7 +52,9 @@ public class PirateRulesPopup extends JDialog
 											"<br>Docking with a space station or weigh station will allow you to bank your payload, buy repairs and upgrades. While docked you can't fire at anything. On the plus side, nothing can harm you <br>" +
 											"either since the stations are guarded by force fields.<br><br>Moving: <br><\t>left click to accelerate" +
 											"<br><\t>right double click to fire your weapon(s)" + 
-											"<br><\t>move the mouse in the direction you want to travel");	
+											"<br><\t>move the mouse in the direction you want to travel"+
+											"<br><br>Docking: To dock, coast into a Space Station or Weigh Station" +
+											"<br>Undocking: To Undock, Press the left mouse button and hold it until clear of the station.");	
 		label.setBorder (BorderFactory.createEmptyBorder (10,10,10,10));
 		this.add (label);
 		this.pack();

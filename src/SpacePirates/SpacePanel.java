@@ -208,6 +208,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			if (mainShip.getSpeed() < 50)
 				mainShip.setSpeed (mainShip.getSpeed() + 10);
 			mainShip.setCoasting (false);
+			if (mainShip.isInOrbit ( ))
+				mainShip.setBreakingOrbit (true);
 			mainShip.setInOrbit (false);
 		}
 
@@ -218,9 +220,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	{
 		if (e.getButton ( ) == MouseEvent.BUTTON1)
 		{
-			//System.out.print("Stop Move  ");
+			mainShip.setBreakingOrbit (false);
 			
-			//mainShip.setSpeed (0);
 			mainShip.setCoasting (true);
 			
 		}
