@@ -4,10 +4,10 @@ Stuff for anyone (these are items from the capstone requirements document)
 	(this is started by not fully working; one might say the hooks are in place)
 - need to make sure the main ship can't be damaged while in orbit around a space station or weigh station 
 - edit ClusterBomb.gif file to have multiple layers/panes (all exist as separate files, just need to be merged into a single animated gif file named ClusterBomb.gif)
-
+- Create gifs for the different types of treasures?
 
 Stuff for Sam 
-- modify SmallAsteroid to do the same thing (randomly create treasure) but skip the first 3 types since small asteroids are harder to hit.
+
 
 
 Stuff for Charles??
@@ -49,3 +49,4 @@ COMPLETED
 - added asteroidsHit, treasuresCaptured, currency, and lastOrbitStatus attributes to loadGame and saveGame methods.(Sam)
 - modify LargeAsteroid to generate a random treasure when it is destroyed (should be returned with the collection of small asteroids already in being created). 
   The lower the value of the treasure type the higher the probability it is created.(Sam)
+- modify SmallAsteroid to do the same thing (randomly create treasure) but skip the first 3 types since small asteroids are harder to hit.(skipped Steel, water, and SpaceCredits)

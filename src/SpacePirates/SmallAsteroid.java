@@ -11,6 +11,8 @@
 
 package SpacePirates;
 
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Enter type purpose here
@@ -50,5 +52,46 @@ public class SmallAsteroid extends SpaceObject
 		super(x,y,m,v);
 		type = SpaceObjectType.DYNAMIC;
 		this.setRotationRate (.5);
+	}
+	
+	public ArrayList <SpaceObject> getDebris()
+	{
+		ArrayList<SpaceObject> debris = super.getDebris ( );
+		debris.add (addSpaceTreasure());
+		return debris;
+		
+	}
+	
+	public SpaceTreasure addSpaceTreasure()
+	{
+		
+		SpaceTreasure treasure = new SpaceTreasure(x,y);
+		
+		Random r = new Random();
+		int prob = r.nextInt(1000);
+		
+		if(prob<=100)					//anti-matter has a 10% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.ANTI_MATTER);
+		}
+		else if(prob>100 && prob<=200)	//dark-matter has a 10% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.DARK_MATTER);
+		}
+		else if(prob>200 && prob<=425) 	//titanium has a 22.5% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.TITANIUM);
+		}
+		else if(prob>425 && prob<=700)	//Uranium has a 27.5% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.URANIUM);
+		}
+		else							//Gold has a 30% chance of being the treasure type
+		{
+			treasure.setTreasureType (SpaceTreasureType.GOLD);
+		}
+		
+		
+		return treasure;	
 	}
 }
