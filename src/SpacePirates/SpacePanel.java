@@ -341,10 +341,10 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 				Rectangle rect2 = rects.get (r2);
 				if (rect1.intersects (rect2))
 				{
-					// make sure weapons aren't "colliding" with whatever fired them
 					SpaceObject o1 = objects.get (r1);
 					SpaceObject o2 = objects.get (r2);
 										
+					// make sure weapons aren't "colliding" with whatever fired them
 					if ((o1.getOrigin ( ) == o2) || (o2.getOrigin ( ) == o1))
 						;// as Trump says... "No Collision"
 					else
@@ -373,6 +373,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 							rects.remove(rect1);
 							r1--;
 							r2--; // decrement r2 since r1 by definition is earlier in the list
+							break; // break out of inner loop since our r1 is gone and we need to find a new one
 						}
 					} // end else (weapon not colliding with origin)
 					
