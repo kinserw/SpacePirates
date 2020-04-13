@@ -28,8 +28,6 @@ public class SpaceShip extends SpaceObject
 	private transient TreasureListener treasureListener = null;
 	private transient OrbitListener orbitListener = null;
 	private transient boolean breakingOrbit = false;
-	
-	
 
 	/**
 	 * 
