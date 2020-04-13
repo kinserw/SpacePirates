@@ -48,4 +48,32 @@ public class SpaceStation extends WeighStation
 	{
 		; // do nothing because I have a force field
 	}
+	
+	/**
+	 * Overrides simCollide to make asteroids get
+	 * pushed away from WayStations and SpaceStations.      
+	 *
+	 * <hr>
+	 * Date created: Apr 13, 2020 
+	 *
+	 * <hr>
+	 * @param obj
+	 * @see SpacePirates.SpaceObject#simCollide(SpacePirates.SpaceObject)
+	 */
+	public void simCollide(SpaceObject obj)
+	{
+		if (obj instanceof LargeAsteroid || obj instanceof SmallAsteroid)
+		{
+			obj.pointAt(this);
+			obj.setSpeedAng(obj.getSpeedAng() + Math.PI);
+			
+			if(obj.getSpeed() < 10)
+				obj.setSpeed(10);
+		}
+		else
+		{
+			super.simCollide (obj);
+		}
+	}
+
 }

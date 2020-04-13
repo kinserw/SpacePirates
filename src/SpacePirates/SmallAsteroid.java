@@ -94,4 +94,31 @@ public class SmallAsteroid extends SpaceObject
 		
 		return treasure;	
 	}
+	
+	/**
+	 * Overrides simCollide to make asteroids get
+	 * pushed away from WayStations and SpaceStations.      
+	 *
+	 * <hr>
+	 * Date created: Apr 13, 2020 
+	 *
+	 * <hr>
+	 * @param obj
+	 * @see SpacePirates.SpaceObject#simCollide(SpacePirates.SpaceObject)
+	 */
+	public void simCollide(SpaceObject obj)
+	{
+		if (obj instanceof SpaceStation || obj instanceof WeighStation)
+		{
+			pointAt(obj);
+			setSpeedAng(getSpeedAng() + Math.PI);
+			
+			if(getSpeed() < 10)
+				setSpeed(10);
+		}
+		else
+		{
+			super.simCollide (obj);
+		}
+	}
 }

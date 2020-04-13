@@ -16,8 +16,7 @@ Stuff for Charles??
 	- Treasure variation
 - Docking with stations (charles)
 	-- flesh out purchase of items
-- Asteroids repelled from stations 
-	(I made so they don't orbit but they still don't repel)
+
 
 OPTIONAL ITEMS TO ADD
 - Modify ship
@@ -27,6 +26,7 @@ OPTIONAL ITEMS TO ADD
 
 
 COMPLETED
+- Asteroids repelled from stations 
 - need to improve our ability to get out of orbit without going back into orbit right away
 - shooting spacetreasures should give us points but not as much as capturing the treasure
 - shooting a space station or weigh station should deduct points (not a huge amount just enough to make it a disincentive)
