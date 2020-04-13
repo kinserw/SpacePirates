@@ -97,7 +97,7 @@ public class LargeAsteroid extends SpaceObject
 		for (int i=0; i < size; i++)
 		{
 			// create small asteroid with the same x,y as this and proportional mass
-			SmallAsteroid debrisItem = new SmallAsteroid(getX ( ),getY(),getMass()/size,getSpeed());
+			SmallAsteroid debrisItem = new SmallAsteroid(getX ( ),getY(),getMass()/size,getSpeed()-10); //-10 decreases the speed slightly
 
 			// set speed angle to be a random trajectory
 			debrisItem.setSpeedAng (Math.random()*2*Math.PI);
