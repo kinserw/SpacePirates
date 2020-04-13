@@ -13,14 +13,15 @@ package SpacePirates;
 
 
 /**
- * Enter type purpose here
+ * Specialized kind of space object. This is an abstract class meant to be extended but provides
+ * some default behavior common across all weapons.
  *
  * <hr>
  * Date created: Mar 4, 2020
  * <hr>
  * @author William Kinser
  */
-public class Weapon extends SpaceObject
+public abstract class Weapon extends SpaceObject
 {
 
 	
@@ -46,21 +47,35 @@ public class Weapon extends SpaceObject
 	}
 
 	
+	/**
+	 * called when this object collides with another one (passed in as a parameter)         
+	 *
+	 * <hr>
+	 * Date created: Apr 13, 2020 
+	 *
+	 * <hr>
+	 * @param obj
+	 * @see SpacePirates.SpaceObject#simCollide(SpacePirates.SpaceObject)
+	 */
+	@Override
 	public void simCollide(SpaceObject obj)
 	{
+		// if colliding with a station, the weapon is destroyed by the station's force field
 		if (obj instanceof SpaceStation || obj instanceof WeighStation)
 		{
-			this.setHealth (0); // missiles hitting a station just disappear
-			PirateScore.score -= 25;
+			this.setHealth (0); // weapon hitting a station just disappear
+			PirateScore.score -= 25; // negative score to hit a station, bad thing, bad bad bad
 		}
+		// if weapon hits a space treasure, destroy it and update score accordingly
 		else if (obj instanceof SpaceTreasure)
 		{
 			// weapons hitting a space treasure destroys it and itself (without collecting any booty)
 			SpaceTreasure treasure = (SpaceTreasure)obj;
-			treasure.setHealth (0);
-			this.setHealth (0);
-			PirateScore.score += 25;
+			treasure.setHealth (0); // set health on treasure to cause it to be destroyed
+			this.setHealth (0);     // set health on this object to cause it to be destroyed
+			PirateScore.score += 25; 
 		}
+		// if weapon hits a large asteroid, destroy it and continue with default behavior
 		else if (obj instanceof LargeAsteroid)
 		{
 			LargeAsteroid asteroid = (LargeAsteroid)obj;
@@ -68,6 +83,7 @@ public class Weapon extends SpaceObject
 			super.simCollide(obj);
 			PirateScore.score += 100;
 		}
+		// if weapon hits a small asteroid, destroy it and continue with default behavior
 		else if (obj instanceof SmallAsteroid)
 		{
 			SmallAsteroid asteroid = (SmallAsteroid)obj;
@@ -75,9 +91,10 @@ public class Weapon extends SpaceObject
 			super.simCollide(obj);
 			PirateScore.score += 200;
 		}
+		// else do the default thing
 		else
 		{
 			super.simCollide(obj);
 		}
 	}
-}
+} // end Weapon

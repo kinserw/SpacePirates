@@ -13,7 +13,6 @@ package SpacePirates;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -259,10 +258,10 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			// can't shoot weapon while in orbit
 			if (mainShip.isInOrbit() == false)
 			{
-				Weapon weapon = this.mainShip.getCurrentWeapon ( );
+				// if weapon available then fire it (it automatically update ammo count)
+				Weapon weapon = this.mainShip.fireCurrentWeapon ( );
 				
-				// if weapon available then fire it
-				if (weapon != null)
+				if (weapon != null) 
 				{
 					// weapon starts at center of the main ship
 					weapon.setX(this.mainShip.getX ( ) + 
@@ -703,7 +702,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 				if (i == shipIndex)
 				{
 					if (obj.getClass ( ).equals (SpaceShip.class))
-						this.mainShip = (SpaceShip)obj;
+						addMainShip((SpaceShip)obj);
 					else
 						errors = new String("Can't find main space ship");
 				}

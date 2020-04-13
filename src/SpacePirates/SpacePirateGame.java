@@ -20,6 +20,10 @@ import java.util.ArrayList;
 /**
  * Controls various aspects of the game such as difficulty of play, 
  * physics, etc.
+ * 
+ * NOTE: Currently this class is not used. It is here to refactor SpacePanel to remove 
+ * game specific logic from the UI classes. This will make it helpful to port the game 
+ * to different platforms in the future. For now, it doesn't get used.
  *
  * <hr>
  * Date created: Mar 18, 2020
@@ -59,16 +63,6 @@ public class SpacePirateGame implements Serializable
 	public SpacePirateGame ( )
 	{
 	}
-	
-	public void newGame()
-	{
-		
-	}
-	public void endGame()
-	{
-		
-	}
-	
 	
     
 	/**
@@ -182,4 +176,4 @@ public class SpacePirateGame implements Serializable
     	return null;
     }
 
-}
+} // end SpacePirateGame

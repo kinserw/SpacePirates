@@ -45,9 +45,20 @@ public class WeighStation extends SpaceObject
 		this.setRotationRate (0.2);
 	}
 	
-	public void calculateDamage(double speed1, double speed2)
+	/**
+	 * calculates damage as a result of a collision        
+	 *
+	 * <hr>
+	 * Date created: Apr 13, 2020
+	 *
+	 * <hr>
+	 * @param speed1
+	 * @param speed2
+	 */
+	public void calculateDamage(int speed1, int speed2)
 	{
-		// override base class method to not take damage since stations have a force field
+		; // do nothing because I have a force field
 	}
 
-}
+
+} // end WeighStation
