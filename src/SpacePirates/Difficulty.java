@@ -13,7 +13,7 @@ package SpacePirates;
 
 
 /**
- * Enter type purpose here
+ * Enumberation type representing the difficulty of the game as selected by the player
  *
  * <hr>
  * Date created: Mar 18, 2020
@@ -24,5 +24,6 @@ public enum Difficulty
 {
 	EASY,
 	MEDIUM,
-	HARD
+	HARD,
+	REALLY_HARD
 }

@@ -12,10 +12,10 @@
 package SpacePirates;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
- * Enter type purpose here
+ * Specialized kind of space object, representing a large asteroid. When it is destroyed
+ * it will break up into multiple small asteroids based on its size. 
  *
  * <hr>
  * Date created: Mar 4, 2020
@@ -28,8 +28,20 @@ public class LargeAsteroid extends SpaceObject
 	 * 
 	 */
 	private static final long serialVersionUID = -3176116193088426885L;
-	private int size = 0;
+	private int size = 0; // determines how many small asteroids are created when destroyed
 	
+	
+	/**
+	 * Constructor        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * 
+	 * @param x
+	 * @param y
+	 * @param size
+	 */
 	public LargeAsteroid(int x, int y, int size)
 	{
 		super(x,y);
@@ -40,6 +52,20 @@ public class LargeAsteroid extends SpaceObject
 	}
 	
 	
+	
+	/**
+	 * Constructor        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * 
+	 * @param x
+	 * @param y
+	 * @param size  
+	 * @param m		// mass
+	 * @param v		// velocity
+	 */
 	public LargeAsteroid(int x, int y, int size, double m, double v)
 	{
 		super(x,y,m,v);
@@ -48,45 +74,43 @@ public class LargeAsteroid extends SpaceObject
 		this.setRotationRate (.5);
 	}
 	
-	/**
-	 *
-	 * <hr>
-	 * Date created: Mar 18, 2020
-	 *
-	 * <hr>
-	 * @param speed1
-	 * @param speed2
-	 * @return true if destroyed by the collision
-	 */
-	public void calculateDamage(double speed1, double speed2)
-	{
-		super.calculateDamage (speed1, speed2);
-		// based on the force of the impact, this large asteroid will break
-		// up into multiple component parts. Each is a new LargeAsteroid with
-		// its own collection of SmallAsteroids. The sum of all SmallAsteroids
-		// will be equal to or less than the number originally contained herein.
-		// these will be returned in the array provided by the caller. 
-		// If the result is that this asteroid has no small asteroids left in it, 
-		// then it returns true and the caller should delete it.
-		
-		// some of the original SmallAsteroids contained herein may be destroyed
-		// by the collision 
-		
-	}
+
 	
+	/**
+	 * Overrides base class method to create an array of small asteroids and space treasure
+	 * when this large asteroid is destroyed         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * <hr>
+	 * @return
+	 * @see SpacePirates.SpaceObject#getDebris()
+	 */
+	@Override
 	public ArrayList<SpaceObject> getDebris()
 	{
+		// get super's debris field and add to it
 		ArrayList<SpaceObject> debrisField = super.getDebris ( );
+		
+		// loop to create size # of small asteroids
 		for (int i=0; i < size; i++)
 		{
+			// create small asteroid with the same x,y as this and proportional mass
 			SmallAsteroid debrisItem = new SmallAsteroid(getX ( ),getY(),getMass()/size,getSpeed());
+
+			// set speed angle to be a random trajectory
 			debrisItem.setSpeedAng (Math.random()*2*Math.PI);
+
+			// set speed to be up to twice this one
 			debrisItem.setSpeed (Math.random()*2*getSpeed());
 			debrisField.add (debrisItem);
 		}
+
+		// add a space treasure as part of the debri field
 		debrisField.add (addSpaceTreasure());
 		return debrisField;
-	}
+	} // end getDebris
 	
 	/**
 	 * Adds space treasure to debris based on probability    
@@ -102,8 +126,8 @@ public class LargeAsteroid extends SpaceObject
 		
 		SpaceTreasure treasure = new SpaceTreasure(x,y);
 		
-		Random r = new Random();
-		int prob = r.nextInt(1000);
+		// use Math static random because it creates a single static instance of Random
+		int prob = (int)(1000*Math.random ( ));
 		
 		if(prob<=25)					//anti-matter has a 2.5% chance of being the treasure type
 		{
@@ -137,23 +161,54 @@ public class LargeAsteroid extends SpaceObject
 			treasure.setTreasureType (SpaceTreasureType.STEEL);
 		
 		return treasure;	
-	}
+	} // end addSpaceTreasure
 	
 	
 	
+	/**
+	 * Overrides base behavior to do nothing.        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * <hr>
+	 * @param inOrbit
+	 * @see SpacePirates.SpaceObject#setInOrbit(boolean)
+	 */
+	@Override
 	public void setInOrbit (boolean inOrbit)
 	{
 		; // do nothing. asteroids can't be in orbit
 	}
 
+	/**
+	 * Overrides base behavior to do nothing.        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * <hr>
+	 * @param obj
+	 * @see SpacePirates.SpaceObject#orbit(boolean)
+	 */
+	@Override
 	public void orbit(SpaceObject obj)
 	{
 		; // do nothing. asteroids can't be in orbit
 	}
 	
+	/**
+	 * Overrides base behavior to do nothing.        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * <hr>
+	 * @see SpacePirates.SpaceObject#orbit(boolean)
+	 */
 	public void orbit()
 	{
 		; // do nothing. asteroids can't be in orbit
 	}
 	
-}
+} // end LargeAsteroid
