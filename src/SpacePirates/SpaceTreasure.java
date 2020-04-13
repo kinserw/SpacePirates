@@ -13,7 +13,7 @@ package SpacePirates;
 
 
 /**
- * Enter type purpose here
+ * Models treasure that is floating in space
  *
  * <hr>
  * Date created: Mar 4, 2020
@@ -26,12 +26,11 @@ public class SpaceTreasure extends SpaceObject
 	 * 
 	 */
 	private static final long serialVersionUID = 6638950121102790576L;
-	/**
-	 * 
-	 */
-	private SpaceTreasureType type = SpaceTreasureType.STEEL;
 
-	public static final int[] value = {
+	// track what type of treasure this is
+	private SpaceTreasureType type = SpaceTreasureType.STEEL; // default type is steel
+
+	public static final int[] value = { // value is different from ordinal but needs one for each type)
 					1, // STEEL,
 					3, // WATER,
 					5, // GOLD,
@@ -92,4 +91,4 @@ public class SpaceTreasure extends SpaceObject
 		this.type = type;
 	}
 
-}
+} // end SpaceTreasure

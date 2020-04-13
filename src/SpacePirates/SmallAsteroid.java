@@ -12,10 +12,9 @@
 package SpacePirates;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
- * Enter type purpose here
+ * This is a specialized type of space object
  *
  * <hr>
  * Date created: Mar 4, 2020
@@ -44,9 +43,21 @@ public class SmallAsteroid extends SpaceObject
 	public SmallAsteroid (int x, int y)
 	{
 		super (x, y);
-		// TODO Auto-generated constructor stub
 	}
 	
+	
+	/**
+	 * Constructor        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * 
+	 * @param x
+	 * @param y
+	 * @param m
+	 * @param v
+	 */
 	public SmallAsteroid(int x, int y, double m, double v)
 	{
 		super(x,y,m,v);
@@ -54,6 +65,17 @@ public class SmallAsteroid extends SpaceObject
 		this.setRotationRate (.5);
 	}
 	
+	/**
+	 * overrid base behavior to return a space treasure         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * <hr>
+	 * @return
+	 * @see SpacePirates.SpaceObject#getDebris()
+	 */
+	@Override
 	public ArrayList <SpaceObject> getDebris()
 	{
 		ArrayList<SpaceObject> debris = super.getDebris ( );
@@ -62,14 +84,23 @@ public class SmallAsteroid extends SpaceObject
 		
 	}
 	
+	/**
+	 * add a space treasure when this space object is destroyed         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @return
+	 */
 	public SpaceTreasure addSpaceTreasure()
 	{
 		
 		SpaceTreasure treasure = new SpaceTreasure(x,y);
 		
-		Random r = new Random();
-		int prob = r.nextInt(1000);
-		
+		// use Math static random because it creates a single static instance of Random
+		int prob = (int)(1000*Math.random ( ));
+				
 		if(prob<=100)					//anti-matter has a 10% chance of being the treasure type
 		{
 			treasure.setTreasureType (SpaceTreasureType.ANTI_MATTER);
@@ -94,4 +125,4 @@ public class SmallAsteroid extends SpaceObject
 		
 		return treasure;	
 	}
-}
+} // end SmallAsteroid

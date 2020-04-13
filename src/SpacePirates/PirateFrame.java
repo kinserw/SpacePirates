@@ -1,8 +1,19 @@
+/**
+ * ---------------------------------------------------------------------------
+ * File name: PirateFrame.java
+ * Project name: SpacePirates
+ * ---------------------------------------------------------------------------
+ * Creator's name and email: William Kinser, kinserw@etsu.edu
+ * Course:  CSCI 1260 277
+ * Creation Date: Mar 31, 2020
+ * ---------------------------------------------------------------------------
+ */
+
 package SpacePirates;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,6 +41,15 @@ import javax.swing.JSplitPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
+
+/**
+ * This class is the main class. It has its own thread and is the listener for key events.
+ *
+ * <hr>
+ * Date created: Apr 12, 2020
+ * <hr>
+ * @author William Kinser
+ */
 public class PirateFrame extends JFrame implements Runnable, ActionListener, TreasureListener, OrbitListener
 {
 	public static PirateFrame ourFrame = null;	// static handle to myself
@@ -42,7 +62,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	private boolean gamePaused = false;			// flag indicating if game is paused or running
 
 	// TODO: Move all the following to SpaceGame
-	private int difficulty = 3;					// difficulty setting for the game
+	private Difficulty difficulty = Difficulty.EASY; // difficulty setting for the game
 	private int health = 100; 					// tracks health of main ship
 	private int asteroidsHit = 0;				// count of how man weapons hit asteroids
 	private int[] treasuresCaptured = new int[SpaceTreasureType.SPACE_CREDITS.ordinal()+1];
@@ -56,8 +76,20 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	 */
 	private static final long serialVersionUID = -943895067531390799L;
 
-	public PirateFrame() throws HeadlessException {
-		super("Space Pirates");
+	
+	/**
+	 * Constructor that creates main display components and starts its thread
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * 
+	 * @throws HeadlessException
+	 */
+	public PirateFrame() throws HeadlessException 
+	{
+		super("Space Pirates"); // set caption
+		
 		// set up default operations and starting size/position of screen 
 		setTitle("Space Pirates");
 		PirateFrame.ourFrame = this; 
@@ -65,10 +97,13 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		setLocation(00,0);
 		setPreferredSize(new Dimension(600, 600));
 
+		// add menu bar
 		createMenuBar();
 		
+		// add main game panel
 		spacePanel = new SpacePanel();	
-		// have to have a main ship even if a game isn't in health.
+
+		// have to have a main ship even if a game hasn't started
 		spacePanel.addMainShip (new SpaceShip(300,300));
 
 		setLayout(new BorderLayout());
@@ -93,10 +128,14 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		progressBar.setBackground (Color.RED);
 		add(BorderLayout.SOUTH,this.progressBar);
 		
-		shapeMyFrame();
+		pack();
+
+		setVisible(true);
+		setResizable(true);
 
 		Thread myThread = new Thread(this);
 		
+		// display welcom screen
 		if (this.firstTimeThru)
 		{
 			this.firstTimeThru = false;
@@ -106,54 +145,34 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 						    "\nWould you like to start a new game or load an existing game?", 
 				"Welcome", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, 
 				options, 0);
+			// change the way we start depending on player's choice
 			if (answer == 0)
 				startGame();
 			else if (answer == 1)
 				loadGame();
+			// default option is to not start right away
 				
 		}
 
-		//run();
+		//run()
 		myThread.start();
 
+	} // end default constructor
 
-	}
 
-	public PirateFrame(GraphicsConfiguration gc) {
-		super(gc);
-		// TODO Auto-generated constructor stub
-	}
-
-	public PirateFrame(String title) throws HeadlessException {
-		super(title);
-		// TODO Auto-generated constructor stub
-	}
-
-	public PirateFrame(String title, GraphicsConfiguration gc) {
-		super(title, gc);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public void shapeMyFrame()
-	{
-		/*
-		 * setPreferredSize(new Dimension((myGrid.getMaxX()+1)*spacePanel.getRowOffset(),
-		 * (myGrid.getMaxY()+4)*spacePanel.getColOffset()));
-		 * spacePanel.setPreferredSize(
-		 * new Dimension((myGrid.getMaxX()+1)*spacePanel.getRowOffset(),
-		 * (myGrid.getMaxY()+4)*spacePanel.getColOffset()));
-		 */		
-		pack();
-
-		setVisible(true);
-		setResizable(true);
-
-	}
-	
+	/**
+	 * the static public main method that starts the game
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
+		// load the game icon
 		String name = "SpaceShip.gif";
-
 		BufferedImage i = null;
 		try
         {
@@ -162,13 +181,25 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		catch (Exception e)
 		{
 		}
-		@SuppressWarnings("unused")
+
 		PirateFrame gameFrame = new PirateFrame();
 		gameFrame.setIconImage (i);
 	}
+
 	
+	
+	/**
+	 * adds button panel to main display
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @return
+	 */
 	private JPanel createButtons()
 	{
+		// create button panel and add content
 		this.myBtnPanel = new PirateBtnPanel();
 		myBtnPanel.createContent();
 		myBtnPanel.addStatsListener (this);
@@ -189,17 +220,18 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	@Override
 	public void actionPerformed (ActionEvent e)
 	{
+		// pause game while stats are displayed
 		setGamePaused(true);
 		
-		
-		String[] difficultyString = {"?","?", "?", "Easy", "?", "Medium", "?", "?", "Hard", "?", "Really Hard"};
+		// build string for treasures captured
 		String treasures = "";
 		for (SpaceTreasureType treasureType : SpaceTreasureType.values ( ))
 			treasures += "\t\t                     " + treasureType + " = " + treasuresCaptured[treasureType.ordinal ( )] + "\n";
 
+		// show dialog
 		JOptionPane.showMessageDialog (this, 
 			"Game is currently" + (gameInProgress ? " " : " not " ) + "in progress.\n" +
-			"Difficulty set at: " + difficultyString[difficulty] + ". \n" +
+			"Difficulty set at: " + difficulty.toString ( ) + ". \n" +
 			"Health remaining: " + health + "%\n"+
 			"Wealth accumulated: " + currency + "\n" +
 			"Score " + PirateScore.score + "\n" +
@@ -207,26 +239,50 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 					"\t\t Treasures captured: "+ "\n" + treasures
 			, "Space Pirates Stats", JOptionPane.INFORMATION_MESSAGE, null);
 
+		// unpause the game once they click ok
 		setGamePaused(false);
 	}
 	
+	/**
+	 * call to set whether or not the game is paused         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @param paused
+	 */
 	public void setGamePaused(boolean paused)
 	{
 		gamePaused = paused;
 		this.spacePanel.setGamePaused(paused);
 	}
 
+	/**
+	 * ovverride the base class behavior to run this thread         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * <hr>
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
+
+		// loop forever 
 		while (true)
 		{
+			// set health based on main ship if it exists
 			if (spacePanel.mainShip ( ) != null)
 				health = spacePanel.mainShip().getHealth();
 			
 			progressBar.setValue( (int)(this.health));
 
+			// if game is not in progresss we don't do anything, otherwise display objects
 			if (gameInProgress)
 			{
+				
 				repaint();		
 				this.myBtnPanel.updateScore (PirateScore.score);
 				
@@ -244,24 +300,32 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 					this.spacePanel.moveObjects();
 			}
 			
-			//for (int i = 0; i < 1000000; i++);'
+			// set delay 
 			synchronized(this)
 			{
 				try {
 					this.wait(50);
 					
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
+			} // end synchronized 
 		
-		}
+		} // end loop 
 		
-	}
+	} // end run method
 
+	/**
+	 * this method to save game specific values         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 */
 	private void saveGame()
 	{
+		// use JFileChooser to get file to save to
 		JFileChooser fileChooser = new JFileChooser("src");
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	            "SpacePirate files", "spf");
@@ -269,21 +333,33 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	    fileChooser.addChoosableFileFilter(filter);
 	    fileChooser.setAcceptAllFileFilterUsed(false);
 	    fileChooser.setSelectedFile(new File("*.spf"));
-		if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+	    if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+	      // get file 
 		  File file = fileChooser.getSelectedFile();
 		  try 
 		  {
+			  // if it exists then delete it and create a new one
 			  if (file.exists())
 				  file.delete();
+			 
+			  // create a new one
 			  file.createNewFile();
 			  
+			  // make sure I have permissions to write to this location
 			  if (file.canWrite())
 			  {
+				  // set game heading (this helps uniquely identify files as spf files)
 				  String heading = "SpacePirate Game";
+				  
+				  // create an output stream for the file
 				  FileOutputStream fileOut = new FileOutputStream(file); 
 		          ObjectOutputStream out = new ObjectOutputStream(fileOut); 
-		          
+
+		          // put the heading file there
 		          out.writeObject(heading); 
+		          
+		          // call method to save game specific values
 		          String errors = saveGame(out);
 		          if (errors != null)
 		        	  JOptionPane.showMessageDialog (this, errors);
@@ -303,41 +379,55 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		} // end get file
 	} // end save game
 
+	/**
+	 * this method is the exact opposite of saveGame         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @return
+	 */
 	private boolean loadGame()
 	{
+		// use JFileChooser to specify the file to load
 		JFileChooser fileChooser = new JFileChooser("src");
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter("SpacePirate files", "spf");
 	    fileChooser.setFileFilter(filter);
 	    fileChooser.setDialogTitle ("Load Game");
 	    fileChooser.setApproveButtonToolTipText ("Select the SpacePirate saved game to load.");
 	    boolean status = true;
-	    
+
+	    // define the file 
 		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 			// load from file
 		  	try 
 			{
+		  		// make sure the file exists and I can read it (permissions)
 				if (file.exists() && file.canRead())
 				{
-					  String heading = "SpacePirate Game";
-					  FileInputStream fileIn = new FileInputStream(file); 
-			          ObjectInputStream in = new ObjectInputStream(fileIn); 
-			              
-					
-			          // Method for serialization of object 
-			          String str = (String)in.readObject(); 
-			          if (!str.equals(heading))
-			        	  System.out.println("this is not a SpacePirate game file");
-			          else {
-			        	  String errors = loadGame(in);
-			        	  if (errors != null) 
-			        	  {
-			        		  JOptionPane.showMessageDialog (this, errors);
-			        		  status = false;
-			        	  }
-			          }
-			          in.close(); 
-			          fileIn.close(); 
+					// find the special heading
+					String heading = "SpacePirate Game";
+					FileInputStream fileIn = new FileInputStream(file); 
+					ObjectInputStream in = new ObjectInputStream(fileIn); 
+					      
+					// verify the special heading is in the file
+					String str = (String)in.readObject(); 
+					if (!str.equals(heading))
+						System.out.println("this is not a SpacePirate game file");
+					else 
+					{
+						// call the method that loads game specific values from file
+						String errors = loadGame(in);
+						if (errors != null) 
+						{
+							JOptionPane.showMessageDialog (this, errors);
+							status = false;
+						}
+					}
+			        in.close(); 
+			        fileIn.close(); 
 			          
 				} // can read from file
 				else
@@ -359,31 +449,51 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	} // end load game
 		
 
+	/**
+	 * this method is called to end the game but not the program
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 */
 	private void endGame()
 	{
 
+		// if game isn't over by definition it must be at the request of the player
 		if (!gameOver) 
 		{
 			int answer = JOptionPane.showConfirmDialog (this, "Are you sure you want to end this game?");
 			if (answer != JOptionPane.YES_OPTION)
-				return;
+				return; // exit this method if they don't want to quit the game
 		}
 		
+		// set game values to indicate end
 		gameInProgress = false;
 		progressBar.setBackground (Color.RED);
 		health = 100;
 		gameOver = false;
 
+		// tell the panel to do the same thing
 		this.spacePanel.endGame();
 		
 		// keep at least the main ship to avoid errors in mouse events
 		spacePanel.addMainShip (new SpaceShip(300,300));
 		
-	}
+	} // end endGame
 	
 
+	/**
+	 * this method is called to set up game values for the start of a new game 
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 */
 	private void startGame()
 	{
+		// if game is already in progress then end it 
 		if (gameInProgress)
 		{
 			// confirm they want to end the game in progress
@@ -392,24 +502,29 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 				return; // they don't want to end the current game
 		}
 
-		// TODO: do start game stuff here
+		// set the game specific parameters to start
 		gameInProgress = true;
 		gameOver = false;
 		health = 100;
 		PirateScore.score = 0;
 		this.asteroidsHit = 0;
 		this.currency = 0;
+		
+		// reset all the treasures that have been captured
 		for (SpaceTreasureType type : SpaceTreasureType.values())
 			treasuresCaptured[type.ordinal()] = 0;
 
+		// for a new game, start with a main ship and stations
 		spacePanel.addMainShip (new SpaceShip(300,300));
 		spacePanel.add (new SpaceStation(100,100));
 		spacePanel.add (new WeighStation(-100,-100));
-		for (int i = 0; i <= difficulty; i++)
+
+		// create a large asteroid based on the difficulty level
+		for (int i = 0; i <= (difficulty.ordinal ( )*3); i++)
 		{
 			spacePanel.add (new LargeAsteroid((int)(Math.random ( )*1200)-600,
 												(int)(Math.random ( )*1200)-600,
-												6,
+												5 + (int)(Math.random()*5),
 												1,
 												1));
 		}
@@ -419,11 +534,20 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		this.spacePanel.startGame();
 	}
 	
+	/**
+	 * this method will create the menu bar for the main display    
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 */
 	private void createMenuBar() 
 	{
-
+		// make menu bar
 		JMenuBar menuBar = new JMenuBar();
 
+		// create file menu to load, save, new, end
 		JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
@@ -440,8 +564,6 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 
         fileMenu.add(saveMenuItem);
         fileMenu.addSeparator();
-        
-        JMenu optionMenu = new JMenu("Options");
         
         JMenuItem newMenuItem = new JMenuItem("New Game");
         JMenuItem endMenuItem = new JMenuItem("End Game");
@@ -464,6 +586,8 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         fileMenu.add(eMenuItem);
         menuBar.add(fileMenu);
 
+        // create options menu with size of map and difficulty level
+        JMenu optionMenu = new JMenu("Options");
         optionMenu.setMnemonic(KeyEvent.VK_O);
 
         ButtonGroup difGroup = new ButtonGroup();
@@ -474,20 +598,20 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 
         easyRMenuItem.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                this.difficulty = 3;
+                this.difficulty = Difficulty.EASY;
 
             }
         });
 
         JRadioButtonMenuItem mediumRMenuItem = new JRadioButtonMenuItem("Normal");
         mediumRMenuItem.setSelected(true);
-        difficulty = 5;
+        difficulty = Difficulty.MEDIUM;
         optionMenu.add(mediumRMenuItem);
         mediumRMenuItem.setToolTipText("Set difficulty of game play to Normal");
 
         mediumRMenuItem.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                this.difficulty = 5;
+                this.difficulty = Difficulty.MEDIUM;
             }
         });
 
@@ -497,7 +621,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 
         hardRMenuItem.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                this.difficulty = 8;
+                this.difficulty = Difficulty.HARD;
             }
         });
 
@@ -507,10 +631,11 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 
         reallyHardRMenuItem.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                this.difficulty = 10;
+                this.difficulty = Difficulty.REALLY_HARD;
             }
         });
 
+        // add all the difficulty buttons to the same group
         difGroup.add(easyRMenuItem);
         difGroup.add(mediumRMenuItem);
         difGroup.add(hardRMenuItem);
@@ -518,6 +643,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         
         optionMenu.addSeparator();
 
+        // now make the map size options
         ButtonGroup sizeGroup = new ButtonGroup();
 
         JRadioButtonMenuItem smallRMenuItem = new JRadioButtonMenuItem("Small Map");
@@ -548,6 +674,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
     			}
         });
 
+        // put all the map size options into a group
         sizeGroup.add(smallRMenuItem);
         sizeGroup.add(medRMenuItem);
         sizeGroup.add(largeRMenuItem);
@@ -569,23 +696,15 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
     			smallRMenuItem.setEnabled(false);
     			medRMenuItem.setEnabled(false);
     			largeRMenuItem.setEnabled(false);
-    			switch (this.difficulty) 
-    			{
-    				case 10 : // really hard
-    	    			reallyHardRMenuItem.setSelected (true);
-    					break;
-    				case 8 : // hard
-    	    			hardRMenuItem.setSelected (true);
-    					break;
-    				case 5 : // medium
-    	    			mediumRMenuItem.setSelected (true);
-    					break;
-    				case 3 : // easy, fall through to default
-    				default :
-    	    			easyRMenuItem.setSelected (true);
-    					break;
-    						
-    			}
+    			if (this.difficulty == Difficulty.REALLY_HARD) 
+    	    		reallyHardRMenuItem.setSelected (true);
+    			else if (this.difficulty == Difficulty.HARD) 
+    				hardRMenuItem.setSelected (true);
+    			else if (this.difficulty == Difficulty.MEDIUM) 
+    				mediumRMenuItem.setSelected (true);
+    			else  
+    				easyRMenuItem.setSelected (true);
+
     			if (this.spacePanel.getZoomFactor ( ) < 0.5) 
     			{
     				largeRMenuItem.setEnabled(true);			
@@ -637,6 +756,16 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         setJMenuBar(menuBar);
     }
 	
+	/**
+	 * save the game specific values          
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @param out
+	 * @return
+	 */
 	public String saveGame(ObjectOutputStream out) 
     {
     	// returns a string containing any error messages generated while
@@ -647,7 +776,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		{
 	        out.writeInt(health);
 	        out.writeBoolean (gameInProgress);
-	        out.writeInt (difficulty);
+	        out.writeInt (difficulty.ordinal());
 	        out.writeInt (PirateScore.score);
 	        out.writeInt (asteroidsHit);
 	        
@@ -678,6 +807,18 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		
 		return errors;
     }
+	
+	
+    /**
+     * this method loads game specific values from a stream         
+     *
+     * <hr>
+     * Date created: Apr 12, 2020
+     *
+     * <hr>
+     * @param in
+     * @return
+     */
     public String loadGame(ObjectInputStream in) 
     {
     	// returns a string containing any error messages generated while
@@ -686,9 +827,11 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 
 		try
 		{
+			// start pulling in game specific values
+			// load health, gameInProgress, difficulty, etc
 			health = in.readInt();
 			gameInProgress = in.readBoolean ();
-	        difficulty = in.readInt ();
+	        difficulty = Difficulty.values ( )[in.readInt ()];
 	        PirateScore.score = in.readInt ( );
 	        asteroidsHit = in.readInt ( );
 	        
@@ -707,8 +850,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		}
 		
 		String panelErrors = this.spacePanel.loadGame (in);
-		// load health, gameInProgress, difficulty, etc
-
+		
 		progressBar.setBackground (Color.WHITE);
 
 		if (panelErrors != null)
@@ -734,7 +876,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	}
 
 	/**
-	 * Enter method description here         
+	 * this method is called when a new treasure is captured         
 	 *
 	 * <hr>
 	 * Date created: Mar 31, 2020 
@@ -779,7 +921,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 			PirateScore.score += 25; 
 	        Object[] options = {"Buy Health", "Turn Treasure", "All Done"};
 	
-			Object answer = JOptionPane.showInputDialog (this, "You've docked with a station! \n" +
+			JOptionPane.showInputDialog (this, "You've docked with a station! \n" +
 				"You have " + this.currency + " space credits, " +
 				health + "% health.\nWhat would you like to do" 
 				, "Docking in Progess", JOptionPane.PLAIN_MESSAGE, null, 
@@ -788,4 +930,4 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		}
 	}
 
-}
+} // end pirateFrame

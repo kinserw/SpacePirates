@@ -13,7 +13,7 @@ package SpacePirates;
 
 
 /**
- * Enter type purpose here
+ * Specialized type of WeighStation that allows ships to dock, exchange cargo, do repairs, etc.
  *
  * <hr>
  * Date created: Mar 4, 2020
@@ -44,8 +44,18 @@ public class SpaceStation extends WeighStation
 		this.setRotationRate (0.1);
 	}
 
+	/**
+	 * calculates damage as a result of a collision        
+	 *
+	 * <hr>
+	 * Date created: Apr 13, 2020
+	 *
+	 * <hr>
+	 * @param speed1
+	 * @param speed2
+	 */
 	public void calculateDamage(int speed1, int speed2)
 	{
 		; // do nothing because I have a force field
 	}
-}
+} // end SpaceStation

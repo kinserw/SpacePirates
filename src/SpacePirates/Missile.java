@@ -12,7 +12,7 @@
 package SpacePirates;
 
 /**
- * Enter type purpose here
+ * Specialized class of space object
  *
  * <hr>
  * Date created: Mar 15, 2020
@@ -26,6 +26,17 @@ public class Missile extends Weapon
 	 */
 	private static final long serialVersionUID = 466225001077917721L;
 
+	
+	/**
+	 * Constructor        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	public Missile(int x, int y)
 	{
 		super (x, y);

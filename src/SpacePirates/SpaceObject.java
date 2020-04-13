@@ -40,7 +40,7 @@ abstract public class SpaceObject implements Serializable
 	 * All member data is initialized at declaration to avoid undefined values
 	 * when object is created from an iostream (i.e. when loaded from a file).
 	 */
-	private transient BufferedImage icon = null;
+	private transient BufferedImage icon = null; // track image 
 	private static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
 	private transient SpaceObject origin = null;  // reference to object this one came from (if any)
 
@@ -63,6 +63,17 @@ abstract public class SpaceObject implements Serializable
 	
 
 
+	
+	/**
+	 * Constructor        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	public SpaceObject(int x, int y)
 	{
 		this.x = x;
@@ -72,6 +83,19 @@ abstract public class SpaceObject implements Serializable
 		icon = fetchImage();
 	}
 	
+	
+	/**
+	 * Constructor        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020 
+	 *
+	 * 
+	 * @param x
+	 * @param y
+	 * @param m // mass
+	 * @param v // velocity
+	 */
 	public SpaceObject(int x, int y, double m, double v)
 	{
 		this.x = x;
@@ -79,7 +103,6 @@ abstract public class SpaceObject implements Serializable
 		this.mass = m;
 		this.speed = v;
 		
-		// TODO: load image based on the image name set by most derived class for this instance
 		icon = fetchImage();
 	}
 	
@@ -104,6 +127,16 @@ abstract public class SpaceObject implements Serializable
 		return health<= 0;
 	}
 
+	/**
+	 * default behavior to calculate damage based on the speeds of the two objects involved         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @param speed1
+	 * @param speed2
+	 */
 	public void calculateDamage(double speed1, double speed2)
 	{
 		// speed max's out at 50 so two object's speed combined is max 100
@@ -116,11 +149,29 @@ abstract public class SpaceObject implements Serializable
 		
 	}
 	
+	/**
+	 * Base class method to set default behavior for when a space object is destroyed        
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @return
+	 */
 	public ArrayList<SpaceObject> getDebris()
 	{
 		return new ArrayList<SpaceObject>(); // default is no debris
 	}
 
+	/**
+	 * set default behavior for when a space object goes into orbit around another one (obj)         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @param obj
+	 */
 	public void orbit(SpaceObject obj)
 	{
 		pointAt(obj);
@@ -130,6 +181,14 @@ abstract public class SpaceObject implements Serializable
 		lastOrb = obj;
 	}
 	
+	/**
+	 * default behavior to define what happens when a space object is in orbit       
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 */
 	public void orbit()
 	{
 		if (lastOrb != null)
@@ -141,6 +200,16 @@ abstract public class SpaceObject implements Serializable
 		}
 	}
 	
+	/**
+	 * make the space object image to point at the object this one is in orbit around       
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @param x
+	 * @param y
+	 */
 	public void pointAt(double x, double y)
 	{
 		double rotation = Math.atan2 (y - this.y, x - this.x);
@@ -148,6 +217,16 @@ abstract public class SpaceObject implements Serializable
 		setRotation (rotation);
 	}
 	
+	/**
+	 * make the space object image to point at the object this one is in orbit around       
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @param x
+	 * @param y
+	 */
 	public void pointAt(SpaceObject obj)
 	{
 		double rotation = Math.atan2 (((obj.getY ( ) + obj.getImage ( ).getHeight ( ) / 2) - (this.y + getImage ( ).getHeight ( ) / 2)),
@@ -299,6 +378,15 @@ abstract public class SpaceObject implements Serializable
 		return i;
 	}
 	
+	/**
+	 * get the image for this space object         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @return
+	 */
 	public BufferedImage getImage()
 	{
 		// need this logic for when space objects are loaded from an io stream
@@ -309,6 +397,7 @@ abstract public class SpaceObject implements Serializable
 		}
 		return this.icon;
 	}
+	
 	/**
 	 * @return x
 	 */

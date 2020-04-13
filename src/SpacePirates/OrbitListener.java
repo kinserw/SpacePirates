@@ -22,6 +22,15 @@ package SpacePirates;
  */
 public interface OrbitListener
 {
+	/**
+	 * interface method invoked when the orbit changes status         
+	 *
+	 * <hr>
+	 * Date created: Apr 12, 2020
+	 *
+	 * <hr>
+	 * @param orbiting
+	 */
 	public void orbitChanged(boolean orbiting);
 
 }

@@ -13,7 +13,7 @@ package SpacePirates;
 
 
 /**
- * Enter type purpose here
+ * Specialized kind of weapon
  *
  * <hr>
  * Date created: Mar 15, 2020
