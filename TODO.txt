@@ -1,10 +1,9 @@
-Stuff for anyone (these are items from the capstone requirements document)
+Stuff for anyone 
 - stats display needs to show which weapon is in use and how many rounds it has left
 - docking with the station needs to allow user to buy new weapons, buy more rounds for weapon on board, buy health, trade in treasures to get space coins 
 	(this is started by not fully working; one might say the hooks are in place)
 - need to make sure the main ship can't be damaged while in orbit around a space station or weigh station 
 - edit ClusterBomb.gif file to have multiple layers/panes (all exist as separate files, just need to be merged into a single animated gif file named ClusterBomb.gif)
-- Create gifs for the different types of treasures?
 
 Stuff for Sam 
 
@@ -12,8 +11,7 @@ Stuff for Sam
 
 Stuff for Charles??
 - Continuous random world generation
-- Collect treasure
-	- Treasure variation
+
 - Docking with stations (charles)
 	-- flesh out purchase of items
 - Asteroids repelled from stations 
