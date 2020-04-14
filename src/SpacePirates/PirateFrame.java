@@ -144,7 +144,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 							"Welcome to SpacePirates!\n" +
 						    "\nWould you like to start a new game or load an existing game?", 
 				"Welcome", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, 
-				options, 0);
+				options, options[0]);
 			// change the way we start depending on player's choice
 			if (answer == 0)
 				startGame();
@@ -593,6 +593,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         ButtonGroup difGroup = new ButtonGroup();
 
         JRadioButtonMenuItem easyRMenuItem = new JRadioButtonMenuItem("Easy");
+        easyRMenuItem.setMnemonic (KeyEvent.VK_E);
         optionMenu.add(easyRMenuItem);
         easyRMenuItem.setToolTipText("Set difficulty of game play to Easy");
 
@@ -604,6 +605,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         });
 
         JRadioButtonMenuItem mediumRMenuItem = new JRadioButtonMenuItem("Normal");
+        mediumRMenuItem.setMnemonic (KeyEvent.VK_N);
         mediumRMenuItem.setSelected(true);
         difficulty = Difficulty.MEDIUM;
         optionMenu.add(mediumRMenuItem);
@@ -616,6 +618,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         });
 
         JRadioButtonMenuItem hardRMenuItem = new JRadioButtonMenuItem("Hard");
+        hardRMenuItem.setMnemonic (KeyEvent.VK_H);
         optionMenu.add(hardRMenuItem);
         hardRMenuItem.setToolTipText("Set difficulty of game play to Hard");
 
@@ -626,6 +629,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         });
 
         JRadioButtonMenuItem reallyHardRMenuItem = new JRadioButtonMenuItem("Really Hard");
+        reallyHardRMenuItem.setMnemonic (KeyEvent.VK_R);
         optionMenu.add(reallyHardRMenuItem);
         reallyHardRMenuItem.setToolTipText("Set difficulty of game play to Really Hard");
 
@@ -647,6 +651,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         ButtonGroup sizeGroup = new ButtonGroup();
 
         JRadioButtonMenuItem smallRMenuItem = new JRadioButtonMenuItem("Small Map");
+        smallRMenuItem.setMnemonic (KeyEvent.VK_S);
         optionMenu.add(smallRMenuItem);
 
         smallRMenuItem.addItemListener((e) -> {
@@ -656,6 +661,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         });
 
         JRadioButtonMenuItem medRMenuItem = new JRadioButtonMenuItem("Medium Map");
+        mediumRMenuItem.setMnemonic (KeyEvent.VK_M);
         optionMenu.add(medRMenuItem);
 
         medRMenuItem.addItemListener((e) -> {
@@ -665,6 +671,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         });
 
         JRadioButtonMenuItem largeRMenuItem = new JRadioButtonMenuItem("Large Map");
+        largeRMenuItem.setMnemonic (KeyEvent.VK_L);
         largeRMenuItem.setSelected(true);
         optionMenu.add(largeRMenuItem);
 
@@ -750,6 +757,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 
         
         JMenuItem helpMenu = new JMenuItem("How to Play");
+        helpMenu.setMnemonic (KeyEvent.VK_H);
         helpMenu.addActionListener( (event) -> new PirateRulesPopup(this) );
         menuBar.add(helpMenu);
 

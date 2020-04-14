@@ -15,6 +15,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -103,6 +104,7 @@ public class PirateBtnPanel extends JPanel {
 	{
 		// create the button
 	    statsButton =new JButton("Stats & Inventory");  
+	    statsButton.setMnemonic (KeyEvent.VK_S);
 	    
 	    // make layout
 	    GridBagLayout grid = new GridBagLayout();
