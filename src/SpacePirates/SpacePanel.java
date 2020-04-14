@@ -58,8 +58,9 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	// used to pause painting and motion
 	private boolean 				gamePaused			= false; // flag indicating game is paused
 
-	
-	
+	// used to determine how far away asteroids need to be from the player
+	// for new ones to generate
+	private final double			GEN_DIST			= 500;
 	
 
 	
@@ -253,7 +254,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	{
 		// right mouse double click causes the player's ship to fire it's current
 		// weapon. 
-		if (e.getButton ( ) == MouseEvent.BUTTON3 && e.getClickCount ( ) == 2)
+		if (e.getButton ( ) == MouseEvent.BUTTON3 && e.getClickCount ( ) == 1)
 		{
 			// can't shoot weapon while in orbit
 			if (mainShip.isInOrbit() == false)
@@ -378,6 +379,9 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	 */
 	public void moveObjects()
 	{
+		// boolean flag for if new asteroids should be generated
+		boolean generateFlag = true;
+		
 		// iterate through all active objects in space (and in the game)
 		for (SpaceObject object : this.objects)
 		{
@@ -397,9 +401,86 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 				// if this is the main ship and is coasting, reduce speed a little
 				else if ((object == mainShip) && mainShip.isCoasting())
 					this.mainShip.setSpeed ((speed <= 0 ? 0 : speed - 1));
+				
+				// check to see if there are asteroids near the player
+				// if there aren't any, generate new ones out of view
+				if (object instanceof LargeAsteroid && generateFlag == true)
+				{
+					// Distance formula using the coordinates of the asteroid and player
+					if (Math.sqrt (
+						Math.pow((object.getX() - mainShip.getX ( )), 2) +
+						Math.pow((object.getY() - mainShip.getY ( )), 2)
+						) < GEN_DIST / zoomFactor)
+					{
+						generateFlag = false;
+					}
+				}
 			} // end if
 		} // end iterate
+		
+		if (generateFlag == true)
+		{
+			System.out.println("generated asteroids");
+			generateAsteroids((int)(Math.random ( ) * 5),
+							mainShip.getX ( ),
+							mainShip.getY ( ),
+							GEN_DIST / zoomFactor,
+							(GEN_DIST / 2) / zoomFactor);
+		}
 	} // end moveObjects
+	
+	
+	/**
+	 * Generates n number of asteroids at random points about
+	 * x, y based on the set of distances passed in.       
+	 *
+	 * <hr>
+	 * Date created: Apr 13, 2020
+	 *
+	 * <hr>
+	 * @param numObj	:the number of asteroids to be generated
+	 * @param x			:the x position the generation will be based around
+	 * @param y			:the y position the generation will be based around
+	 * @param maxDist	:the maximum distance asteroids can be from point x, y
+	 * @param minDist	:the minimum distance asteroids can be from point x, y
+	 */
+	public void generateAsteroids(int numObj, int x, int y, double maxDist, double minDist)
+	{
+		LargeAsteroid tempAst = null;
+		int newX;
+		int newY;
+		int size;
+		double mass;
+		double speed;
+		
+		for(int i = 0; i < numObj; i++)
+		{
+			// sets new x and y to their distances from the original point x, y
+			newX = (int) (minDist + ((maxDist - minDist) * Math.random()));
+			newY = (int) (minDist + ((maxDist - minDist) * Math.random()));
+			
+			// puts the x and y in a random quadrant
+			// also applies the original coordinates
+			if (Math.random ( ) < .5)
+				newX = newX * -1 + x;
+			else
+				newX += x;
+			if (Math.random ( ) < .5)
+				newY = newY * -1 + y;
+			else
+				newY += y;
+			
+			size = 5; //(int) Math.random() * 10;
+			mass = Math.random() * 10;
+			speed = Math.random() * 10;
+			
+			tempAst = new LargeAsteroid(newX, newY, size, mass, speed);
+			tempAst.setRotationRate (Math.random());
+			tempAst.setSpeedAng (Math.random ( ) * 2 * Math.PI);
+			
+			objects.add (tempAst);
+		}
+	}
 	
 	/**
 	 * This method draws all the objects in space, and handles their interactions with each other         
