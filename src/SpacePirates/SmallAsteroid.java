@@ -140,7 +140,7 @@ public class SmallAsteroid extends SpaceObject
 	 */
 	public void simCollide(SpaceObject obj)
 	{
-		if (obj instanceof SpaceStation || obj instanceof WeighStation)
+		if (obj instanceof SpaceStation || obj instanceof WeighStation || (obj instanceof SpaceShip && ((SpaceShip) obj).getTakeDamage()==false))
 		{
 			pointAt(obj);
 			setSpeedAng(getSpeedAng() + Math.PI);

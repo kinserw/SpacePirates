@@ -32,6 +32,7 @@ public class SpaceShip extends SpaceObject
 	private transient OrbitListener orbitListener = null; // called when orbit status changes
 
 	private transient boolean breakingOrbit = false; // track whether ship is breaking orbit
+	private transient boolean takeDamage = true; // tracks whether the ship can take damage
 
 	/**
 	 * 
@@ -72,8 +73,9 @@ public class SpaceShip extends SpaceObject
 	{
 		// debug statement. TODO remove debug
 		System.out.println("ship health = " + getHealth() + "  s1  s2 " + speed1 + "   " + speed2);
-
-		super.calculateDamage (speed1, speed2);
+		if(takeDamage==true)
+			super.calculateDamage (speed1, speed2);
+			
 	}
 	
 	/**
@@ -98,6 +100,7 @@ public class SpaceShip extends SpaceObject
 				System.out.println("orbit");
 				orbit(obj);
 				setInOrbit(true);
+				takeDamage = false;
 			}
 		}
 		// if colliding with a spaceTreasure, capture it as cargo
@@ -296,6 +299,7 @@ public class SpaceShip extends SpaceObject
 	public void setBreakingOrbit (boolean breakingOrbit)
 	{
 		this.breakingOrbit = breakingOrbit;
+		takeDamage = true;
 	}
 
 	/**
@@ -313,5 +317,19 @@ public class SpaceShip extends SpaceObject
 	public void setCoasting (boolean coasting)
 	{
 		this.coasting = coasting;
+	}
+
+	/**
+	 * Getter for takeDamage        
+	 *
+	 * <hr>
+	 * Date created: Apr 15, 2020
+	 *
+	 * <hr>
+	 * @return
+	 */
+	public boolean getTakeDamage ( )
+	{
+		return takeDamage;
 	}
 } // end SpaceShip
