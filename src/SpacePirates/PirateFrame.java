@@ -233,10 +233,12 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 			"Game is currently" + (gameInProgress ? " " : " not " ) + "in progress.\n" +
 			"Difficulty set at: " + difficulty.toString ( ) + ". \n" +
 			"Health remaining: " + health + "%\n"+
+			"Current Weapon: " + SpacePanel.mainShip().getWeapon ( ) + "\n" +
+			"Remaining Ammunition: " + SpacePanel.mainShip ( ).getWeaponCount ( ) + "\n" +
 			"Wealth accumulated: " + currency + "\n" +
 			"Score " + PirateScore.score + "\n" +
-					"\t\t Asteroids hit: " + asteroidsHit + "\n" +
-					"\t\t Treasures captured: "+ "\n" + treasures
+					"\t\tAsteroids hit: " + asteroidsHit + "\n" +
+					"\t\tTreasures captured: "+ "\n" + treasures
 			, "Space Pirates Stats", JOptionPane.INFORMATION_MESSAGE, null);
 
 		// unpause the game once they click ok

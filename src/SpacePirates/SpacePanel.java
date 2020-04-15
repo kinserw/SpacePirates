@@ -53,7 +53,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 	// keep a handle to the mainShip for quick reference. The mainShip is in the 
 	// objects array list of SpaceObjects too.
-	private SpaceShip 				mainShip			= null; 
+	private static SpaceShip 				mainShip			= null; 
 
 	// used to pause painting and motion
 	private boolean 				gamePaused			= false; // flag indicating game is paused
@@ -104,7 +104,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		
 		// remember this one passed in
 		objects.add (0,ship);		// make sure space ship is the first item in collection
-		this.mainShip = ship;
+		mainShip = ship;
 		
 		// register as listener to key ship events
 		if (mainShip != null)
@@ -117,9 +117,9 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	/**
 	 * @return mainShip
 	 */	
-	public SpaceShip mainShip()
+	public static SpaceShip mainShip()
 	{
-		return this.mainShip;
+		return mainShip;
 	}
 	
 	/**
@@ -260,16 +260,16 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			if (mainShip.isInOrbit() == false)
 			{
 				// if weapon available then fire it (it automatically update ammo count)
-				Weapon weapon = this.mainShip.fireCurrentWeapon ( );
+				Weapon weapon = mainShip.fireCurrentWeapon ( );
 				
 				if (weapon != null) 
 				{
 					// weapon starts at center of the main ship
-					weapon.setX(this.mainShip.getX ( ) + 
-						        this.mainShip.getImage ( ).getWidth ( )/2 -
+					weapon.setX(mainShip.getX ( ) + 
+						        mainShip.getImage ( ).getWidth ( )/2 -
 						        weapon.getImage ( ).getWidth ( )/2);
-					weapon.setY (this.mainShip.getY ( ) + 
-				        		this.mainShip.getImage ( ).getHeight( )/2 -
+					weapon.setY (mainShip.getY ( ) + 
+				        		mainShip.getImage ( ).getHeight( )/2 -
 				        		weapon.getImage ( ).getHeight( )/2);
 					// shoots in the direction the ship is facing
 					weapon.setSpeedAng (mainShip.getSpeedAng ( ));
@@ -400,7 +400,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 					object.orbit();
 				// if this is the main ship and is coasting, reduce speed a little
 				else if ((object == mainShip) && mainShip.isCoasting())
-					this.mainShip.setSpeed ((speed <= 0 ? 0 : speed - 1));
+					mainShip.setSpeed ((speed <= 0 ? 0 : speed - 1));
 				
 				// check to see if there are asteroids near the player
 				// if there aren't any, generate new ones out of view
@@ -706,7 +706,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			
 			// save index in objects that corresponds to mainShip
 			// so that we can identify which one it is when we load the game
-			int shipIndex = objects.indexOf (this.mainShip);
+			int shipIndex = objects.indexOf (mainShip);
 			out.writeInt (shipIndex);
 
 			// save count of how many space objects we're saving

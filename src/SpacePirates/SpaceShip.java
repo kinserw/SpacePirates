@@ -275,6 +275,14 @@ public class SpaceShip extends SpaceObject
 
 	
 	/**
+	 * @return weaponCount
+	 */
+	public SpaceShipWeaponType getWeapon( )
+	{
+		return currentWeapon;
+	}
+	
+	/**
 	 * @param weaponCount the weaponCount to set
 	 */
 	public void setWeaponCount (int weaponCount)

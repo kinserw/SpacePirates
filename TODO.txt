@@ -1,5 +1,4 @@
 Stuff for anyone 
-- stats display needs to show which weapon is in use and how many rounds it has left
 - docking with the station needs to allow user to buy new weapons, buy more rounds for weapon on board, buy health, trade in treasures to get space coins 
 	(this is started by not fully working; one might say the hooks are in place)
 - edit ClusterBomb.gif file to have multiple layers/panes (all exist as separate files, just need to be merged into a single animated gif file named ClusterBomb.gif)
@@ -50,3 +49,4 @@ COMPLETED
   The lower the value of the treasure type the higher the probability it is created.(Sam)
 - modify SmallAsteroid to do the same thing (randomly create treasure) but skip the first 3 types since small asteroids are harder to hit.(skipped Steel, water, and SpaceCredits)
 - need to make sure the main ship can't be damaged while in orbit around a space station or weigh station (Sam)
+- stats display needs to show which weapon is in use and how many rounds it has left
