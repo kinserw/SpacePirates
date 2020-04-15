@@ -235,7 +235,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 			"Health remaining: " + health + "%\n"+
 			"Current Weapon: " + SpacePanel.mainShip().getWeapon ( ) + "\n" +
 			"Remaining Ammunition: " + SpacePanel.mainShip ( ).getWeaponCount ( ) + "\n" +
-			"Wealth accumulated: " + currency + "\n" +
+			"Space Credits: " + currency + "\n" +
 			"Score " + PirateScore.score + "\n" +
 					"\t\tAsteroids hit: " + asteroidsHit + "\n" +
 					"\t\tTreasures captured: "+ "\n" + treasures
@@ -927,17 +927,168 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		
 		if (orbiting)
 		{
-			setGamePaused(true);
-			PirateScore.score += 25; 
-	        Object[] options = {"Buy Health", "Turn Treasure", "All Done"};
-	
-			JOptionPane.showInputDialog (this, "You've docked with a station! \n" +
-				"You have " + this.currency + " space credits, " +
-				health + "% health.\nWhat would you like to do" 
-				, "Docking in Progess", JOptionPane.PLAIN_MESSAGE, null, 
-				options, options[0]);
-			setGamePaused(false);
+			String userResponse ="";
+			try
+			{
+				setGamePaused(true);
+				PirateScore.score += 25; 
+				String[] options = {"Buy Health", "Buy Ammo", "Trade Treasure", "Buy Weapon", "All Done"};
+	        
+				userResponse = (String) JOptionPane.showInputDialog (this, "You've docked with a station! \n" +
+								"You have " + this.currency + " space credits, " +
+								health + "% health.\nWhat would you like to do" 
+								, "Docking in Progess", JOptionPane.PLAIN_MESSAGE, null, 
+								options, options[0]);
+				
+				if(userResponse.equals("Buy Health"))
+				{
+					buyHealth();
+					setGamePaused(false);
+				}
+				else if(userResponse.equals("Buy Ammo"))
+				{
+					buyAmmo();
+					setGamePaused(false);
+				}
+				else if(userResponse.equals("Trade Treasure"))
+				{
+					tradeTreasure();
+					setGamePaused(false);
+				}
+				else if(userResponse.equals("Buy Weapon"))
+				{
+					buyWeapon();
+					setGamePaused(false);
+				}
+				else
+				
+				setGamePaused(false);
+			}
+			catch(NullPointerException NFE)
+			{
+				setGamePaused(false);
+			}
+			
 		}
 	}
-
+	
+	
+	/**
+	 * Gives the user the option to buy health with Space Credit        
+	 *
+	 * <hr>
+	 * Date created: Apr 15, 2020
+	 *
+	 * <hr>
+	 */
+	public void buyHealth()
+	{
+		int userResponse = 5;
+		String[] options = {"5 HP for 10 Credits","Done"};
+		try
+		{
+			userResponse = JOptionPane.showOptionDialog (this, "Current Health: "+ this.health + 
+				"\nSpace Credits: " + currency, "Buy Health", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null, options,Integer.valueOf(2));
+		}
+		catch(NullPointerException NFE)
+		{
+			
+		}
+		switch(userResponse)
+		{
+			case 0:
+				if(currency<10)
+					JOptionPane.showMessageDialog (this, "You do not have enough Space Credits");
+				else if(this.health==100)
+				{
+					JOptionPane.showMessageDialog (this, "Health is already maxed");
+				}
+				else
+				{
+					currency-=10;
+					if(this.health>95)
+					{
+						SpacePanel.mainShip ( ).setHealth (health+= (100-this.health));;
+						this.health = SpacePanel.mainShip ( ).getHealth ( );
+					}
+					else
+					{
+						SpacePanel.mainShip ( ).setHealth (health+= 5);;
+						this.health = SpacePanel.mainShip ( ).getHealth ( );
+					}		
+				}
+				buyHealth();
+				break;
+			default:
+				break;	
+		}
+		
+	}
+	
+	/**
+	 * User can trade treasure accumulated for Space Credits        
+	 *
+	 * <hr>
+	 * Date created: Apr 15, 2020
+	 *
+	 * <hr>
+	 */
+	public void tradeTreasure()
+	{
+		JOptionPane.showMessageDialog (this, "bye");
+	}
+	
+	
+	/**
+	 * User can buy more ammo for their current weapon         
+	 *
+	 * <hr>
+	 * Date created: Apr 15, 2020
+	 *
+	 * <hr>
+	 */
+	public void buyAmmo()
+	{
+		int userResponse = 5;
+		String[] options = {"10 rounds for 5 Credits","Done"};
+		try
+		{
+			userResponse = JOptionPane.showOptionDialog (this, "Current Weapon: "+ SpacePanel.mainShip ( ).getWeapon ( ) + "\nAmmo Rounds Left: " + 
+							SpacePanel.mainShip ( ).getWeaponCount ( ) + "\nSpace Credits: " + currency, "Buy Ammunition", JOptionPane.PLAIN_MESSAGE,
+			JOptionPane.PLAIN_MESSAGE, null, options,Integer.valueOf(2));
+		}
+		catch(NullPointerException NFE)
+		{
+			
+		}
+		switch(userResponse)
+		{
+			case 0:
+				if(currency<5)
+					JOptionPane.showMessageDialog (this, "You do not have enough Space Credits");
+				else
+				{
+					currency-=5;
+					SpacePanel.mainShip ( ).setWeaponCount (SpacePanel.mainShip ( ).getWeaponCount()+10);
+				}
+				buyAmmo();
+				break;
+				
+			default:
+				break;	
+		}
+	}
+	
+	/**
+	 * Users can buy new weapons with Space Credits         
+	 *
+	 * <hr>
+	 * Date created: Apr 15, 2020
+	 *
+	 * <hr>
+	 */
+	public void buyWeapon()
+	{
+		
+	}
 } // end pirateFrame
