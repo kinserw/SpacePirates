@@ -1038,7 +1038,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		String userResponse ="";
 		try
 		{
-			String[] options = {"Steel", "Water", "Gold", "Uranium", "Titanium", "Dark Matter", "AntiMatter"}; //
+			String[] options = {"Steel", "Water", "Gold", "Uranium", "Titanium", "Dark Matter", "Anti Matter"}; //
 			
 			int treasureIndex=0;
 			int[] treasureValue = new int[] {2,3,5,7,10,20,20}; //Values for trade rate
