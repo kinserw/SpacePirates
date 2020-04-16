@@ -140,7 +140,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		{
 			this.firstTimeThru = false;
 			String[] options = {"New Game", "Load Game","Pick Options"};
-			int answer = JOptionPane.showOptionDialog (null, 
+			int answer = JOptionPane.showOptionDialog (this, 
 							"Welcome to SpacePirates!\n" +
 						    "\nWould you like to start a new game or load an existing game?", 
 				"Welcome", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, 
@@ -276,8 +276,8 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		while (true)
 		{
 			// set health based on main ship if it exists
-			if (spacePanel.mainShip ( ) != null)
-				health = spacePanel.mainShip().getHealth();
+			if (SpacePanel.mainShip ( ) != null)
+				health = SpacePanel.mainShip().getHealth();
 			
 			progressBar.setValue( (int)(this.health));
 
@@ -290,7 +290,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 				
 				// now that collisions have been processed, determine if the main ship is
 				// so damaged that the game is over.
-				if (spacePanel.mainShip().getHealth ( ) <= 0)
+				if (SpacePanel.mainShip().getHealth ( ) <= 0)
 				{
 					JOptionPane.showMessageDialog (this, "Game Over!\nYour ship has been destroyed!");
 					gameOver = true;
@@ -1035,7 +1035,254 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	 */
 	public void tradeTreasure()
 	{
-		JOptionPane.showMessageDialog (this, "bye");
+		String userResponse ="";
+		try
+		{
+			String[] options = {"Steel", "Water", "Gold", "Uranium", "Titanium", "Dark Matter", "AntiMatter"}; //
+			
+			int treasureIndex=0;
+			int[] treasureValue = new int[] {2,3,5,7,10,20,20}; //Values for trade rate
+			
+			
+			String treasures = "Trading Rates:\n";
+			//Loops through each treasure type and displays the trade rate and quantity
+			for (SpaceTreasureType treasureType : SpaceTreasureType.values ( ))
+			{
+				if(treasureIndex<7) //only loop through 7 times so that Space Credits doesn't get included
+				{
+						treasures += "\t" + treasureType + " = "+ treasureValue[treasureIndex] + " Space Credits - " +
+								"Quantity: " + treasuresCaptured[treasureType.ordinal ( )] + "\n";
+						treasureIndex++;
+				}
+			}
+			treasures+="\n                      Select an item to trade:";
+			//Lets user select which treasure type they would like to trade
+			userResponse = (String) JOptionPane.showInputDialog (this, treasures , "Trade Treasure", JOptionPane.PLAIN_MESSAGE, null, 
+							options, options[0]);
+			
+			if(userResponse.equals("Steel"))
+			{
+				int steelNum = treasuresCaptured[SpaceTreasureType.STEEL.ordinal()];
+				if(steelNum==0)
+				{
+					JOptionPane.showMessageDialog (this, "You do not have any Steel");
+					tradeTreasure();
+				}
+				else
+				{
+					//Only shows up to the quantity of the item held by the user for simplicity
+					String [] quantity = new String[steelNum];
+					for(int i=0; i<steelNum; i++)
+						quantity[i] = "" + (i+1); 
+				
+					//gets the amount the user wants to trade
+					String quantityTraded = (String) JOptionPane.showInputDialog (this, "Select how much Steel you would like to trade", 
+						"Trade Treasure", JOptionPane.PLAIN_MESSAGE, null, quantity, quantity[0]);
+				
+					int iQuantityTraded = Integer.parseInt (quantityTraded);
+					//Adjusts the amount of treasures for the specified type
+					treasuresCaptured[SpaceTreasureType.STEEL.ordinal()] = treasuresCaptured[SpaceTreasureType.STEEL.ordinal()] - iQuantityTraded;
+					//Adjusts the currency based on the trade rate
+					currency += (iQuantityTraded*2);
+					//Shows a confirmation Screen
+					JOptionPane.showMessageDialog (this, "You have traded " + iQuantityTraded + " Steel for " 
+					+ iQuantityTraded*2 + " Space Credits." +
+					"\n\nSpace Credits: " +currency + "\nSteel = " + treasuresCaptured[SpaceTreasureType.STEEL.ordinal()]);
+					tradeTreasure();
+				}
+			}
+			else if(userResponse.equals("Water"))
+			{
+				int waterNum = treasuresCaptured[SpaceTreasureType.WATER.ordinal()];
+				if(waterNum==0)
+				{
+					JOptionPane.showMessageDialog (this, "You do not have any Water");
+					tradeTreasure();
+				}
+				else
+				{
+					//Only shows up to the quantity of the item held by the user for simplicity
+					String [] quantity = new String[waterNum];
+					for(int i=0; i<waterNum; i++)
+						quantity[i] = "" + (i+1); 
+				
+					//gets the amount the user wants to trade
+					String quantityTraded = (String) JOptionPane.showInputDialog (this, "Select how much Water you would like to trade", 
+						"Trade Treasure", JOptionPane.PLAIN_MESSAGE, null, quantity, quantity[0]);
+				
+					int iQuantityTraded = Integer.parseInt (quantityTraded);
+					//Adjusts the amount of treasures for the specified type
+					treasuresCaptured[SpaceTreasureType.WATER.ordinal()] = treasuresCaptured[SpaceTreasureType.WATER.ordinal()] - iQuantityTraded;
+					//Adjusts the currency based on the trade rate
+					currency += (iQuantityTraded*3);
+					
+					JOptionPane.showMessageDialog (this, "You have traded " + iQuantityTraded + " Water for " 
+					+ iQuantityTraded*3 + " Space Credits." +
+					"\n\nSpace Credits: " +currency + "\nWater = " + treasuresCaptured[SpaceTreasureType.WATER.ordinal()]);
+					tradeTreasure();
+				}
+			}
+			else if(userResponse.equals("Gold"))
+			{
+				int goldNum = treasuresCaptured[SpaceTreasureType.GOLD.ordinal()];
+				if(goldNum==0)
+				{
+					JOptionPane.showMessageDialog (this, "You do not have any Gold");
+					tradeTreasure();
+				}
+				else
+				{
+					//Only shows up to the quantity of the item held by the user for simplicity
+					String [] quantity = new String[goldNum];
+					for(int i=0; i<goldNum; i++)
+						quantity[i] = "" + (i+1); 
+				
+					//gets the amount the user wants to trade
+					String quantityTraded = (String) JOptionPane.showInputDialog (this, "Select how much Gold you would like to trade", 
+						"Trade Treasure", JOptionPane.PLAIN_MESSAGE, null, quantity, quantity[0]);
+				
+					int iQuantityTraded = Integer.parseInt (quantityTraded);
+					//Adjusts the amount of treasures for the specified type
+					treasuresCaptured[SpaceTreasureType.GOLD.ordinal()] = treasuresCaptured[SpaceTreasureType.GOLD.ordinal()] - iQuantityTraded;
+					//Adjusts the currency based on the trade rate
+					currency += (iQuantityTraded*5);
+					//Shows a confirmation Screen
+					JOptionPane.showMessageDialog (this, "You have traded " + iQuantityTraded + " Gold for " 
+					+ iQuantityTraded*5 + " Space Credits." +
+					"\n\nSpace Credits: " +currency + "\nGold = " + treasuresCaptured[SpaceTreasureType.GOLD.ordinal()]);
+					tradeTreasure();
+				}
+			}
+			else if(userResponse.equals("Uranium"))
+			{
+				int uraniumNum = treasuresCaptured[SpaceTreasureType.URANIUM.ordinal()];
+				if(uraniumNum==0)
+				{
+					JOptionPane.showMessageDialog (this, "You do not have any Uranium");
+					tradeTreasure();
+				}
+				else
+				{
+					//Only shows up to the quantity of the item held by the user for simplicity
+					String [] quantity = new String[uraniumNum];
+					for(int i=0; i<uraniumNum; i++)
+						quantity[i] = "" + (i+1); 
+				
+					//gets the amount the user wants to trade
+					String quantityTraded = (String) JOptionPane.showInputDialog (this, "Select how much Uranium you would like to trade", 
+						"Trade Treasure", JOptionPane.PLAIN_MESSAGE, null, quantity, quantity[0]);
+				
+					int iQuantityTraded = Integer.parseInt (quantityTraded);
+					//Adjusts the amount of treasures for the specified type
+					treasuresCaptured[SpaceTreasureType.URANIUM.ordinal()] = treasuresCaptured[SpaceTreasureType.URANIUM.ordinal()] - iQuantityTraded;
+					//Adjusts the currency based on the trade rate
+					currency += (iQuantityTraded*7);
+					
+					JOptionPane.showMessageDialog (this, "You have traded " + iQuantityTraded + " Uranium for " 
+					+ iQuantityTraded*7 + " Space Credits." +
+					"\n\nSpace Credits: " +currency + "\nUranium = " + treasuresCaptured[SpaceTreasureType.URANIUM.ordinal()]);
+					tradeTreasure();
+				}
+			}
+			else if(userResponse.equals("Titanium"))
+			{
+				int titaniumNum = treasuresCaptured[SpaceTreasureType.TITANIUM.ordinal()];
+				if(titaniumNum==0)
+				{
+					JOptionPane.showMessageDialog (this, "You do not have any Titanium");
+					tradeTreasure();
+				}
+				else
+				{
+					//Only shows up to the quantity of the item held by the user for simplicity
+					String [] quantity = new String[titaniumNum];
+					for(int i=0; i<titaniumNum; i++)
+						quantity[i] = "" + (i+1); 
+				
+					//gets the amount the user wants to trade
+					String quantityTraded = (String) JOptionPane.showInputDialog (this, "Select how much Titanium you would like to trade", 
+						"Trade Treasure", JOptionPane.PLAIN_MESSAGE, null, quantity, quantity[0]);
+				
+					int iQuantityTraded = Integer.parseInt (quantityTraded);
+					//Adjusts the amount of treasures for the specified type
+					treasuresCaptured[SpaceTreasureType.TITANIUM.ordinal()] = treasuresCaptured[SpaceTreasureType.TITANIUM.ordinal()] - iQuantityTraded;
+					//Adjusts the currency based on the trade rate
+					currency += (iQuantityTraded*10);
+					//Shows a confirmation Screen
+					JOptionPane.showMessageDialog (this, "You have traded " + iQuantityTraded + " Titanium for " 
+					+ iQuantityTraded*10 + " Space Credits." +
+					"\n\nSpace Credits: " +currency + "\nTitanium = " + treasuresCaptured[SpaceTreasureType.TITANIUM.ordinal()]);
+					tradeTreasure();
+				}
+			}
+			else if(userResponse.equals("Dark Matter"))
+			{
+				int darkMatterNum = treasuresCaptured[SpaceTreasureType.DARK_MATTER.ordinal()];
+				if(darkMatterNum==0)
+				{
+					JOptionPane.showMessageDialog (this, "You do not have any Dark Matter");
+					tradeTreasure();
+				}
+				else
+				{
+					//Only shows up to the quantity of the item held by the user for simplicity
+					String [] quantity = new String[darkMatterNum];
+					for(int i=0; i<darkMatterNum; i++)
+						quantity[i] = "" + (i+1); 
+				
+					//gets the amount the user wants to trade
+					String quantityTraded = (String) JOptionPane.showInputDialog (this, "Select how much Dark Matter you would like to trade", 
+						"Trade Treasure", JOptionPane.PLAIN_MESSAGE, null, quantity, quantity[0]);
+				
+					int iQuantityTraded = Integer.parseInt (quantityTraded);
+					//Adjusts the amount of treasures for the specified type
+					treasuresCaptured[SpaceTreasureType.DARK_MATTER.ordinal()] = treasuresCaptured[SpaceTreasureType.DARK_MATTER.ordinal()] - iQuantityTraded;
+					//Adjusts the currency based on the trade rate
+					currency += (iQuantityTraded*20);
+					//Shows a confirmation Screen
+					JOptionPane.showMessageDialog (this, "You have traded " + iQuantityTraded + " Dark Matter for " 
+					+ iQuantityTraded*20 + " Space Credits." +
+					"\n\nSpace Credits: " +currency + "\nDark Matter = " + treasuresCaptured[SpaceTreasureType.DARK_MATTER.ordinal()]);
+					tradeTreasure();
+				}
+			}
+			else if(userResponse.equals("Anti Matter"))
+			{
+				int antiMatterNum = treasuresCaptured[SpaceTreasureType.ANTI_MATTER.ordinal()];
+				if(antiMatterNum==0)
+				{
+					JOptionPane.showMessageDialog (this, "You do not have any Anti Matter");
+					tradeTreasure();
+				}
+				else
+				{
+					//Only shows up to the quantity of the item held by the user for simplicity
+					String [] quantity = new String[antiMatterNum];
+					for(int i=0; i<antiMatterNum; i++)
+						quantity[i] = "" + (i+1); 
+					
+					//gets the amount the user wants to trade
+					String quantityTraded = (String) JOptionPane.showInputDialog (this, "Select how much Anti Matter you would like to trade", 
+						"Trade Treasure", JOptionPane.PLAIN_MESSAGE, null, quantity, quantity[0]);
+				
+					int iQuantityTraded = Integer.parseInt (quantityTraded);
+					//Adjusts the amount of treasures for the specified type
+					treasuresCaptured[SpaceTreasureType.ANTI_MATTER.ordinal()] = treasuresCaptured[SpaceTreasureType.ANTI_MATTER.ordinal()] - iQuantityTraded;
+					//Adjusts the currency based on the trade rate
+					currency += (iQuantityTraded*20);
+					//Shows a confirmation Screen
+					JOptionPane.showMessageDialog (this, "You have traded " + iQuantityTraded + " Anti Matter for " 
+					+ iQuantityTraded*20 + " Space Credits." +
+					"\n\nSpace Credits: " +currency + "\nAnti Matter = " + treasuresCaptured[SpaceTreasureType.ANTI_MATTER.ordinal()]);
+					tradeTreasure();
+				}
+			}
+		}
+		catch(NullPointerException NFE)
+		{
+		}
+			
+		
 	}
 	
 	
@@ -1059,7 +1306,6 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		}
 		catch(NullPointerException NFE)
 		{
-			
 		}
 		switch(userResponse)
 		{
