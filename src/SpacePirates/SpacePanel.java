@@ -595,6 +595,9 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 							// remove 2nd object from both lists (objects and rectangles)
 							objects.remove (o2);
 							rects.remove (rect2);
+							// increments asteroids hit in pirate frame
+							if(o2 instanceof SmallAsteroid || o2 instanceof LargeAsteroid && o1 instanceof Weapon)
+								PirateFrame.ourFrame.setAsteroidsHit (PirateFrame.ourFrame.getAsteroidsHit ( ) + 1);
 							r2--; // decrement r2 since we removed it, index will then advance properly
 							// don't need to modify r1 since its the outer loop and hasn't hit the r2
 							// index yet
@@ -609,7 +612,9 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 							// remove object 1 from both lists (objects and rectangles)
 							objects.remove (o1);
 							rects.remove(rect1);
-
+							//increments asteroids hit in pirateframe
+							if(o1 instanceof SmallAsteroid || o1 instanceof LargeAsteroid && o2 instanceof Weapon)
+								PirateFrame.ourFrame.setAsteroidsHit (PirateFrame.ourFrame.getAsteroidsHit ( ) + 1);
 							r1--; // decrement r1 since we removed it, index will then advance properly
 							r2--; // decrement r2 since r1 by definition is earlier in the list 
 							break; // break out of inner loop since our r1 is gone and we need to find a new one

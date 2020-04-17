@@ -237,7 +237,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 			"Remaining Ammunition: " + SpacePanel.mainShip ( ).getWeaponCount ( ) + "\n" +
 			"Space Credits: " + currency + "\n" +
 			"Score " + PirateScore.score + "\n" +
-					"\t\tAsteroids hit: " + asteroidsHit + "\n" +
+					"\t\tAsteroids hit: " + getAsteroidsHit() + "\n" +
 					"\t\tTreasures captured: "+ "\n" + treasures
 			, "Space Pirates Stats", JOptionPane.INFORMATION_MESSAGE, null);
 
@@ -327,6 +327,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	 */
 	private void saveGame()
 	{
+		setGamePaused(true);
 		// use JFileChooser to get file to save to
 		JFileChooser fileChooser = new JFileChooser("src");
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -368,6 +369,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		          
 		          out.close(); 
 		          fileOut.close(); 
+		          setGamePaused(false);
 				  
 			  	}// can write to file
 			  	else
@@ -376,9 +378,12 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		  catch (Exception e)
 		  {
 			  JOptionPane.showMessageDialog(null, "Unable to save game");
+			  setGamePaused(false);
 		  }
+		  setGamePaused(false);
 		  
 		} // end get file
+	    setGamePaused(false);
 	} // end save game
 
 	/**
@@ -509,7 +514,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		gameOver = false;
 		health = 100;
 		PirateScore.score = 0;
-		this.asteroidsHit = 0;
+		this.setAsteroidsHit (0);
 		this.currency = 0;
 		
 		// reset all the treasures that have been captured
@@ -788,7 +793,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	        out.writeBoolean (gameInProgress);
 	        out.writeInt (difficulty.ordinal());
 	        out.writeInt (PirateScore.score);
-	        out.writeInt (asteroidsHit);
+	        out.writeInt (getAsteroidsHit());
 	        
 	        int numTreasures = treasuresCaptured.length;
 	        out.writeInt (numTreasures); // save size of array so it can be initialized on load	        
@@ -843,7 +848,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 			gameInProgress = in.readBoolean ();
 	        difficulty = Difficulty.values ( )[in.readInt ()];
 	        PirateScore.score = in.readInt ( );
-	        asteroidsHit = in.readInt ( );
+	        setAsteroidsHit (in.readInt ( ));
 	        
 	        int numTreasures = in.readInt ( );
 	        treasuresCaptured = new int[numTreasures];
@@ -1336,5 +1341,25 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	public void buyWeapon()
 	{
 		
+	}
+
+
+	
+	/**
+	 * @return asteroidsHit
+	 */
+	public int getAsteroidsHit ( )
+	{
+		return asteroidsHit;
+	}
+
+
+	
+	/**
+	 * @param asteroidsHit the asteroidsHit to set
+	 */
+	public void setAsteroidsHit (int asteroidsHit)
+	{
+		this.asteroidsHit = asteroidsHit;
 	}
 } // end pirateFrame
