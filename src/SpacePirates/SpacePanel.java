@@ -13,6 +13,7 @@ package SpacePirates;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -20,11 +21,11 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 /**
@@ -205,8 +206,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		//double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
 		if (mainShip.isInOrbit() == false)
 		{
-			double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getHeight ( ) / 2)),
-										 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getWidth ( ) / 2)));
+			double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getIconHeight () )),
+										 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getIconWidth ()) ));
 			mainShip.setSpeedAng (rotation);
 			mainShip.setRotation (rotation);
 		}
@@ -231,8 +232,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		//double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
 		if (mainShip.isInOrbit() == false)
 		{
-			double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getHeight ( ) / 2)),
-										 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getWidth ( ) / 2)));
+			double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getIconHeight () / 2)),
+										 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getIconWidth () / 2)));
 			mainShip.setSpeedAng (rotation);
 			mainShip.setRotation (rotation);
 		}
@@ -266,11 +267,11 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 				{
 					// weapon starts at center of the main ship
 					weapon.setX(mainShip.getX ( ) + 
-						        mainShip.getImage ( ).getWidth ( )/2 -
-						        weapon.getImage ( ).getWidth ( )/2);
+						        mainShip.getImage ( ).getIconWidth ()/2 -
+						        weapon.getImage ( ).getIconWidth ( )/2);
 					weapon.setY (mainShip.getY ( ) + 
-				        		mainShip.getImage ( ).getHeight( )/2 -
-				        		weapon.getImage ( ).getHeight( )/2);
+				        		mainShip.getImage ( ).getIconHeight( )/2 -
+				        		weapon.getImage ( ).getIconHeight( )/2);
 					// shoots in the direction the ship is facing
 					weapon.setSpeedAng (mainShip.getSpeedAng ( ));
 					weapon.setRotation (mainShip.getRotation ( ));
@@ -593,8 +594,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		{
 			// keep ship in center of screen 
 			
-			myRowOffset = mainShip.getX ( ) - ((int) width / 2 - mainShip.getImage ( ).getWidth ( ) / 2);
-			myColOffset = mainShip.getY ( ) - ((int) height / 2 - mainShip.getImage ( ).getHeight ( ) / 2);
+			myRowOffset = mainShip.getX ( ) - ((int) width / 2 - mainShip.getImage ( ).getIconWidth () / 2);
+			myColOffset = mainShip.getY ( ) - ((int) height / 2 - mainShip.getImage ( ).getIconHeight () / 2);
 		
 			g2.translate (-myRowOffset, -myColOffset);
 		} 
@@ -605,12 +606,13 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
 		for (SpaceObject obj : this.objects)
 		{
-			BufferedImage image = obj.getImage ( );
+			ImageIcon imageIcon = obj.getImage ( );
+			Image image = imageIcon.getImage ( );
 			Graphics2D g22 = (Graphics2D)g.create ( );
 			
 			// rotate each object separately based on its rotation
-			g22.rotate(obj.getRotation ( ),(int)(obj.getX())+image.getWidth ( )/2,
-								(int)(obj.getY())+image.getHeight ( )/2);
+			g22.rotate(obj.getRotation ( ),(int)(obj.getX())+obj.getImage ( ).getIconWidth()/2,
+								(int)(obj.getY())+obj.getImage ( ).getIconHeight ()/2);
 			// draw rotated image
 			g22.drawImage (image, (int)(obj.getX()), (int)(obj.getY()), null);
 			
@@ -618,7 +620,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			obj.setRotation (obj.getRotation ( )+obj.getRotationRate());
 			
 			// add a rectangle that outlines this image (used in collision calculations later)
-			rects.add (new Rectangle(obj.getX ( ),obj.getY ( ), image.getWidth ( ),image.getHeight ( )));
+			rects.add (new Rectangle(obj.getX ( ),obj.getY ( ), obj.getImage ( ).getIconWidth(),obj.getImage ( ).getIconHeight ()));
 
 			// get rid of custom graphics obj used for individual rotation
 			g22.dispose ( );

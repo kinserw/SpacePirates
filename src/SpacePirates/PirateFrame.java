@@ -1345,7 +1345,7 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 		{
 			String[] options = {"Missile","Torpedo", "Cluster Bomb"}; //
 			
-			String weapons = "Weapons To Buy:\nTorpedo = 250 Space Credits\nCluster Bomb = 500 Space Credits\n";
+			String weapons = "Weapons To Buy:\nMissile = 150 Space Credits\nTorpedo = 250 Space Credits\nCluster Bomb = 500 Space Credits\n";
 			
 			weapons+="\n                      Select a Weapon to Buy:";
 			//Lets user select which treasure type they would like to trade

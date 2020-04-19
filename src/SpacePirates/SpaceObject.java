@@ -11,12 +11,10 @@
 
 package SpacePirates;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  * Abstract base class for all objects in space. Defines common behaviors and
@@ -40,8 +38,8 @@ abstract public class SpaceObject implements Serializable
 	 * All member data is initialized at declaration to avoid undefined values
 	 * when object is created from an iostream (i.e. when loaded from a file).
 	 */
-	private transient BufferedImage icon = null; // track image 
-	private static HashMap<String,BufferedImage> ourImages = new HashMap<String,BufferedImage>();
+	private transient ImageIcon icon = null; // track image 
+	private static HashMap<String,ImageIcon> ourImages = new HashMap<String,ImageIcon>();
 	private transient SpaceObject origin = null;  // reference to object this one came from (if any)
 
 	// x,y represent coordinates on the 2D plane
@@ -60,6 +58,7 @@ abstract public class SpaceObject implements Serializable
 	private int health = 100;			// percentage of health object has
 	private boolean inOrbit = false;	// is the object in orbit
 	private transient SpaceObject lastOrb = null;	// the last object orbited
+	private transient String URL;
 	
 
 
@@ -229,8 +228,8 @@ abstract public class SpaceObject implements Serializable
 	 */
 	public void pointAt(SpaceObject obj)
 	{
-		double rotation = Math.atan2 (((obj.getY ( ) + obj.getImage ( ).getHeight ( ) / 2) - (this.y + getImage ( ).getHeight ( ) / 2)),
-			 ((obj.getX() + obj.getImage ( ).getWidth( ) / 2) - (this.x + getImage ( ).getWidth ( ) / 2)));
+		double rotation = Math.atan2 (((obj.getY ( ) + obj.getImage ( ).getIconHeight () / 2) - (this.y + getImage ( ).getIconHeight () / 2)),
+			 ((obj.getX() + obj.getImage ( ).getIconWidth() / 2) - (this.x + getImage ( ).getIconWidth () / 2)));
 		setSpeedAng (rotation);
 		setRotation (rotation);
 		
@@ -350,10 +349,9 @@ abstract public class SpaceObject implements Serializable
 	 * <hr>
 	 * @return
 	 */
-	private BufferedImage fetchImage()
+	private ImageIcon fetchImage()
 	{
 		String name = this.getClass ( ).getName ( );
-
 		// if class name prefixed with package name, remove the package name
 		if (name.contains ("."))
 		{
@@ -362,13 +360,13 @@ abstract public class SpaceObject implements Serializable
 		
 		// see if we've already loaded this image. Since static, no need to 
 		// load it more than once 
-		BufferedImage i = ourImages.get (name);
+		ImageIcon i = ourImages.get (name);
 		if (i == null)
 		{
 			// load the image and add it to the hashmap
 			try
 	        {
-					i = ImageIO.read(new File(name+".gif"));
+					i = new ImageIcon(name+".gif");
 					ourImages.put(name,i);
 			}
 			catch (Exception e)
@@ -387,7 +385,7 @@ abstract public class SpaceObject implements Serializable
 	 * <hr>
 	 * @return
 	 */
-	public BufferedImage getImage()
+	public ImageIcon getImage()
 	{
 		// need this logic for when space objects are loaded from an io stream
 		// and don't go through the defined constructors.
@@ -592,5 +590,15 @@ abstract public class SpaceObject implements Serializable
 	{
 		this.inOrbit = inOrbit;
 	}
+	
+	public String getURL()
+	{
+		return URL;
+	}
 
+	
+	public void setURL()
+	{
+		
+	}
 } // end SpaceObject
