@@ -1340,7 +1340,89 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	 */
 	public void buyWeapon()
 	{
-		
+		String userResponse ="";
+		try
+		{
+			String[] options = {"Missile","Torpedo", "Cluster Bomb"}; //
+			
+			String weapons = "Weapons To Buy:\nTorpedo = 250 Space Credits\nCluster Bomb = 500 Space Credits\n";
+			
+			weapons+="\n                      Select a Weapon to Buy:";
+			//Lets user select which treasure type they would like to trade
+			userResponse = (String) JOptionPane.showInputDialog (this, weapons, "Buy Weapons", JOptionPane.PLAIN_MESSAGE, null, 
+							options, options[0]);
+			
+			if(userResponse.equals("Missile"))
+			{
+				
+				if(SpacePanel.mainShip ( ).getWeapon() == SpaceShipWeaponType.MISSILE)
+				{
+					JOptionPane.showMessageDialog (this, "This weapon is already equiped");
+					buyWeapon();
+				}
+				else
+				{
+					if(currency<150)
+					{
+						JOptionPane.showMessageDialog (this, "You do not have enough Space Credits");
+						buyWeapon();
+					}
+					else
+					{
+						SpacePanel.mainShip().setCurrentWeapon(SpaceShipWeaponType.MISSILE);
+						JOptionPane.showMessageDialog (this, "You have changed your weapon to Torpedo");
+						currency-=150;
+					}
+				}
+			}
+			else if(userResponse.equals("Torpedo"))
+			{
+				if(SpacePanel.mainShip ( ).getWeapon() == SpaceShipWeaponType.TORPEDO)
+				{
+					JOptionPane.showMessageDialog (this, "This weapon is already equiped");
+					buyWeapon();
+				}
+				else
+				{
+					if(currency<250)
+					{
+						JOptionPane.showMessageDialog (this, "You do not have enough Space Credits");
+						buyWeapon();
+					}
+					else
+					{
+						SpacePanel.mainShip().setCurrentWeapon(SpaceShipWeaponType.TORPEDO);
+						JOptionPane.showMessageDialog (this, "You have changed your weapon to Torpedo");
+						currency-=250;
+					}
+				}
+			}
+			else if(userResponse.equals("Cluster Bomb"))
+			{
+				if(SpacePanel.mainShip ( ).getWeapon() == SpaceShipWeaponType.CLUSTERBOMB)
+				{
+					JOptionPane.showMessageDialog (this, "This weapon is already equiped");
+					buyWeapon();
+				}
+				else
+				{
+					if(currency<500)
+					{
+						JOptionPane.showMessageDialog (this, "You do not have enough Space Credits");
+						buyWeapon();
+					}
+					else
+					{
+						SpacePanel.mainShip().setCurrentWeapon(SpaceShipWeaponType.CLUSTERBOMB);
+						JOptionPane.showMessageDialog (this, "You have changed your weapon to Cluster Bomb");
+						currency-=500;
+					}
+				}
+			}
+		}
+		catch(NullPointerException nfe)
+		{	
+		}
 	}
 
 

@@ -1,5 +1,4 @@
-Stuff for anyone 
-- docking with the station needs to allow user to buy new weapons 
+Stuff for anyone  
 	(this is started by not fully working; one might say the hooks are in place)
 - edit ClusterBomb.gif file to have multiple layers/panes (all exist as separate files, just need to be merged into a single animated gif file named ClusterBomb.gif)
 - Fix the docking in progress prompt to where it doesn't pop up each time a collision is detected
@@ -52,4 +51,5 @@ COMPLETED
 - stats display needs to show which weapon is in use and how many rounds it has left (Sam)
 - Docking with the station allows to buy more health with space credits, buy more rounds for weapon on board, and trade treasures in for Space Credits (Sam)
 - Have asteroidsHit increment in the stats display (Sam)
+- Docking with the station needs to allow user to buy new weapons(Sam)
 
