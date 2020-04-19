@@ -371,7 +371,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	}
 
 	/**
-	 * iterates through all the objects in space and tells them to move          
+	 * iterates through all the objects in space and tells them to move
+	 * also generates more objects depending on relative player location          
 	 *
 	 * <hr>
 	 * Date created: Mar 4, 2020
@@ -382,6 +383,9 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	{
 		// boolean flag for if new asteroids should be generated
 		boolean generateFlag = true;
+		
+		// the distance from the closest station
+		Double minStationDist = null;
 		
 		// iterate through all active objects in space (and in the game)
 		for (SpaceObject object : this.objects)
@@ -416,7 +420,31 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 						generateFlag = false;
 					}
 				}
+				
+				
 			} // end if
+			
+			// update distance from the nearest weighstation
+			if (object instanceof WeighStation && minStationDist != null)
+			{
+				// Distance formula using the coordinates of the station and player
+				if (Math.sqrt (
+					Math.pow((object.getX() - mainShip.getX ( )), 2) +
+					Math.pow((object.getY() - mainShip.getY ( )), 2)
+					) < minStationDist)
+				{
+					minStationDist = (Math.sqrt (
+						Math.pow((object.getX() - mainShip.getX ( )), 2) +
+						Math.pow((object.getY() - mainShip.getY ( )), 2)));
+				}
+			}
+			else if (object instanceof WeighStation)
+			{
+				minStationDist = (Math.sqrt (
+					Math.pow((object.getX() - mainShip.getX ( )), 2) +
+					Math.pow((object.getY() - mainShip.getY ( )), 2)));
+			}
+			
 		} // end iterate
 		
 		if (generateFlag == true)
@@ -427,6 +455,15 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 							mainShip.getY ( ),
 							GEN_DIST / zoomFactor,
 							(GEN_DIST / 2) / zoomFactor);
+		}
+		
+		if (minStationDist != null && minStationDist > (GEN_DIST * 5) / zoomFactor)
+		{
+			System.out.println("generated station");
+			generateStation(mainShip.getX ( ),
+				mainShip.getY ( ),
+				GEN_DIST / zoomFactor,
+				(GEN_DIST / 2) / zoomFactor);
 		}
 	} // end moveObjects
 	
@@ -481,6 +518,45 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			
 			objects.add (tempAst);
 		}
+	}
+	
+	
+	/**
+	 * Generates a station at a random position based on given parameters      
+	 *
+	 * <hr>
+	 * Date created: Apr 13, 2020
+	 *
+	 * <hr>
+	 * @param x			:the x position the generation will be based around
+	 * @param y			:the y position the generation will be based around
+	 * @param maxDist	:the maximum distance the station can be from point x, y
+	 * @param minDist	:the minimum distance the station can be from point x, y
+	 */
+	public void generateStation(int x, int y, double maxDist, double minDist)
+	{
+		WeighStation tempAst = null;
+		int newX;
+		int newY;
+		
+			// sets new x and y to their distances from the original point x, y
+			newX = (int) (minDist + ((maxDist - minDist) * Math.random()));
+			newY = (int) (minDist + ((maxDist - minDist) * Math.random()));
+			
+			// puts the x and y in a random quadrant
+			// also applies the original coordinates
+			if (Math.random ( ) < .5)
+				newX = newX * -1 + x;
+			else
+				newX += x;
+			if (Math.random ( ) < .5)
+				newY = newY * -1 + y;
+			else
+				newY += y;
+			
+			tempAst = new WeighStation(newX, newY);
+			
+			objects.add (tempAst);
 	}
 	
 	/**
