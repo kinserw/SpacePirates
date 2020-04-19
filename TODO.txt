@@ -1,5 +1,4 @@
 Stuff for anyone  
-	(this is started by not fully working; one might say the hooks are in place)
 - edit ClusterBomb.gif file to have multiple layers/panes (all exist as separate files, just need to be merged into a single animated gif file named ClusterBomb.gif)
 - Fix the docking in progress prompt to where it doesn't pop up each time a collision is detected
 - Should ammo count exceed 99?
