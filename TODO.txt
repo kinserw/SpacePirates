@@ -1,5 +1,4 @@
 Stuff for anyone  
-- edit ClusterBomb.gif file to have multiple layers/panes (all exist as separate files, just need to be merged into a single animated gif file named ClusterBomb.gif)
 - Fix the docking in progress prompt to where it doesn't pop up each time a collision is detected
 - Should ammo count exceed 99?
 
@@ -51,4 +50,5 @@ COMPLETED
 - Docking with the station allows to buy more health with space credits, buy more rounds for weapon on board, and trade treasures in for Space Credits (Sam)
 - Have asteroidsHit increment in the stats display (Sam)
 - Docking with the station needs to allow user to buy new weapons(Sam)
+- edit ClusterBomb.gif file to have multiple layers/panes (Sam)
 
