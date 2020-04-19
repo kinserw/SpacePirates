@@ -575,8 +575,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 					if ((o1.getOrigin ( ) == o2) || (o2.getOrigin ( ) == o1))
 						;// as Trump says... "No Collision"
 					
-					else if((o1 instanceof SmallAsteroid || o1 instanceof SmallAsteroid || o1 instanceof SpaceTreasure) 
-									&& (o2 instanceof SmallAsteroid || o2 instanceof SmallAsteroid || o2 instanceof SpaceTreasure) )
+					else if((o1 instanceof SmallAsteroid || o1 instanceof LargeAsteroid || o1 instanceof SpaceTreasure) 
+									&& (o2 instanceof SmallAsteroid || o2 instanceof LargeAsteroid || o2 instanceof SpaceTreasure) )
 						;//keeps small asteroids from destroying each other
 					else
 					{
