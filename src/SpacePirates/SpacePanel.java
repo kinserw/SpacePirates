@@ -241,51 +241,6 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	}
 
 	/**
-	 *  fire weapon when mouse 2 is double clicked         
-	 *
-	 * <hr>
-	 * Date created: Mar 4, 2020 
-	 *
-	 * <hr>
-	 * @param e
-	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
-	 */
-	@Override
-	public void mouseClicked (MouseEvent e)
-	{
-		// right mouse double click causes the player's ship to fire it's current
-		// weapon. 
-		if (e.getButton ( ) == MouseEvent.BUTTON3 && e.getClickCount ( ) == 1)
-		{
-			// can't shoot weapon while in orbit
-			if (mainShip.isInOrbit() == false)
-			{
-				// if weapon available then fire it (it automatically update ammo count)
-				Weapon weapon = mainShip.fireCurrentWeapon ( );
-				
-				if (weapon != null) 
-				{
-					// weapon starts at center of the main ship
-					weapon.setX(mainShip.getX ( ) + 
-						        mainShip.getImage ( ).getIconWidth ()/2 -
-						        weapon.getImage ( ).getIconWidth ( )/2);
-					weapon.setY (mainShip.getY ( ) + 
-				        		mainShip.getImage ( ).getIconHeight( )/2 -
-				        		weapon.getImage ( ).getIconHeight( )/2);
-					// shoots in the direction the ship is facing
-					weapon.setSpeedAng (mainShip.getSpeedAng ( ));
-					weapon.setRotation (mainShip.getRotation ( ));
-					
-					weapon.setOrigin (mainShip); // missile knows where it came from
-					
-					// add weapon to list of objects in the game (right after the main ship)
-					this.objects.add (1,weapon);
-				} // need a weapon to fire
-			} // can't fire if in orbit 
-		}// fire weapon
-	}
-
-	/**
 	 * Accelerate main ship when mouse 1 is clicked         
 	 *
 	 * <hr>
@@ -317,7 +272,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 
 	/**
 	 * releasing mouse means main ship is no longer accelerating.
-	 * main ship starts coasting when no longer accelerating         
+	 * main ship starts coasting when no longer accelerating    
+	 * if mouse 2 is released, a missile will be fired     
 	 *
 	 * <hr>
 	 * Date created: Mar 4, 2020 
@@ -334,6 +290,37 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			mainShip.setBreakingOrbit (false); // set to false so it can go back into orbit
 			mainShip.setCoasting (true);			
 		}
+		
+		// right mouse double click causes the player's ship to fire it's current
+				// weapon. 
+				if (e.getButton ( ) == MouseEvent.BUTTON3)
+				{
+					// can't shoot weapon while in orbit
+					if (mainShip.isInOrbit() == false)
+					{
+						// if weapon available then fire it (it automatically update ammo count)
+						Weapon weapon = mainShip.fireCurrentWeapon ( );
+						
+						if (weapon != null) 
+						{
+							// weapon starts at center of the main ship
+							weapon.setX(mainShip.getX ( ) + 
+								        mainShip.getImage ( ).getIconWidth ()/2 -
+								        weapon.getImage ( ).getIconWidth ( )/2);
+							weapon.setY (mainShip.getY ( ) + 
+						        		mainShip.getImage ( ).getIconHeight( )/2 -
+						        		weapon.getImage ( ).getIconHeight( )/2);
+							// shoots in the direction the ship is facing
+							weapon.setSpeedAng (mainShip.getSpeedAng ( ));
+							weapon.setRotation (mainShip.getRotation ( ));
+							
+							weapon.setOrigin (mainShip); // missile knows where it came from
+							
+							// add weapon to list of objects in the game (right after the main ship)
+							this.objects.add (1,weapon);
+						} // need a weapon to fire
+					} // can't fire if in orbit 
+				}// fire weapon
 	}
 
 	/**
@@ -902,5 +889,23 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		}
     	return errors;
     } // end loadGame
+
+
+	/**
+	 * N/A        
+	 *
+	 * <hr>
+	 * Date created: Apr 20, 2020 
+	 *
+	 * <hr>
+	 * @param e
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseClicked (MouseEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
 } // end SpacePanel
