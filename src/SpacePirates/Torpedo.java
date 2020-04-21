@@ -27,6 +27,17 @@ public class Torpedo extends Weapon
 	 */
 	private static final long serialVersionUID = -5507921673897338261L;
 
+	
+	/**
+	 * Constructor        
+	 *
+	 * <hr>
+	 * Date created: Apr 21, 2020 
+	 *
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	public Torpedo(int x, int y)
 	{
 		super (x, y);

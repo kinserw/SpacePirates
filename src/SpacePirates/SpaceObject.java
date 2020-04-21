@@ -58,8 +58,6 @@ abstract public class SpaceObject implements Serializable
 	private int health = 100;			// percentage of health object has
 	private boolean inOrbit = false;	// is the object in orbit
 	private transient SpaceObject lastOrb = null;	// the last object orbited
-	private transient String URL;
-	
 
 
 	
@@ -589,16 +587,5 @@ abstract public class SpaceObject implements Serializable
 	public void setInOrbit (boolean inOrbit)
 	{
 		this.inOrbit = inOrbit;
-	}
-	
-	public String getURL()
-	{
-		return URL;
-	}
-
-	
-	public void setURL()
-	{
-		
 	}
 } // end SpaceObject

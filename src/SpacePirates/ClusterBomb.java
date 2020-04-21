@@ -27,6 +27,17 @@ public class ClusterBomb extends Weapon
 	 */
 	private static final long serialVersionUID = -7596162407236521197L;
 
+	
+	/**
+	 * Constructor        
+	 *
+	 * <hr>
+	 * Date created: Apr 21, 2020 
+	 *
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	public ClusterBomb(int x, int y)
 	{
 		super (x, y);
