@@ -358,13 +358,13 @@ abstract public class SpaceObject implements Serializable
 		
 		// see if we've already loaded this image. Since static, no need to 
 		// load it more than once 
-		ImageIcon i = ourImages.get (name);
+		ImageIcon i = ourImages.get ("media\\" + name);
 		if (i == null)
 		{
 			// load the image and add it to the hashmap
 			try
 	        {
-					i = new ImageIcon(name+".gif");
+					i = new ImageIcon("media\\" + name+".gif");
 					ourImages.put(name,i);
 			}
 			catch (Exception e)
