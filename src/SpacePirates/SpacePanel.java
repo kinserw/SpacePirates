@@ -315,6 +315,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 							weapon.setRotation (mainShip.getRotation ( ));
 							
 							weapon.setOrigin (mainShip); // missile knows where it came from
+							weapon.setSpeed (weapon.getSpeed ( ) + mainShip.getSpeed());
 							
 							// add weapon to list of objects in the game (right after the main ship)
 							this.objects.add (1,weapon);
