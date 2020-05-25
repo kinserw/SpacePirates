@@ -36,6 +36,8 @@ public class SpacePirateGame implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 7901517065602915834L;
+	
+	private static final String gameVersion = "1.0.0";
 
 	public static final SpacePirateGame theGame = new SpacePirateGame();
 

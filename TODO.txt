@@ -1,27 +1,53 @@
-Stuff for anyone  
-- Fix the docking in progress prompt to where it doesn't pop up each time a collision is detected
-- Should ammo count exceed 99?
 
-Stuff for Sam 
+BUGS/MISTAKES
+- missiles should have x velocity + that of the ship (charles)
 
-
-
-Stuff for Charles??
-- Continuous random world generation
-
-- Docking with stations (charles)
-	-- flesh out purchase of items
-- Asteroids repelled from stations 
-	(I made so they don't orbit but they still don't repel)
-
-OPTIONAL ITEMS TO ADD
-- Modify ship
+GENERAL TODO *salutes*
+- Finish the other weapons (charles)
+	- consider using '1' '2' '3' etc. keys to swap weapons
+- Revamp Menus and UI
+	- this includes adding a dedicated 
 - *Trade ships (go in between way stations)
+	- ships defend selves? (maybe some do)
 	- avoid asteroids?
 	- loot on ships
+	- generate way stations to travel to?
+- Enemy ships and/or space monsters
+	- hopefully we can recycle code from trade ships
+- Modify player ship (MAJOR ADDITION)
+	- this includes adding physical parts to the ship
+	(not just statistical upgrades)
+	- Considering a polygon based building system where player can
+		draw parts.
+	- building should require materials
+- Visual effects (Particles that don't collide like smoke)
+
+CONSIDERING TODO
+- Inventory Limits?
+	- Should ammo count exceed 99?
+- Change Control Scheme
+	- change the controls to where WASD or arrows control the
+		ship and mouse aims the gun
+	- use two joysticks in the case of mobile version
+
+OPTIONAL ITEMS TO ADD
+- 'Sell All' option
+- - Lock To function (would help with ship building)
+	- this function would enable a space object to be
+		anchored to another based on relative location
+		and angle (a dev method, like orbit or simCollide)
+- Buy Materials from stations
+- Revamp art
 
 
-COMPLETED
+COMPLETED For Current Version
+
+COMPLETED 1.0.0
+- Fix the docking in progress prompt to where it doesn't pop up each time a collision is detected
+- Docking with stations
+	-- flesh out purchase of items
+- Asteroids repelled from stations 
+- Continuous random world generation
 - need to improve our ability to get out of orbit without going back into orbit right away
 - shooting spacetreasures should give us points but not as much as capturing the treasure
 - shooting a space station or weigh station should deduct points (not a huge amount just enough to make it a disincentive)
