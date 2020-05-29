@@ -1,9 +1,8 @@
 
 BUGS/MISTAKES
-- missiles should have x velocity + that of the ship (charles)
 
 GENERAL TODO *salutes*
-- Finish the other weapons (charles)
+- Finish the other weapons
 	- consider using '1' '2' '3' etc. keys to swap weapons
 - Revamp Menus and UI
 	- this includes adding a dedicated 
@@ -14,7 +13,7 @@ GENERAL TODO *salutes*
 	- generate way stations to travel to?
 - Enemy ships and/or space monsters
 	- hopefully we can recycle code from trade ships
-- Modify player ship (MAJOR ADDITION)
+- Modify player ship (MAJOR ADDITION) (charles)
 	- this includes adding physical parts to the ship
 	(not just statistical upgrades)
 	- Considering a polygon based building system where player can
@@ -41,6 +40,7 @@ OPTIONAL ITEMS TO ADD
 
 
 COMPLETED For Current Version
+- (bug fixed) missiles should have x velocity + that of the ship (charles)
 
 COMPLETED 1.0.0
 - Fix the docking in progress prompt to where it doesn't pop up each time a collision is detected

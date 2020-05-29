@@ -104,6 +104,7 @@ public class LargeAsteroid extends SpaceObject
 
 			// set speed to be up to twice this one
 			debrisItem.setSpeed (Math.random()*2*getSpeed());
+			
 			debrisField.add (debrisItem);
 		}
 

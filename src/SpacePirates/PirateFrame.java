@@ -60,7 +60,8 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	private boolean gameOver = false ; 			// forces game to end 
 	private boolean firstTimeThru = true; 		// flag used to display welcome screen
 	private boolean gamePaused = false;			// flag indicating if game is paused or running
-
+	private boolean buildState = false;			// flag indicating if the player ship is being edited
+	
 	// TODO: Move all the following to SpaceGame
 	private Difficulty difficulty = Difficulty.EASY; // difficulty setting for the game
 	private int health = 100; 					// tracks health of main ship
@@ -584,6 +585,14 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 
         fileMenu.add(endMenuItem);
         fileMenu.addSeparator();
+        
+        JMenuItem buildMenuItem = new JMenuItem("Build");
+        buildMenuItem.setMnemonic(KeyEvent.VK_B);
+        buildMenuItem.setToolTipText("Enter ship editor mode");
+        buildMenuItem.addActionListener((event) -> this.toggleBuildState());
+        
+        fileMenu.add (buildMenuItem);
+        fileMenu.addSeparator();
          
         JMenuItem eMenuItem = new JMenuItem("Exit");
         eMenuItem.setMnemonic(KeyEvent.VK_E);
@@ -771,6 +780,31 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
         setJMenuBar(menuBar);
     }
 	
+	/**
+	 * This pauses the game and starts letting the user edit their ship        
+	 *
+	 * <hr>
+	 * Date created: May 28, 2020
+	 *
+	 * <hr>
+	 * @return
+	 */
+	private void toggleBuildState ( )
+	{
+		setGamePaused(!gamePaused);
+		
+		if (gamePaused == true)
+		{
+			buildState = true;
+			System.out.println("buildState on");
+		}
+		else
+		{
+			buildState = false;
+		}
+	}
+
+
 	/**
 	 * save the game specific values          
 	 *
@@ -1443,5 +1477,25 @@ public class PirateFrame extends JFrame implements Runnable, ActionListener, Tre
 	public void setAsteroidsHit (int asteroidsHit)
 	{
 		this.asteroidsHit = asteroidsHit;
+	}
+
+
+	
+	/**
+	 * @return gamePaused
+	 */
+	public boolean isGamePaused ( )
+	{
+		return gamePaused;
+	}
+
+
+	
+	/**
+	 * @return buildState
+	 */
+	public boolean isBuildState ( )
+	{
+		return buildState;
 	}
 } // end pirateFrame

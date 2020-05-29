@@ -44,19 +44,25 @@ abstract public class SpaceObject implements Serializable
 
 	// x,y represent coordinates on the 2D plane
 	protected int x = 0;
-	protected int y = 0; 
+	protected int y = 0;
+	// offsets used for anchoring
+	protected int xOff = 0;
+	protected int yOff = 0;
 	
 	// represents the type of space objects. Subclasses should set this in their
 	// constructors.
 	protected SpaceObjectType type = SpaceObjectType.ELLIPTICAL;
 
 	private double rotation = 0;		// current angle in reference to rotational velocity
+	private double rotationOff = 0;		// the offset in angle used for anchoring
 	private double rotationRate = 0.0;	// rotational velocity
 	private double speed = 0;			// space object's velocity
 	private double speedAng = 0;		// angle used for determining velocity vector
 	private double mass = 1;			// mass for simulating force and collisions
 	private int health = 100;			// percentage of health object has
 	private boolean inOrbit = false;	// is the object in orbit
+	private boolean anchored = false;	// is the object attached to another
+	private SpaceObject curAnchor = null; 			// the current object being followed
 	private transient SpaceObject lastOrb = null;	// the last object orbited
 
 
@@ -134,17 +140,118 @@ abstract public class SpaceObject implements Serializable
 	 * @param speed1
 	 * @param speed2
 	 */
-	public void calculateDamage(double speed1, double speed2)
+	public void calculateDamage(SpaceObject obj)
 	{
-		// speed max's out at 50 so two object's speed combined is max 100
-		// the faster they are going the more damage they do
-
-		// CHARLES TODO: consider using angular speed since current calculation doesn't
-		// take into consideration whether the two objects are doing a head on 
-		// collision or if they are glancing off each other.
-		health -= (int)(speed1+speed2);
+		double speed2 = obj.getSpeed ( );			// store the speed of the second object as a temporary variable
+		double speedAng2 = obj.getSpeedAng ( );		// store the angle of the second object as a temporary variable
+		double mass2 = obj.getMass ( );				// store the mass of the second object as a temporary variable
+		
+		// separate the vector into individual components
+			double deltaX = speed*Math.cos(speedAng);
+			double deltaY = speed*Math.sin(speedAng);
+			double deltaX2 = speed2*Math.cos(speedAng2);
+			double deltaY2 = speed2*Math.sin(speedAng2);
+			
+			int dmg = (int) (Math.abs (deltaX - deltaX2) + Math.abs (deltaY - deltaY2));
+			
+			obj.setHealth (obj.getHealth ( ) - (int)(dmg/mass2*mass));
+			this.setHealth (this.getHealth ( ) - (int)(dmg/mass*mass2));
 		
 	}
+	
+	
+	/**
+	 * Setup offsets based on position in reference to the anchor
+	 * and store the object being anchored to.     
+	 *
+	 * <hr>
+	 * Date created: May 29, 2020
+	 *
+	 * <hr>
+	 * @param obj
+	 */
+	public void anchorTo(SpaceObject obj)
+	{
+		if (obj == curAnchor)
+			return;
+		
+		anchored = true;
+		curAnchor = obj;
+		xOff = (this.x + this.getImage ( ).getIconWidth () / 2) - (obj.getX ( ) + obj.getImage ( ).getIconWidth () / 2);
+		yOff = (this.y + this.getImage ( ).getIconHeight () / 2) - (obj.getY ( ) + obj.getImage ( ).getIconHeight () / 2);
+		rotationOff = this.rotation - obj.getRotation();
+		rotationRate = 0;
+		
+		System.out.println(xOff + " " + yOff);
+		
+		speed = curAnchor.getSpeed ( );
+		speedAng = curAnchor.getSpeedAng ( );
+		
+		x = (int)
+			((xOff * Math.cos ((curAnchor.getRotation ( )))) -
+			(yOff * Math.sin ((curAnchor.getRotation ( )))));
+					
+		y = (int)
+			((yOff * Math.cos ((curAnchor.getRotation ( )))) +
+			(xOff * Math.sin ((curAnchor.getRotation ( )))));
+		
+		x += curAnchor.getX ( ) + curAnchor.getImage ( ).getIconWidth () / 2;
+		y += curAnchor.getY ( ) + curAnchor.getImage ( ).getIconHeight () / 2;
+			
+		rotation = rotationOff + obj.getRotation ( );
+	}
+	
+	/**
+	 * updates the properties of the object based on
+	 * the stored anchor.        
+	 *
+	 * <hr>
+	 * Date created: May 29, 2020
+	 *
+	 * <hr>
+	 */
+	public void updateAnchor()
+	{
+		if (curAnchor == null)
+		{
+			return;
+		}
+		
+		speed = curAnchor.getSpeed ( );
+		speedAng = curAnchor.getSpeedAng ( );
+		
+		
+		x = (int)
+			((xOff * Math.cos ((curAnchor.getRotation ( )))) -
+			(yOff * Math.sin ((curAnchor.getRotation ( )))));
+		
+		y = (int)
+			((yOff * Math.cos ((curAnchor.getRotation ( )))) +
+			(xOff * Math.sin ((curAnchor.getRotation ( )))));
+		
+		x += curAnchor.getX ( );
+		y += curAnchor.getY ( );
+		
+		rotation = rotationOff + curAnchor.getRotation ( );
+	}
+	
+	/**
+	 * removes all data on any anchor object        
+	 *
+	 * <hr>
+	 * Date created: May 29, 2020
+	 *
+	 * <hr>
+	 */
+	public void removeAnchor()
+	{
+		anchored = false;
+		curAnchor = null;
+		xOff = 0;
+		yOff = 0;
+		rotationOff = 0;
+	}
+	
 	
 	/**
 	 * Base class method to set default behavior for when a space object is destroyed        
@@ -250,7 +357,7 @@ abstract public class SpaceObject implements Serializable
 		
 		// make this a virtual function so space objects that have force fields
 		// can adjust the calculations but the rest use the same default calc.
-		calculateDamage(speed,speed2);
+		calculateDamage(obj);
 		
 		
 		// separate the vector into individual components
@@ -587,5 +694,15 @@ abstract public class SpaceObject implements Serializable
 	public void setInOrbit (boolean inOrbit)
 	{
 		this.inOrbit = inOrbit;
+	}
+
+
+	
+	/**
+	 * @return anchored
+	 */
+	public boolean isAnchored ( )
+	{
+		return anchored;
 	}
 } // end SpaceObject

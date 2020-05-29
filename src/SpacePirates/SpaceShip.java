@@ -69,12 +69,10 @@ public class SpaceShip extends SpaceObject
 	 * @see SpacePirates.SpaceObject#calculateDamage(double, double)
 	 */
 	@Override
-	public void calculateDamage(double speed1, double speed2)
+	public void calculateDamage(SpaceObject obj)
 	{
-		// debug statement. TODO remove debug
-		System.out.println("ship health = " + getHealth() + "  s1  s2 " + speed1 + "   " + speed2);
 		if(takeDamage==true)
-			super.calculateDamage (speed1, speed2);
+			super.calculateDamage (obj);
 			
 	}
 	
@@ -113,8 +111,10 @@ public class SpaceShip extends SpaceObject
 		}
 		else // revert to default behavior
 		{
-			setInOrbit(false);
-			super.simCollide(obj);
+			obj.anchorTo (this);
+			return;
+			//setInOrbit(false);
+			//super.simCollide(obj);
 		}
 	} // end simCollide
 	

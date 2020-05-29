@@ -41,7 +41,7 @@ public class ClusterBomb extends Weapon
 	public ClusterBomb(int x, int y)
 	{
 		super (x, y);
-		super.setSpeed(40);
+		super.setSpeed(0);
 		super.setType (SpaceObjectType.STEERABLE);
 	}
 	

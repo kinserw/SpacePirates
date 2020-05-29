@@ -204,7 +204,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		// the mouse event x & y are not translated
 		// also need to adjust mouse event x & y based on zoomFactor to match adjustments already in the other values
 		//double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
-		if (mainShip.isInOrbit() == false)
+		if (mainShip.isInOrbit() == false && !gamePaused)
 		{
 			double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getIconHeight () )),
 										 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getIconWidth ()) ));
@@ -230,7 +230,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 		// the mouse event x & y are not translated
 		// also need to adjust mouse event x & y based on zoomFactor to match adjustments already in the other values
 		//double rotation = Math.atan2 ((e.getY ( )/zoomFactor- (mainShip.getY ( ) +myColOffset )),(e.getX()/zoomFactor - (mainShip.getX() + myRowOffset)));
-		if (mainShip.isInOrbit() == false)
+		if (mainShip.isInOrbit() == false && !gamePaused)
 		{
 			double rotation = Math.atan2 ((e.getY ( ) / zoomFactor + myColOffset - (mainShip.getY ( ) + mainShip.getImage ( ).getIconHeight () / 2)),
 										 (e.getX() / zoomFactor + myRowOffset - (mainShip.getX() + mainShip.getImage ( ).getIconWidth () / 2)));
@@ -253,7 +253,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mousePressed (MouseEvent e)
 	{
-		if (e.getButton ( ) == MouseEvent.BUTTON1)
+		if (e.getButton ( ) == MouseEvent.BUTTON1 && !gamePaused)
 		{
 			// accelerate ship if it isn't at max speed yet
 			if (mainShip.getSpeed() < 50)
@@ -285,7 +285,7 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	@Override
 	public void mouseReleased (MouseEvent e)
 	{
-		if (e.getButton ( ) == MouseEvent.BUTTON1)
+		if (e.getButton ( ) == MouseEvent.BUTTON1 && !gamePaused)
 		{
 			mainShip.setBreakingOrbit (false); // set to false so it can go back into orbit
 			mainShip.setCoasting (true);			
@@ -381,12 +381,23 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			// if the object isn't stationary, calculate its movement
 			if (object.getType ( ) != SpaceObjectType.STATIONARY)
 			{
-				// calculate new position and set
 				double speed = object.getSpeed ( );
 				double deltaX = speed*Math.cos(object.getSpeedAng ( ));
 				double deltaY = speed*Math.sin(object.getSpeedAng ( ));
-				object.setX (object.getX() + (int)((deltaX)));
-				object.setY (object.getY() + (int)((deltaY)));
+				
+				// bypass normal calculations if the object is anchored
+				if (object.isAnchored())
+					object.updateAnchor ( );
+				else
+				{
+					// calculate new position and set
+					object.setX (object.getX() + (int)((deltaX)));
+					object.setY (object.getY() + (int)((deltaY)));
+				}
+				
+				// update any anchored objects
+				if (object.isAnchored())
+					object.updateAnchor ( );
 				
 				// if this is the main ship, override movement when in orbit
 				if ((object == mainShip) && mainShip.isInOrbit() == true)
@@ -561,8 +572,8 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 	public void paintComponent (Graphics g)
 	{
 		// if game is paused, nothing to do
-		if (gamePaused)
-			return;
+		//if (gamePaused)
+			//return;
 		
 		Graphics2D g2 = (Graphics2D) g;
 		
@@ -604,14 +615,17 @@ public class SpacePanel extends JPanel implements MouseListener, MouseMotionList
 			// draw rotated image
 			g22.drawImage (image, (int)(obj.getX()), (int)(obj.getY()), null);
 			
-			// set next rotation
-			obj.setRotation (obj.getRotation ( )+obj.getRotationRate());
-			
-			// add a rectangle that outlines this image (used in collision calculations later)
-			rects.add (new Rectangle(obj.getX ( ),obj.getY ( ), obj.getImage ( ).getIconWidth(),obj.getImage ( ).getIconHeight ()));
-
-			// get rid of custom graphics obj used for individual rotation
-			g22.dispose ( );
+			if (!gamePaused)
+			{
+				// set next rotation
+				obj.setRotation (obj.getRotation ( )+obj.getRotationRate());
+				
+				// add a rectangle that outlines this image (used in collision calculations later)
+				rects.add (new Rectangle(obj.getX ( ),obj.getY ( ), obj.getImage ( ).getIconWidth(),obj.getImage ( ).getIconHeight ()));
+	
+				// get rid of custom graphics obj used for individual rotation
+				g22.dispose ( );
+			}
 		}
 
 		// look for collisions (use loops since objects can be destroyed by collisions

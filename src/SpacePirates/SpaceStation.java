@@ -74,11 +74,13 @@ public class SpaceStation extends WeighStation
 	{
 		if (obj instanceof LargeAsteroid || obj instanceof SmallAsteroid)
 		{
-			obj.pointAt(this);
-			obj.setSpeedAng(obj.getSpeedAng() + Math.PI);
+			//obj.pointAt(this);
+			//obj.setSpeedAng(obj.getSpeedAng() + Math.PI);
 			
-			if(obj.getSpeed() < 5)
-				obj.setSpeed(5);
+			//if(obj.getSpeed() < 5)
+				//obj.setSpeed(5);
+			
+			obj.anchorTo (this);
 		}
 		else
 		{
