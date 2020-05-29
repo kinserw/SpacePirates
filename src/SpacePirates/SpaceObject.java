@@ -164,6 +164,9 @@ abstract public class SpaceObject implements Serializable
 	 * Setup offsets based on position in reference to the anchor
 	 * and store the object being anchored to.     
 	 *
+	 * TODO the Anchor system still doesn't work fully. find a fix for the inconsistent
+	 * distance between anchor and anchored objects.
+	 *
 	 * <hr>
 	 * Date created: May 29, 2020
 	 *
@@ -195,8 +198,8 @@ abstract public class SpaceObject implements Serializable
 			((yOff * Math.cos ((curAnchor.getRotation ( )))) +
 			(xOff * Math.sin ((curAnchor.getRotation ( )))));
 		
-		x += curAnchor.getX ( ) + curAnchor.getImage ( ).getIconWidth () / 2;
-		y += curAnchor.getY ( ) + curAnchor.getImage ( ).getIconHeight () / 2;
+		x += curAnchor.getX ( ) + (curAnchor.getImage ( ).getIconWidth () / 2) * Math.cos (curAnchor.getRotation());
+		y += curAnchor.getY ( ) + (curAnchor.getImage ( ).getIconHeight () / 2) * Math.sin (curAnchor.getRotation());
 			
 		rotation = rotationOff + obj.getRotation ( );
 	}
@@ -229,8 +232,8 @@ abstract public class SpaceObject implements Serializable
 			((yOff * Math.cos ((curAnchor.getRotation ( )))) +
 			(xOff * Math.sin ((curAnchor.getRotation ( )))));
 		
-		x += curAnchor.getX ( );
-		y += curAnchor.getY ( );
+		x += curAnchor.getX ( ) + (curAnchor.getImage ( ).getIconWidth () / 2) * Math.cos (curAnchor.getRotation());
+		y += curAnchor.getY ( ) + (curAnchor.getImage ( ).getIconHeight () / 2) * Math.sin (curAnchor.getRotation());
 		
 		rotation = rotationOff + curAnchor.getRotation ( );
 	}
